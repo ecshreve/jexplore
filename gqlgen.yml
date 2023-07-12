@@ -1,0 +1,27 @@
+skip_mod_tidy: false
+
+schema:
+  - ./*.graphql
+
+exec:
+  dir: ./
+  filename: gql-generated.go
+  package: jexplore
+
+resolver:
+  layout: follow-schema
+  dir: ./
+  package: jexplore
+
+autobind:
+  - github.com/ecshreve/jexplore/ent
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.IntID
+
+  Node:
+    model:
+      - github.com/ecshreve/jexplore/ent.Noder
