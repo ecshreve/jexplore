@@ -3,7 +3,8 @@
 ## [wip]
 <img src="./img/jexplore.gif">
 
-## reference
+## where i found stuff
+
 - https://github.com/entkit/entkit
 - https://entkit.com/docs/get-started/introduction
 - https://github.com/entkit/entkit-demo
@@ -12,7 +13,74 @@
 - https://atlasgo.io/getting-started/
 - https://gqlgen.com/
 
-## stuff
+## how to do stuff
+
+This repo uses [`run`](https://github.com/amonks/run) as a general task executor, tasks are defined in `./tasks.toml`.
+
+<br>
+
+---
+`run migrate/man`
+
+create a new empty atlas migration
+```
+atlas migrate new MANUAL_MIGRATION \
+  --dir "file://ent/migrate/migrations"
+```
+
+---
+
+`run migrate/diff`
+generate migration file from diff
+```
+atlas migrate diff some-migration-name \
+  --dir "file://ent/migrate/migrations" \
+  --to "ent://ent/schema" \
+  --dev-url "sqlite://file?mode=memory&_fk=1"
+```
+
+---
+
+`run migrate/hash`
+
+update atlas.sum hash file after making changes to the empty migration
+```
+atlas migrate hash   
+  --dir "file://ent/migrate/migrations"
+```
+
+--- 
+
+`run migrate/apply/dev`
+
+apply migrations to the dev database
+```
+atlas migrate apply   
+  --dir "file://ent/migrate/migrations"   
+  --url "sqlite://file?mode=memory&_fk=1"
+```
+
+--- 
+
+`run migrate/apply/prod`
+
+apply migrations to the file.db database
+```
+atlas migrate apply   
+  --dir "file://ent/migrate/migrations"   
+  --url "sqlite://file.db?_fk=1"
+```
+
+---
+
+`run serve/dev`
+
+run the generated server and web ui (in unified mode)
+```
+go run ./my-server/*.go serve -u refine-project
+```
+
+## where / what stuff is
 
 `./file.db`
 - sqlite3 database
@@ -41,44 +109,3 @@
   - remove an auth type declaration from `my-server/main.go`
   - coerce record IDs from number to string in `refine-app/src/edges-diagram.tsx`
   - something else i'm forgetting...
-
-## commands
-
-create a new empty migration
-```
-atlas migrate new backfill-clues \
-  --dir "file://ent/migrate/migrations"
-```
-
-update atlas.sum hash file after making changes to the empty migration
-```
-atlas migrate hash   
-  --dir "file://ent/migrate/migrations"
-```
-
-apply migrations to the dev database
-```
-atlas migrate apply   
-  --dir "file://ent/migrate/migrations"   
-  --url "sqlite://file?mode=memory&_fk=1"
-```
-
-apply migrations to the file.db database
-```
-atlas migrate apply   
-  --dir "file://ent/migrate/migrations"   
-  --url "sqlite://file.db?_fk=1"
-```
-
-generate migration file from diff
-```
-atlas migrate diff some-migration-name \
-  --dir "file://ent/migrate/migrations" \
-  --to "ent://ent/schema" \
-  --dev-url "sqlite://file?mode=memory&_fk=1"
-```
-
-run the generated server and web ui (in unified mode)
-```
-go run ./my-server/*.go serve -u refine-project
-```
