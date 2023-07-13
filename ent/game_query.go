@@ -4,12 +4,14 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/predicate"
 	"github.com/ecshreve/jexplore/ent/season"
@@ -18,14 +20,15 @@ import (
 // GameQuery is the builder for querying Game entities.
 type GameQuery struct {
 	config
-	ctx        *QueryContext
-	order      []game.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Game
-	withSeason *SeasonQuery
-	withFKs    bool
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*Game) error
+	ctx            *QueryContext
+	order          []game.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.Game
+	withSeason     *SeasonQuery
+	withClues      *ClueQuery
+	modifiers      []func(*sql.Selector)
+	loadTotal      []func(context.Context, []*Game) error
+	withNamedClues map[string]*ClueQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -84,6 +87,28 @@ func (gq *GameQuery) QuerySeason() *SeasonQuery {
 	return query
 }
 
+// QueryClues chains the current query on the "clues" edge.
+func (gq *GameQuery) QueryClues() *ClueQuery {
+	query := (&ClueClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(game.Table, game.FieldID, selector),
+			sqlgraph.To(clue.Table, clue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, game.CluesTable, game.CluesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Game entity from the query.
 // Returns a *NotFoundError when no Game was found.
 func (gq *GameQuery) First(ctx context.Context) (*Game, error) {
@@ -108,8 +133,8 @@ func (gq *GameQuery) FirstX(ctx context.Context) *Game {
 
 // FirstID returns the first Game ID from the query.
 // Returns a *NotFoundError when no Game ID was found.
-func (gq *GameQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (gq *GameQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = gq.Limit(1).IDs(setContextOp(ctx, gq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -121,7 +146,7 @@ func (gq *GameQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (gq *GameQuery) FirstIDX(ctx context.Context) string {
+func (gq *GameQuery) FirstIDX(ctx context.Context) int {
 	id, err := gq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -159,8 +184,8 @@ func (gq *GameQuery) OnlyX(ctx context.Context) *Game {
 // OnlyID is like Only, but returns the only Game ID in the query.
 // Returns a *NotSingularError when more than one Game ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (gq *GameQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (gq *GameQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = gq.Limit(2).IDs(setContextOp(ctx, gq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -176,7 +201,7 @@ func (gq *GameQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (gq *GameQuery) OnlyIDX(ctx context.Context) string {
+func (gq *GameQuery) OnlyIDX(ctx context.Context) int {
 	id, err := gq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,7 +229,7 @@ func (gq *GameQuery) AllX(ctx context.Context) []*Game {
 }
 
 // IDs executes the query and returns a list of Game IDs.
-func (gq *GameQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (gq *GameQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if gq.ctx.Unique == nil && gq.path != nil {
 		gq.Unique(true)
 	}
@@ -216,7 +241,7 @@ func (gq *GameQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (gq *GameQuery) IDsX(ctx context.Context) []string {
+func (gq *GameQuery) IDsX(ctx context.Context) []int {
 	ids, err := gq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -277,6 +302,7 @@ func (gq *GameQuery) Clone() *GameQuery {
 		inters:     append([]Interceptor{}, gq.inters...),
 		predicates: append([]predicate.Game{}, gq.predicates...),
 		withSeason: gq.withSeason.Clone(),
+		withClues:  gq.withClues.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -291,6 +317,17 @@ func (gq *GameQuery) WithSeason(opts ...func(*SeasonQuery)) *GameQuery {
 		opt(query)
 	}
 	gq.withSeason = query
+	return gq
+}
+
+// WithClues tells the query-builder to eager-load the nodes that are connected to
+// the "clues" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GameQuery) WithClues(opts ...func(*ClueQuery)) *GameQuery {
+	query := (&ClueClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withClues = query
 	return gq
 }
 
@@ -371,18 +408,12 @@ func (gq *GameQuery) prepareQuery(ctx context.Context) error {
 func (gq *GameQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Game, error) {
 	var (
 		nodes       = []*Game{}
-		withFKs     = gq.withFKs
 		_spec       = gq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			gq.withSeason != nil,
+			gq.withClues != nil,
 		}
 	)
-	if gq.withSeason != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, game.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Game).scanValues(nil, columns)
 	}
@@ -410,6 +441,20 @@ func (gq *GameQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Game, e
 			return nil, err
 		}
 	}
+	if query := gq.withClues; query != nil {
+		if err := gq.loadClues(ctx, query, nodes,
+			func(n *Game) { n.Edges.Clues = []*Clue{} },
+			func(n *Game, e *Clue) { n.Edges.Clues = append(n.Edges.Clues, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedClues {
+		if err := gq.loadClues(ctx, query, nodes,
+			func(n *Game) { n.appendNamedClues(name) },
+			func(n *Game, e *Clue) { n.appendNamedClues(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range gq.loadTotal {
 		if err := gq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
@@ -419,13 +464,10 @@ func (gq *GameQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Game, e
 }
 
 func (gq *GameQuery) loadSeason(ctx context.Context, query *SeasonQuery, nodes []*Game, init func(*Game), assign func(*Game, *Season)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*Game)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Game)
 	for i := range nodes {
-		if nodes[i].season_games == nil {
-			continue
-		}
-		fk := *nodes[i].season_games
+		fk := nodes[i].SeasonID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -442,11 +484,41 @@ func (gq *GameQuery) loadSeason(ctx context.Context, query *SeasonQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "season_games" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "season_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (gq *GameQuery) loadClues(ctx context.Context, query *ClueQuery, nodes []*Game, init func(*Game), assign func(*Game, *Clue)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Game)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(clue.FieldGameID)
+	}
+	query.Where(predicate.Clue(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(game.CluesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GameID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "game_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -464,7 +536,7 @@ func (gq *GameQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (gq *GameQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt))
 	_spec.From = gq.sql
 	if unique := gq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -478,6 +550,9 @@ func (gq *GameQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != game.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if gq.withSeason != nil {
+			_spec.Node.AddColumnOnce(game.FieldSeasonID)
 		}
 	}
 	if ps := gq.predicates; len(ps) > 0 {
@@ -533,6 +608,20 @@ func (gq *GameQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedClues tells the query-builder to eager-load the nodes that are connected to the "clues"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GameQuery) WithNamedClues(name string, opts ...func(*ClueQuery)) *GameQuery {
+	query := (&ClueClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedClues == nil {
+		gq.withNamedClues = make(map[string]*ClueQuery)
+	}
+	gq.withNamedClues[name] = query
+	return gq
 }
 
 // GameGroupBy is the group-by builder for Game entities.

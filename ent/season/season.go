@@ -28,7 +28,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "game" package.
 	GamesInverseTable = "games"
 	// GamesColumn is the table column denoting the games relation/edge.
-	GamesColumn = "season_games"
+	GamesColumn = "season_id"
 )
 
 // Columns holds all SQL columns for season fields.

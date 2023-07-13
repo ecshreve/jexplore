@@ -8,12 +8,70 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (c *Category) Clues(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, orderBy *ClueOrder, where *ClueWhereInput,
+) (*ClueConnection, error) {
+	opts := []CluePaginateOption{
+		WithClueOrder(orderBy),
+		WithClueFilter(where.Filter),
+	}
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := c.Edges.totalCount[0][alias]
+	if nodes, err := c.NamedClues(alias); err == nil || hasTotalCount {
+		pager, err := newCluePager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &ClueConnection{Edges: []*ClueEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
+	}
+	return c.QueryClues().Paginate(ctx, after, first, before, last, opts...)
+}
+
+func (c *Clue) Category(ctx context.Context) (*Category, error) {
+	result, err := c.Edges.CategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Clue) Game(ctx context.Context) (*Game, error) {
+	result, err := c.Edges.GameOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryGame().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (ga *Game) Season(ctx context.Context) (*Season, error) {
 	result, err := ga.Edges.SeasonOrErr()
 	if IsNotLoaded(err) {
 		result, err = ga.QuerySeason().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (ga *Game) Clues(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, orderBy *ClueOrder, where *ClueWhereInput,
+) (*ClueConnection, error) {
+	opts := []CluePaginateOption{
+		WithClueOrder(orderBy),
+		WithClueFilter(where.Filter),
+	}
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := ga.Edges.totalCount[1][alias]
+	if nodes, err := ga.NamedClues(alias); err == nil || hasTotalCount {
+		pager, err := newCluePager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &ClueConnection{Edges: []*ClueEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
+	}
+	return ga.QueryClues().Paginate(ctx, after, first, before, last, opts...)
 }
 
 func (s *Season) Games(

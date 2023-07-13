@@ -18,6 +18,89 @@ import * as RA from "@refinedev/antd";
 import * as Tables from "./tables";
 import * as Type from "./typedefs";
 import * as Action from "./action";
+export type CategoryListProps = RA.ListProps & {
+    tableProps?: Tables.CategoryTableProps;
+};
+export const CategoryList: React.FC<CategoryListProps> = ({
+    tableProps,
+    ...props
+}) => {
+    const can = true;
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
+    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+
+    return can ? (
+        <RA.List
+            {...props}
+            resource="category"
+            headerButtons={({ defaultButtons }) => (
+                <>
+                    <Action.CategoryListAction
+                        key="CategoryListAction"
+                        recordItemIDs={selectedRowKeys}
+                    />
+                    <Action.CategoryCreateAction
+                        key="CategoryCreateAction"
+                        recordItemIDs={selectedRowKeys}
+                    />
+
+                    {selectedRowKeys.length ? (
+                        <>
+                            <Action.CategoryDeleteAction
+                                key="CategoryDeleteAction"
+                                recordItemIDs={selectedRowKeys}
+                                onSuccess={() => setSelectedRowKeys([])}
+                            />
+                        </>
+                    ) : null}
+                </>
+            )}
+        >
+            <Tables.CategoryTable {...tableProps} rowSelection={rowSelection} />
+        </RA.List>
+    ) : null;
+};
+export type ClueListProps = RA.ListProps & {
+    tableProps?: Tables.ClueTableProps;
+};
+export const ClueList: React.FC<ClueListProps> = ({ tableProps, ...props }) => {
+    const can = true;
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
+    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+
+    return can ? (
+        <RA.List
+            {...props}
+            resource="clue"
+            headerButtons={({ defaultButtons }) => (
+                <>
+                    <Action.ClueListAction
+                        key="ClueListAction"
+                        recordItemIDs={selectedRowKeys}
+                    />
+                    <Action.ClueCreateAction
+                        key="ClueCreateAction"
+                        recordItemIDs={selectedRowKeys}
+                    />
+
+                    {selectedRowKeys.length ? (
+                        <>
+                            <Action.ClueDeleteAction
+                                key="ClueDeleteAction"
+                                recordItemIDs={selectedRowKeys}
+                                onSuccess={() => setSelectedRowKeys([])}
+                            />
+                        </>
+                    ) : null}
+                </>
+            )}
+        >
+            <Tables.ClueTable {...tableProps} rowSelection={rowSelection} />
+        </RA.List>
+    ) : null;
+};
 export type GameListProps = RA.ListProps & {
     tableProps?: Tables.GameTableProps;
 };

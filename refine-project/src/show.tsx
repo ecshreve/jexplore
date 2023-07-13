@@ -25,6 +25,213 @@ import * as View from "./view";
 import * as Custom from "./custom";
 import * as Action from "./action";
 
+export type CategoryShowProps = {
+    id?: Interfaces.JeppID;
+    withEdges?: boolean;
+} & RA.ShowProps;
+export const CategoryShow: React.FC<CategoryShowProps> = ({
+    id,
+    withEdges,
+    ...showProps
+}) => {
+    const { queryResult } = useShow<Interfaces.JeppCategoryInterface>({
+        resource: "category",
+        id,
+        metaData: {
+            fields: [
+                "id",
+                "name",
+                {
+                    operation: "clues",
+                    fields: [
+                        {
+                            edges: [
+                                {
+                                    node: [
+                                        "id",
+                                        "question",
+                                        "answer",
+                                        "categoryID",
+                                        "gameID",
+                                    ],
+                                },
+                            ],
+                        },
+                        "totalCount",
+                    ],
+                    variables: {
+                        first: 10,
+                    },
+                },
+            ],
+        },
+    });
+
+    const { data, isLoading } = queryResult;
+    const record = data?.data;
+
+    if (!record) {
+        return <></>;
+    }
+
+    return (
+        <RA.Show
+            isLoading={isLoading}
+            headerButtons={() => (
+                <>
+                    <Action.CategoryListAction recordItemIDs={[record.id]} />
+                    <Action.CategoryEditAction recordItemIDs={[record.id]} />
+                    <Action.CategoryDeleteAction recordItemIDs={[record.id]} />
+                    <Action.CategoryEdgesDiagramAction
+                        recordItemIDs={[record.id]}
+                    />
+                </>
+            )}
+            {...showProps}
+        >
+            <Antd.Typography.Title level={5}>Id</Antd.Typography.Title>
+            <View.JeppNumberViewOnShow value={record?.id} />
+            <Antd.Typography.Title level={5}>Name</Antd.Typography.Title>
+            <View.JeppStringViewOnShow value={record?.name} />
+
+            {withEdges ? (
+                <>
+                    <Antd.Typography.Title level={3}>
+                        Edges
+                    </Antd.Typography.Title>
+                    <Antd.Descriptions></Antd.Descriptions>
+                    <Antd.Tabs
+                        defaultActiveKey="0"
+                        items={[
+                            {
+                                label: (
+                                    <span>
+                                        <AntdIcons.FileOutlined />
+                                        Clues
+                                    </span>
+                                ),
+                                key: "0",
+                                children: (
+                                    <Lists.ClueList
+                                        key={"clues-categories"}
+                                        breadcrumb={false}
+                                        tableProps={{
+                                            extendTable: {
+                                                permanentFilter: [
+                                                    {
+                                                        operator:
+                                                            "hasCategoryWith" as any,
+                                                        field: "",
+                                                        value: {
+                                                            id: record?.id,
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    />
+                                ),
+                            },
+                        ]}
+                    />
+                </>
+            ) : null}
+        </RA.Show>
+    );
+};
+
+export const CategoryMainShow: React.FC = () => {
+    return <CategoryShow withEdges={true} />;
+};
+
+export const CategoryPartialShow: React.FC = () => {
+    return <CategoryShow withEdges={false} />;
+};
+
+export type ClueShowProps = {
+    id?: Interfaces.JeppID;
+    withEdges?: boolean;
+} & RA.ShowProps;
+export const ClueShow: React.FC<ClueShowProps> = ({
+    id,
+    withEdges,
+    ...showProps
+}) => {
+    const { queryResult } = useShow<Interfaces.JeppClueInterface>({
+        resource: "clue",
+        id,
+        metaData: {
+            fields: [
+                "id",
+                "question",
+                "answer",
+                "categoryID",
+                "gameID",
+                {
+                    category: ["id", "name"],
+                },
+            ],
+        },
+    });
+
+    const { data, isLoading } = queryResult;
+    const record = data?.data;
+
+    if (!record) {
+        return <></>;
+    }
+
+    return (
+        <RA.Show
+            isLoading={isLoading}
+            headerButtons={() => (
+                <>
+                    <Action.ClueListAction recordItemIDs={[record.id]} />
+                    <Action.ClueEditAction recordItemIDs={[record.id]} />
+                    <Action.ClueDeleteAction recordItemIDs={[record.id]} />
+                    <Action.ClueEdgesDiagramAction
+                        recordItemIDs={[record.id]}
+                    />
+                </>
+            )}
+            {...showProps}
+        >
+            <Antd.Typography.Title level={5}>Id</Antd.Typography.Title>
+            <View.JeppNumberViewOnShow value={record?.id} />
+            <Antd.Typography.Title level={5}>Question</Antd.Typography.Title>
+            <View.JeppStringViewOnShow value={record?.question} />
+            <Antd.Typography.Title level={5}>Answer</Antd.Typography.Title>
+            <View.JeppStringViewOnShow value={record?.answer} />
+            <Antd.Typography.Title level={5}>Category Id</Antd.Typography.Title>
+            <View.JeppNumberViewOnShow value={record?.categoryID} />
+            <Antd.Typography.Title level={5}>Game Id</Antd.Typography.Title>
+            <View.JeppNumberViewOnShow value={record?.gameID} />
+
+            {withEdges ? (
+                <>
+                    <Antd.Typography.Title level={3}>
+                        Edges
+                    </Antd.Typography.Title>
+                    <Antd.Descriptions>
+                        <Antd.Descriptions.Item label="Category">
+                            <View.CategoryBadge {...record?.category} />
+                        </Antd.Descriptions.Item>
+                    </Antd.Descriptions>
+                    <Antd.Tabs defaultActiveKey="0" items={[]} />
+                </>
+            ) : null}
+        </RA.Show>
+    );
+};
+
+export const ClueMainShow: React.FC = () => {
+    return <ClueShow withEdges={true} />;
+};
+
+export const CluePartialShow: React.FC = () => {
+    return <ClueShow withEdges={false} />;
+};
+
 export type GameShowProps = {
     id?: Interfaces.JeppID;
     withEdges?: boolean;
@@ -43,6 +250,7 @@ export const GameShow: React.FC<GameShowProps> = ({
                 "show",
                 "airdate",
                 "tapedate",
+                "seasonID",
                 {
                     season: ["id", "number", "startdate", "enddate"],
                 },
@@ -65,18 +273,23 @@ export const GameShow: React.FC<GameShowProps> = ({
                     <Action.GameListAction recordItemIDs={[record.id]} />
                     <Action.GameEditAction recordItemIDs={[record.id]} />
                     <Action.GameDeleteAction recordItemIDs={[record.id]} />
+                    <Action.GameEdgesDiagramAction
+                        recordItemIDs={[record.id]}
+                    />
                 </>
             )}
             {...showProps}
         >
             <Antd.Typography.Title level={5}>Id</Antd.Typography.Title>
-            <View.JeppStringViewOnShow value={record?.id} />
+            <View.JeppNumberViewOnShow value={record?.id} />
             <Antd.Typography.Title level={5}>Show</Antd.Typography.Title>
             <View.JeppNumberViewOnShow value={record?.show} />
             <Antd.Typography.Title level={5}>AirDate</Antd.Typography.Title>
             <View.JeppDateViewOnShow value={record?.airdate} />
             <Antd.Typography.Title level={5}>TapeDate</Antd.Typography.Title>
             <View.JeppDateViewOnShow value={record?.tapedate} />
+            <Antd.Typography.Title level={5}>Season Id</Antd.Typography.Title>
+            <View.JeppNumberViewOnShow value={record?.seasonID} />
 
             {withEdges ? (
                 <>
@@ -127,7 +340,13 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
                         {
                             edges: [
                                 {
-                                    node: ["id", "show", "airdate", "tapedate"],
+                                    node: [
+                                        "id",
+                                        "show",
+                                        "airdate",
+                                        "tapedate",
+                                        "seasonID",
+                                    ],
                                 },
                             ],
                         },
@@ -156,12 +375,15 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
                     <Action.SeasonListAction recordItemIDs={[record.id]} />
                     <Action.SeasonEditAction recordItemIDs={[record.id]} />
                     <Action.SeasonDeleteAction recordItemIDs={[record.id]} />
+                    <Action.SeasonEdgesDiagramAction
+                        recordItemIDs={[record.id]}
+                    />
                 </>
             )}
             {...showProps}
         >
             <Antd.Typography.Title level={5}>Id</Antd.Typography.Title>
-            <View.JeppStringViewOnShow value={record?.id} />
+            <View.JeppNumberViewOnShow value={record?.id} />
             <Antd.Typography.Title level={5}>Number</Antd.Typography.Title>
             <View.JeppNumberViewOnShow value={record?.number} />
             <Antd.Typography.Title level={5}>StartDate</Antd.Typography.Title>

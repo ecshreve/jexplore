@@ -26,6 +26,141 @@ import * as Custom from "./custom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+export const CategoryEdit: React.FC = () => {
+    const { formProps, saveButtonProps, queryResult } =
+        RA.useForm<Interfaces.JeppCategoryInterface>({
+            redirect: false,
+            metaData: {
+                fields: [
+                    "name",
+                    "id",
+                    {
+                        clues: [
+                            {
+                                edges: [
+                                    {
+                                        node: ["id"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+
+    const [cluesCursors, setCluesCursors] = useState<Cursors>({});
+
+    const { selectProps: cluesSelectProps } =
+        RA.useSelect<Interfaces.JeppClueInterface>({
+            resource: "Clue",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: cluesCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
+
+    const id = queryResult?.data?.data.id;
+    return (
+        <RA.Edit
+            saveButtonProps={saveButtonProps}
+            headerButtons={() => (
+                <>
+                    <Action.CategoryShowAction recordItemIDs={id ? [id] : []} />
+
+                    <Action.CategoryEdgesDiagramAction
+                        recordItemIDs={id ? [id] : []}
+                    />
+                </>
+            )}
+        >
+            <Antd.Form {...formProps} layout="vertical">
+                <Antd.Form.Item
+                    label="Clues"
+                    name={["clueIDs"]}
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...cluesSelectProps} mode={"multiple"} />
+                </Antd.Form.Item>
+            </Antd.Form>
+        </RA.Edit>
+    );
+};
+
+export const ClueEdit: React.FC = () => {
+    const { formProps, saveButtonProps, queryResult } =
+        RA.useForm<Interfaces.JeppClueInterface>({
+            redirect: false,
+            metaData: {
+                fields: [
+                    "question",
+                    "answer",
+                    "categoryID",
+                    "gameID",
+                    "id",
+                    {
+                        category: ["id"],
+                    },
+                ],
+            },
+        });
+
+    const [categoryCursors, setCategoryCursors] = useState<Cursors>({});
+
+    const { selectProps: categorySelectProps } =
+        RA.useSelect<Interfaces.JeppCategoryInterface>({
+            resource: "Category",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: categoryCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
+
+    const id = queryResult?.data?.data.id;
+    return (
+        <RA.Edit
+            saveButtonProps={saveButtonProps}
+            headerButtons={() => (
+                <>
+                    <Action.ClueShowAction recordItemIDs={id ? [id] : []} />
+
+                    <Action.ClueEdgesDiagramAction
+                        recordItemIDs={id ? [id] : []}
+                    />
+                </>
+            )}
+        >
+            <Antd.Form {...formProps} layout="vertical">
+                <Antd.Form.Item
+                    label="Category"
+                    name="categoryID"
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...categorySelectProps} mode={undefined} />
+                </Antd.Form.Item>
+            </Antd.Form>
+        </RA.Edit>
+    );
+};
+
 export const GameEdit: React.FC = () => {
     const { formProps, saveButtonProps, queryResult } =
         RA.useForm<Interfaces.JeppGameInterface>({
@@ -35,6 +170,7 @@ export const GameEdit: React.FC = () => {
                     "show",
                     "airdate",
                     "tapedate",
+                    "seasonID",
                     "id",
                     {
                         season: ["id"],
@@ -70,6 +206,10 @@ export const GameEdit: React.FC = () => {
             headerButtons={() => (
                 <>
                     <Action.GameShowAction recordItemIDs={id ? [id] : []} />
+
+                    <Action.GameEdgesDiagramAction
+                        recordItemIDs={id ? [id] : []}
+                    />
                 </>
             )}
         >
@@ -138,6 +278,10 @@ export const SeasonEdit: React.FC = () => {
             headerButtons={() => (
                 <>
                     <Action.SeasonShowAction recordItemIDs={id ? [id] : []} />
+
+                    <Action.SeasonEdgesDiagramAction
+                        recordItemIDs={id ? [id] : []}
+                    />
                 </>
             )}
         >

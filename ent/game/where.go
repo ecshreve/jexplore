@@ -11,58 +11,48 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.Game {
+func ID(id int) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.Game {
+func IDEQ(id int) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.Game {
+func IDNEQ(id int) predicate.Game {
 	return predicate.Game(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.Game {
+func IDIn(ids ...int) predicate.Game {
 	return predicate.Game(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.Game {
+func IDNotIn(ids ...int) predicate.Game {
 	return predicate.Game(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.Game {
+func IDGT(id int) predicate.Game {
 	return predicate.Game(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.Game {
+func IDGTE(id int) predicate.Game {
 	return predicate.Game(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.Game {
+func IDLT(id int) predicate.Game {
 	return predicate.Game(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.Game {
+func IDLTE(id int) predicate.Game {
 	return predicate.Game(sql.FieldLTE(FieldID, id))
-}
-
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.Game {
-	return predicate.Game(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.Game {
-	return predicate.Game(sql.FieldContainsFold(FieldID, id))
 }
 
 // Show applies equality check predicate on the "show" field. It's identical to ShowEQ.
@@ -78,6 +68,11 @@ func AirDate(v time.Time) predicate.Game {
 // TapeDate applies equality check predicate on the "tapeDate" field. It's identical to TapeDateEQ.
 func TapeDate(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldTapeDate, v))
+}
+
+// SeasonID applies equality check predicate on the "season_id" field. It's identical to SeasonIDEQ.
+func SeasonID(v int) predicate.Game {
+	return predicate.Game(sql.FieldEQ(FieldSeasonID, v))
 }
 
 // ShowEQ applies the EQ predicate on the "show" field.
@@ -200,6 +195,36 @@ func TapeDateLTE(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldLTE(FieldTapeDate, v))
 }
 
+// SeasonIDEQ applies the EQ predicate on the "season_id" field.
+func SeasonIDEQ(v int) predicate.Game {
+	return predicate.Game(sql.FieldEQ(FieldSeasonID, v))
+}
+
+// SeasonIDNEQ applies the NEQ predicate on the "season_id" field.
+func SeasonIDNEQ(v int) predicate.Game {
+	return predicate.Game(sql.FieldNEQ(FieldSeasonID, v))
+}
+
+// SeasonIDIn applies the In predicate on the "season_id" field.
+func SeasonIDIn(vs ...int) predicate.Game {
+	return predicate.Game(sql.FieldIn(FieldSeasonID, vs...))
+}
+
+// SeasonIDNotIn applies the NotIn predicate on the "season_id" field.
+func SeasonIDNotIn(vs ...int) predicate.Game {
+	return predicate.Game(sql.FieldNotIn(FieldSeasonID, vs...))
+}
+
+// SeasonIDIsNil applies the IsNil predicate on the "season_id" field.
+func SeasonIDIsNil() predicate.Game {
+	return predicate.Game(sql.FieldIsNull(FieldSeasonID))
+}
+
+// SeasonIDNotNil applies the NotNil predicate on the "season_id" field.
+func SeasonIDNotNil() predicate.Game {
+	return predicate.Game(sql.FieldNotNull(FieldSeasonID))
+}
+
 // HasSeason applies the HasEdge predicate on the "season" edge.
 func HasSeason() predicate.Game {
 	return predicate.Game(func(s *sql.Selector) {
@@ -215,6 +240,29 @@ func HasSeason() predicate.Game {
 func HasSeasonWith(preds ...predicate.Season) predicate.Game {
 	return predicate.Game(func(s *sql.Selector) {
 		step := newSeasonStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasClues applies the HasEdge predicate on the "clues" edge.
+func HasClues() predicate.Game {
+	return predicate.Game(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CluesTable, CluesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCluesWith applies the HasEdge predicate on the "clues" edge with a given conditions (other predicates).
+func HasCluesWith(preds ...predicate.Clue) predicate.Game {
+	return predicate.Game(func(s *sql.Selector) {
+		step := newCluesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

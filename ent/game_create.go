@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/season"
 )
@@ -39,16 +40,16 @@ func (gc *GameCreate) SetTapeDate(t time.Time) *GameCreate {
 	return gc
 }
 
-// SetSeasonID sets the "season" edge to the Season entity by ID.
-func (gc *GameCreate) SetSeasonID(id string) *GameCreate {
-	gc.mutation.SetSeasonID(id)
+// SetSeasonID sets the "season_id" field.
+func (gc *GameCreate) SetSeasonID(i int) *GameCreate {
+	gc.mutation.SetSeasonID(i)
 	return gc
 }
 
-// SetNillableSeasonID sets the "season" edge to the Season entity by ID if the given value is not nil.
-func (gc *GameCreate) SetNillableSeasonID(id *string) *GameCreate {
-	if id != nil {
-		gc = gc.SetSeasonID(*id)
+// SetNillableSeasonID sets the "season_id" field if the given value is not nil.
+func (gc *GameCreate) SetNillableSeasonID(i *int) *GameCreate {
+	if i != nil {
+		gc.SetSeasonID(*i)
 	}
 	return gc
 }
@@ -56,6 +57,21 @@ func (gc *GameCreate) SetNillableSeasonID(id *string) *GameCreate {
 // SetSeason sets the "season" edge to the Season entity.
 func (gc *GameCreate) SetSeason(s *Season) *GameCreate {
 	return gc.SetSeasonID(s.ID)
+}
+
+// AddClueIDs adds the "clues" edge to the Clue entity by IDs.
+func (gc *GameCreate) AddClueIDs(ids ...int) *GameCreate {
+	gc.mutation.AddClueIDs(ids...)
+	return gc
+}
+
+// AddClues adds the "clues" edges to the Clue entity.
+func (gc *GameCreate) AddClues(c ...*Clue) *GameCreate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return gc.AddClueIDs(ids...)
 }
 
 // Mutation returns the GameMutation object of the builder.
@@ -115,13 +131,8 @@ func (gc *GameCreate) sqlSave(ctx context.Context) (*Game, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Game.ID type: %T", _spec.ID.Value)
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	gc.mutation.id = &_node.ID
 	gc.mutation.done = true
 	return _node, nil
@@ -130,7 +141,7 @@ func (gc *GameCreate) sqlSave(ctx context.Context) (*Game, error) {
 func (gc *GameCreate) createSpec() (*Game, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Game{config: gc.config}
-		_spec = sqlgraph.NewCreateSpec(game.Table, sqlgraph.NewFieldSpec(game.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(game.Table, sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt))
 	)
 	if value, ok := gc.mutation.Show(); ok {
 		_spec.SetField(game.FieldShow, field.TypeInt, value)
@@ -152,13 +163,29 @@ func (gc *GameCreate) createSpec() (*Game, *sqlgraph.CreateSpec) {
 			Columns: []string{game.SeasonColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.season_games = &nodes[0]
+		_node.SeasonID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.CluesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -204,6 +231,10 @@ func (gcb *GameCreateBulk) Save(ctx context.Context) ([]*Game, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

@@ -14,6 +14,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/ecshreve/jexplore/ent/category"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/season"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -21,8 +23,8 @@ import (
 
 // Common entgql types.
 type (
-	Cursor         = entgql.Cursor[string]
-	PageInfo       = entgql.PageInfo[string]
+	Cursor         = entgql.Cursor[int]
+	PageInfo       = entgql.PageInfo[int]
 	OrderDirection = entgql.OrderDirection
 )
 
@@ -97,6 +99,646 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// CategoryEdge is the edge representation of Category.
+type CategoryEdge struct {
+	Node   *Category `json:"node"`
+	Cursor Cursor    `json:"cursor"`
+}
+
+// CategoryConnection is the connection containing edges to Category.
+type CategoryConnection struct {
+	Edges      []*CategoryEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
+}
+
+func (c *CategoryConnection) build(nodes []*Category, pager *categoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Category
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Category {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Category {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*CategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &CategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// CategoryPaginateOption enables pagination customization.
+type CategoryPaginateOption func(*categoryPager) error
+
+// WithCategoryOrder configures pagination ordering.
+func WithCategoryOrder(order *CategoryOrder) CategoryPaginateOption {
+	if order == nil {
+		order = DefaultCategoryOrder
+	}
+	o := *order
+	return func(pager *categoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithCategoryFilter configures pagination filter.
+func WithCategoryFilter(filter func(*CategoryQuery) (*CategoryQuery, error)) CategoryPaginateOption {
+	return func(pager *categoryPager) error {
+		if filter == nil {
+			return errors.New("CategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type categoryPager struct {
+	reverse bool
+	order   *CategoryOrder
+	filter  func(*CategoryQuery) (*CategoryQuery, error)
+}
+
+func newCategoryPager(opts []CategoryPaginateOption, reverse bool) (*categoryPager, error) {
+	pager := &categoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *categoryPager) applyFilter(query *CategoryQuery) (*CategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *categoryPager) toCursor(c *Category) Cursor {
+	return p.order.Field.toCursor(c)
+}
+
+func (p *categoryPager) applyCursors(query *CategoryQuery, after, before *Cursor) (*CategoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultCategoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *categoryPager) applyOrder(query *CategoryQuery) *CategoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultCategoryOrder.Field {
+		query = query.Order(DefaultCategoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *categoryPager) orderExpr(query *CategoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultCategoryOrder.Field {
+			b.Comma().Ident(DefaultCategoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Category.
+func (c *CategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...CategoryPaginateOption,
+) (*CategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newCategoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if c, err = pager.applyFilter(c); err != nil {
+		return nil, err
+	}
+	conn := &CategoryConnection{Edges: []*CategoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = c.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if c, err = pager.applyCursors(c, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		c.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := c.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	c = pager.applyOrder(c)
+	nodes, err := c.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// CategoryOrderFieldName orders Category by name.
+	CategoryOrderFieldName = &CategoryOrderField{
+		Value: func(c *Category) (ent.Value, error) {
+			return c.Name, nil
+		},
+		column: category.FieldName,
+		toTerm: category.ByName,
+		toCursor: func(c *Category) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f CategoryOrderField) String() string {
+	var str string
+	switch f.column {
+	case CategoryOrderFieldName.column:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f CategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *CategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("CategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *CategoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid CategoryOrderField", str)
+	}
+	return nil
+}
+
+// CategoryOrderField defines the ordering field of Category.
+type CategoryOrderField struct {
+	// Value extracts the ordering value from the given Category.
+	Value    func(*Category) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) category.OrderOption
+	toCursor func(*Category) Cursor
+}
+
+// CategoryOrder defines the ordering of Category.
+type CategoryOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *CategoryOrderField `json:"field"`
+}
+
+// DefaultCategoryOrder is the default ordering of Category.
+var DefaultCategoryOrder = &CategoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &CategoryOrderField{
+		Value: func(c *Category) (ent.Value, error) {
+			return c.ID, nil
+		},
+		column: category.FieldID,
+		toTerm: category.ByID,
+		toCursor: func(c *Category) Cursor {
+			return Cursor{ID: c.ID}
+		},
+	},
+}
+
+// ToEdge converts Category into CategoryEdge.
+func (c *Category) ToEdge(order *CategoryOrder) *CategoryEdge {
+	if order == nil {
+		order = DefaultCategoryOrder
+	}
+	return &CategoryEdge{
+		Node:   c,
+		Cursor: order.Field.toCursor(c),
+	}
+}
+
+// ClueEdge is the edge representation of Clue.
+type ClueEdge struct {
+	Node   *Clue  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// ClueConnection is the connection containing edges to Clue.
+type ClueConnection struct {
+	Edges      []*ClueEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+func (c *ClueConnection) build(nodes []*Clue, pager *cluePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Clue
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Clue {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Clue {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*ClueEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &ClueEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// CluePaginateOption enables pagination customization.
+type CluePaginateOption func(*cluePager) error
+
+// WithClueOrder configures pagination ordering.
+func WithClueOrder(order *ClueOrder) CluePaginateOption {
+	if order == nil {
+		order = DefaultClueOrder
+	}
+	o := *order
+	return func(pager *cluePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultClueOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithClueFilter configures pagination filter.
+func WithClueFilter(filter func(*ClueQuery) (*ClueQuery, error)) CluePaginateOption {
+	return func(pager *cluePager) error {
+		if filter == nil {
+			return errors.New("ClueQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type cluePager struct {
+	reverse bool
+	order   *ClueOrder
+	filter  func(*ClueQuery) (*ClueQuery, error)
+}
+
+func newCluePager(opts []CluePaginateOption, reverse bool) (*cluePager, error) {
+	pager := &cluePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultClueOrder
+	}
+	return pager, nil
+}
+
+func (p *cluePager) applyFilter(query *ClueQuery) (*ClueQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *cluePager) toCursor(c *Clue) Cursor {
+	return p.order.Field.toCursor(c)
+}
+
+func (p *cluePager) applyCursors(query *ClueQuery, after, before *Cursor) (*ClueQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultClueOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *cluePager) applyOrder(query *ClueQuery) *ClueQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultClueOrder.Field {
+		query = query.Order(DefaultClueOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *cluePager) orderExpr(query *ClueQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultClueOrder.Field {
+			b.Comma().Ident(DefaultClueOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Clue.
+func (c *ClueQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...CluePaginateOption,
+) (*ClueConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newCluePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if c, err = pager.applyFilter(c); err != nil {
+		return nil, err
+	}
+	conn := &ClueConnection{Edges: []*ClueEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = c.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if c, err = pager.applyCursors(c, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		c.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := c.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	c = pager.applyOrder(c)
+	nodes, err := c.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// ClueOrderFieldQuestion orders Clue by question.
+	ClueOrderFieldQuestion = &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.Question, nil
+		},
+		column: clue.FieldQuestion,
+		toTerm: clue.ByQuestion,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.Question,
+			}
+		},
+	}
+	// ClueOrderFieldAnswer orders Clue by answer.
+	ClueOrderFieldAnswer = &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.Answer, nil
+		},
+		column: clue.FieldAnswer,
+		toTerm: clue.ByAnswer,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.Answer,
+			}
+		},
+	}
+	// ClueOrderFieldCategoryID orders Clue by category_id.
+	ClueOrderFieldCategoryID = &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.CategoryID, nil
+		},
+		column: clue.FieldCategoryID,
+		toTerm: clue.ByCategoryID,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.CategoryID,
+			}
+		},
+	}
+	// ClueOrderFieldGameID orders Clue by game_id.
+	ClueOrderFieldGameID = &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.GameID, nil
+		},
+		column: clue.FieldGameID,
+		toTerm: clue.ByGameID,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.GameID,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ClueOrderField) String() string {
+	var str string
+	switch f.column {
+	case ClueOrderFieldQuestion.column:
+		str = "QUESTION"
+	case ClueOrderFieldAnswer.column:
+		str = "ANSWER"
+	case ClueOrderFieldCategoryID.column:
+		str = "CATEGORY_ID"
+	case ClueOrderFieldGameID.column:
+		str = "GAME_ID"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ClueOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ClueOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ClueOrderField %T must be a string", v)
+	}
+	switch str {
+	case "QUESTION":
+		*f = *ClueOrderFieldQuestion
+	case "ANSWER":
+		*f = *ClueOrderFieldAnswer
+	case "CATEGORY_ID":
+		*f = *ClueOrderFieldCategoryID
+	case "GAME_ID":
+		*f = *ClueOrderFieldGameID
+	default:
+		return fmt.Errorf("%s is not a valid ClueOrderField", str)
+	}
+	return nil
+}
+
+// ClueOrderField defines the ordering field of Clue.
+type ClueOrderField struct {
+	// Value extracts the ordering value from the given Clue.
+	Value    func(*Clue) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) clue.OrderOption
+	toCursor func(*Clue) Cursor
+}
+
+// ClueOrder defines the ordering of Clue.
+type ClueOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *ClueOrderField `json:"field"`
+}
+
+// DefaultClueOrder is the default ordering of Clue.
+var DefaultClueOrder = &ClueOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.ID, nil
+		},
+		column: clue.FieldID,
+		toTerm: clue.ByID,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{ID: c.ID}
+		},
+	},
+}
+
+// ToEdge converts Clue into ClueEdge.
+func (c *Clue) ToEdge(order *ClueOrder) *ClueEdge {
+	if order == nil {
+		order = DefaultClueOrder
+	}
+	return &ClueEdge{
+		Node:   c,
+		Cursor: order.Field.toCursor(c),
+	}
 }
 
 // GameEdge is the edge representation of Game.
@@ -347,6 +989,20 @@ var (
 			}
 		},
 	}
+	// GameOrderFieldSeasonID orders Game by season_id.
+	GameOrderFieldSeasonID = &GameOrderField{
+		Value: func(ga *Game) (ent.Value, error) {
+			return ga.SeasonID, nil
+		},
+		column: game.FieldSeasonID,
+		toTerm: game.BySeasonID,
+		toCursor: func(ga *Game) Cursor {
+			return Cursor{
+				ID:    ga.ID,
+				Value: ga.SeasonID,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -359,6 +1015,8 @@ func (f GameOrderField) String() string {
 		str = "AIR_DATE"
 	case GameOrderFieldTapeDate.column:
 		str = "TAPE_DATE"
+	case GameOrderFieldSeasonID.column:
+		str = "SEASON_ID"
 	}
 	return str
 }
@@ -381,6 +1039,8 @@ func (f *GameOrderField) UnmarshalGQL(v interface{}) error {
 		*f = *GameOrderFieldAirDate
 	case "TAPE_DATE":
 		*f = *GameOrderFieldTapeDate
+	case "SEASON_ID":
+		*f = *GameOrderFieldSeasonID
 	default:
 		return fmt.Errorf("%s is not a valid GameOrderField", str)
 	}

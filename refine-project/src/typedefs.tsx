@@ -33,15 +33,30 @@ interface gqlField<T> {
     totalCount?: number;
 }
 
+export interface JeppCategoryInterface {
+    id: JeppNumber; // int
+    name: JeppString; // string
+    clues?: JeppClueInterface[];
+    _clues?: gqlField<JeppClueInterface>;
+}
+export interface JeppClueInterface {
+    id: JeppNumber; // int
+    question: JeppString; // string
+    answer: JeppString; // string
+    categoryID: JeppNumber; // int
+    gameID: JeppNumber; // int
+    category?: JeppCategoryInterface;
+}
 export interface JeppGameInterface {
-    id: JeppString; // string
+    id: JeppNumber; // int
     show: JeppNumber; // int
     airdate: JeppDate; // time.Time
     tapedate: JeppDate; // time.Time
+    seasonID: JeppNumber; // int
     season?: JeppSeasonInterface;
 }
 export interface JeppSeasonInterface {
-    id: JeppString; // string
+    id: JeppNumber; // int
     number: JeppNumber; // int
     startdate: JeppDate; // time.Time
     enddate: JeppDate; // time.Time

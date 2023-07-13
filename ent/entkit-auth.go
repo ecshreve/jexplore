@@ -38,12 +38,18 @@ func JeppAuthGinMiddleware() gin.HandlerFunc {
 type JeppResource int
 
 const (
-	JeppGameResource JeppResource = iota
+	JeppCategoryResource JeppResource = iota
+	JeppClueResource
+	JeppGameResource
 	JeppSeasonResource
 )
 
 func (e JeppResource) String() string {
 	switch e {
+	case JeppCategoryResource:
+		return "JeppCategory"
+	case JeppClueResource:
+		return "JeppClue"
 	case JeppGameResource:
 		return "JeppGame"
 	case JeppSeasonResource:
@@ -80,6 +86,38 @@ func (e JeppScope) String() string {
 func JeppAuthorizeByResource(ctx context.Context, resource JeppResource, scope JeppScope) error {
 	fmt.Println("Entkit: Authentication/Authorization is currently disabled. To utilize JeppAuthorizeByResource, please enable this feature.")
 	return nil
+}
+
+func JeppEnforceCategoryRead(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppReadScope)
+}
+
+func JeppEnforceCategoryCreate(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppCreateScope)
+}
+
+func JeppEnforceCategoryUpdate(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppUpdateScope)
+}
+
+func JeppEnforceCategoryDelete(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppDeleteScope)
+}
+
+func JeppEnforceClueRead(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppReadScope)
+}
+
+func JeppEnforceClueCreate(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppCreateScope)
+}
+
+func JeppEnforceClueUpdate(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppUpdateScope)
+}
+
+func JeppEnforceClueDelete(ctx context.Context) error {
+	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppDeleteScope)
 }
 
 func JeppEnforceGameRead(ctx context.Context) error {

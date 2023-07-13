@@ -13,10 +13,20 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
+export const CategorySorterEnums = {
+    name: "NAME",
+};
+export const ClueSorterEnums = {
+    question: "QUESTION",
+    answer: "ANSWER",
+    categoryID: "CATEGORY_ID",
+    gameID: "GAME_ID",
+};
 export const GameSorterEnums = {
     show: "SHOW",
     airdate: "AIR_DATE",
     tapedate: "TAPE_DATE",
+    seasonID: "SEASON_ID",
 };
 export const SeasonSorterEnums = {
     number: "NUMBER",

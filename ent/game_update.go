@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/predicate"
 	"github.com/ecshreve/jexplore/ent/season"
@@ -54,23 +55,44 @@ func (gu *GameUpdate) SetTapeDate(t time.Time) *GameUpdate {
 	return gu
 }
 
-// SetSeasonID sets the "season" edge to the Season entity by ID.
-func (gu *GameUpdate) SetSeasonID(id string) *GameUpdate {
-	gu.mutation.SetSeasonID(id)
+// SetSeasonID sets the "season_id" field.
+func (gu *GameUpdate) SetSeasonID(i int) *GameUpdate {
+	gu.mutation.SetSeasonID(i)
 	return gu
 }
 
-// SetNillableSeasonID sets the "season" edge to the Season entity by ID if the given value is not nil.
-func (gu *GameUpdate) SetNillableSeasonID(id *string) *GameUpdate {
-	if id != nil {
-		gu = gu.SetSeasonID(*id)
+// SetNillableSeasonID sets the "season_id" field if the given value is not nil.
+func (gu *GameUpdate) SetNillableSeasonID(i *int) *GameUpdate {
+	if i != nil {
+		gu.SetSeasonID(*i)
 	}
+	return gu
+}
+
+// ClearSeasonID clears the value of the "season_id" field.
+func (gu *GameUpdate) ClearSeasonID() *GameUpdate {
+	gu.mutation.ClearSeasonID()
 	return gu
 }
 
 // SetSeason sets the "season" edge to the Season entity.
 func (gu *GameUpdate) SetSeason(s *Season) *GameUpdate {
 	return gu.SetSeasonID(s.ID)
+}
+
+// AddClueIDs adds the "clues" edge to the Clue entity by IDs.
+func (gu *GameUpdate) AddClueIDs(ids ...int) *GameUpdate {
+	gu.mutation.AddClueIDs(ids...)
+	return gu
+}
+
+// AddClues adds the "clues" edges to the Clue entity.
+func (gu *GameUpdate) AddClues(c ...*Clue) *GameUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return gu.AddClueIDs(ids...)
 }
 
 // Mutation returns the GameMutation object of the builder.
@@ -82,6 +104,27 @@ func (gu *GameUpdate) Mutation() *GameMutation {
 func (gu *GameUpdate) ClearSeason() *GameUpdate {
 	gu.mutation.ClearSeason()
 	return gu
+}
+
+// ClearClues clears all "clues" edges to the Clue entity.
+func (gu *GameUpdate) ClearClues() *GameUpdate {
+	gu.mutation.ClearClues()
+	return gu
+}
+
+// RemoveClueIDs removes the "clues" edge to Clue entities by IDs.
+func (gu *GameUpdate) RemoveClueIDs(ids ...int) *GameUpdate {
+	gu.mutation.RemoveClueIDs(ids...)
+	return gu
+}
+
+// RemoveClues removes "clues" edges to Clue entities.
+func (gu *GameUpdate) RemoveClues(c ...*Clue) *GameUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return gu.RemoveClueIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -112,7 +155,7 @@ func (gu *GameUpdate) ExecX(ctx context.Context) {
 }
 
 func (gu *GameUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt))
 	if ps := gu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -140,7 +183,7 @@ func (gu *GameUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{game.SeasonColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -153,7 +196,52 @@ func (gu *GameUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{game.SeasonColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.CluesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedCluesIDs(); len(nodes) > 0 && !gu.mutation.CluesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.CluesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -206,23 +294,44 @@ func (guo *GameUpdateOne) SetTapeDate(t time.Time) *GameUpdateOne {
 	return guo
 }
 
-// SetSeasonID sets the "season" edge to the Season entity by ID.
-func (guo *GameUpdateOne) SetSeasonID(id string) *GameUpdateOne {
-	guo.mutation.SetSeasonID(id)
+// SetSeasonID sets the "season_id" field.
+func (guo *GameUpdateOne) SetSeasonID(i int) *GameUpdateOne {
+	guo.mutation.SetSeasonID(i)
 	return guo
 }
 
-// SetNillableSeasonID sets the "season" edge to the Season entity by ID if the given value is not nil.
-func (guo *GameUpdateOne) SetNillableSeasonID(id *string) *GameUpdateOne {
-	if id != nil {
-		guo = guo.SetSeasonID(*id)
+// SetNillableSeasonID sets the "season_id" field if the given value is not nil.
+func (guo *GameUpdateOne) SetNillableSeasonID(i *int) *GameUpdateOne {
+	if i != nil {
+		guo.SetSeasonID(*i)
 	}
+	return guo
+}
+
+// ClearSeasonID clears the value of the "season_id" field.
+func (guo *GameUpdateOne) ClearSeasonID() *GameUpdateOne {
+	guo.mutation.ClearSeasonID()
 	return guo
 }
 
 // SetSeason sets the "season" edge to the Season entity.
 func (guo *GameUpdateOne) SetSeason(s *Season) *GameUpdateOne {
 	return guo.SetSeasonID(s.ID)
+}
+
+// AddClueIDs adds the "clues" edge to the Clue entity by IDs.
+func (guo *GameUpdateOne) AddClueIDs(ids ...int) *GameUpdateOne {
+	guo.mutation.AddClueIDs(ids...)
+	return guo
+}
+
+// AddClues adds the "clues" edges to the Clue entity.
+func (guo *GameUpdateOne) AddClues(c ...*Clue) *GameUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return guo.AddClueIDs(ids...)
 }
 
 // Mutation returns the GameMutation object of the builder.
@@ -234,6 +343,27 @@ func (guo *GameUpdateOne) Mutation() *GameMutation {
 func (guo *GameUpdateOne) ClearSeason() *GameUpdateOne {
 	guo.mutation.ClearSeason()
 	return guo
+}
+
+// ClearClues clears all "clues" edges to the Clue entity.
+func (guo *GameUpdateOne) ClearClues() *GameUpdateOne {
+	guo.mutation.ClearClues()
+	return guo
+}
+
+// RemoveClueIDs removes the "clues" edge to Clue entities by IDs.
+func (guo *GameUpdateOne) RemoveClueIDs(ids ...int) *GameUpdateOne {
+	guo.mutation.RemoveClueIDs(ids...)
+	return guo
+}
+
+// RemoveClues removes "clues" edges to Clue entities.
+func (guo *GameUpdateOne) RemoveClues(c ...*Clue) *GameUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return guo.RemoveClueIDs(ids...)
 }
 
 // Where appends a list predicates to the GameUpdate builder.
@@ -277,7 +407,7 @@ func (guo *GameUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (guo *GameUpdateOne) sqlSave(ctx context.Context) (_node *Game, err error) {
-	_spec := sqlgraph.NewUpdateSpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(game.Table, game.Columns, sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt))
 	id, ok := guo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Game.id" for update`)}
@@ -322,7 +452,7 @@ func (guo *GameUpdateOne) sqlSave(ctx context.Context) (_node *Game, err error) 
 			Columns: []string{game.SeasonColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -335,7 +465,52 @@ func (guo *GameUpdateOne) sqlSave(ctx context.Context) (_node *Game, err error) 
 			Columns: []string{game.SeasonColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.CluesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedCluesIDs(); len(nodes) > 0 && !guo.mutation.CluesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.CluesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   game.CluesTable,
+			Columns: []string{game.CluesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -40,14 +40,14 @@ func (sc *SeasonCreate) SetEndDate(t time.Time) *SeasonCreate {
 }
 
 // AddGameIDs adds the "games" edge to the Game entity by IDs.
-func (sc *SeasonCreate) AddGameIDs(ids ...string) *SeasonCreate {
+func (sc *SeasonCreate) AddGameIDs(ids ...int) *SeasonCreate {
 	sc.mutation.AddGameIDs(ids...)
 	return sc
 }
 
 // AddGames adds the "games" edges to the Game entity.
 func (sc *SeasonCreate) AddGames(g ...*Game) *SeasonCreate {
-	ids := make([]string, len(g))
+	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -111,13 +111,8 @@ func (sc *SeasonCreate) sqlSave(ctx context.Context) (*Season, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Season.ID type: %T", _spec.ID.Value)
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	sc.mutation.id = &_node.ID
 	sc.mutation.done = true
 	return _node, nil
@@ -126,7 +121,7 @@ func (sc *SeasonCreate) sqlSave(ctx context.Context) (*Season, error) {
 func (sc *SeasonCreate) createSpec() (*Season, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Season{config: sc.config}
-		_spec = sqlgraph.NewCreateSpec(season.Table, sqlgraph.NewFieldSpec(season.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(season.Table, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	)
 	if value, ok := sc.mutation.Number(); ok {
 		_spec.SetField(season.FieldNumber, field.TypeInt, value)
@@ -148,7 +143,7 @@ func (sc *SeasonCreate) createSpec() (*Season, *sqlgraph.CreateSpec) {
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -199,6 +194,10 @@ func (scb *SeasonCreateBulk) Save(ctx context.Context) ([]*Season, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

@@ -58,13 +58,45 @@ export const RoutesBundle: React.FC = () => {
                     </Authenticated>
                 }
             >
-                <Route index element={<NavigateToResource resource="game" />} />
+                <Route
+                    index
+                    element={<NavigateToResource resource="season" />}
+                />
+
+                <Route path="category">
+                    <Route
+                        path="show/:id"
+                        element={<Show.CategoryMainShow />}
+                    />
+                    <Route index path="" element={<List.CategoryList />} />
+                    <Route path="create" element={<Create.CategoryCreate />} />
+                    <Route path="edit/:id" element={<Edit.CategoryEdit />} />
+                    <Route
+                        path="edges/:id"
+                        element={<EdgesDiagram.CategoryEdgesDiagram />}
+                    />
+                </Route>
+
+                <Route path="clue">
+                    <Route path="show/:id" element={<Show.ClueMainShow />} />
+                    <Route index path="" element={<List.ClueList />} />
+                    <Route path="create" element={<Create.ClueCreate />} />
+                    <Route path="edit/:id" element={<Edit.ClueEdit />} />
+                    <Route
+                        path="edges/:id"
+                        element={<EdgesDiagram.ClueEdgesDiagram />}
+                    />
+                </Route>
 
                 <Route path="game">
                     <Route path="show/:id" element={<Show.GameMainShow />} />
                     <Route index path="" element={<List.GameList />} />
                     <Route path="create" element={<Create.GameCreate />} />
                     <Route path="edit/:id" element={<Edit.GameEdit />} />
+                    <Route
+                        path="edges/:id"
+                        element={<EdgesDiagram.GameEdgesDiagram />}
+                    />
                 </Route>
 
                 <Route path="season">
@@ -72,6 +104,10 @@ export const RoutesBundle: React.FC = () => {
                     <Route index path="" element={<List.SeasonList />} />
                     <Route path="create" element={<Create.SeasonCreate />} />
                     <Route path="edit/:id" element={<Edit.SeasonEdit />} />
+                    <Route
+                        path="edges/:id"
+                        element={<EdgesDiagram.SeasonEdgesDiagram />}
+                    />
                 </Route>
             </Route>
 
@@ -79,7 +115,7 @@ export const RoutesBundle: React.FC = () => {
                 path={window.environment.appPath}
                 element={
                     <Authenticated fallback={<Outlet />}>
-                        <NavigateToResource resource="game" />
+                        <NavigateToResource resource="season" />
                     </Authenticated>
                 }
             >

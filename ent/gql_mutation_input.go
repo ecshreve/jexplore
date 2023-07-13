@@ -11,7 +11,7 @@ type CreateSeasonInput struct {
 	Number    int
 	StartDate time.Time
 	EndDate   time.Time
-	GameIDs   []string
+	GameIDs   []int
 }
 
 // Mutate applies the CreateSeasonInput on the SeasonMutation builder.

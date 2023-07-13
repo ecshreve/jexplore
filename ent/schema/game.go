@@ -26,15 +26,18 @@ func (Game) Fields() []ent.Field {
 		field.Time("tapeDate").Annotations(
 			entgql.OrderField("TAPE_DATE"),
 		),
+		field.Int("season_id").Optional().
+			Annotations(
+				entgql.OrderField("SEASON_ID"),
+			),
 	}
 }
 
 // Edges of the Game.
 func (Game) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("season", Season.Type).
-			Ref("games").
-			Unique(),
+		edge.From("season", Season.Type).Ref("games").Field("season_id").Unique(),
+		edge.To("clues", Clue.Type).Annotations(entgql.RelayConnection()),
 	}
 }
 
@@ -42,7 +45,6 @@ func (Game) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entkit.IndexRoute(),
-		entkit.Actions(entkit.DefaultActions...),
+		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
 	}
 }

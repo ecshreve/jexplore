@@ -14,7 +14,6 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
-	"entgo.io/ent/schema/field"
 	"github.com/entkit/entkit/v2"
 )
 
@@ -37,7 +36,7 @@ func main() {
 		graphqlUri = "http://localhost/query"
 	}
 
-	entRefine, err := entkit.NewExtension(
+	_, err = entkit.NewExtension(
 		//entkit.WithGenerator(filepath.Join("typescript-project"), entkit.DefaultTypescriptAdapter),
 		entkit.WithGenerator("refine-project", entkit.DefaultRefineAdapter),
 		//entkit.WithGenerator(
@@ -55,14 +54,11 @@ func main() {
 	}
 
 	err = entc.Generate("./ent/schema", &gen.Config{
-		Package: "github.com/ecshreve/jexplore/ent",
-		IDType: &field.TypeInfo{
-			Type: field.TypeString,
-		},
+		Package:  "github.com/ecshreve/jexplore/ent",
 		Features: []gen.Feature{gen.FeatureVersionedMigration},
 	}, entc.Extensions(
 		gqlEx,
-		entRefine,
+		// entRefine,
 	))
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)

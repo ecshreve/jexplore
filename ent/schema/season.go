@@ -32,8 +32,7 @@ func (Season) Fields() []ent.Field {
 // Edges of the Season.
 func (Season) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("games", Game.Type).
-			Annotations(entgql.RelayConnection()),
+		edge.To("games", Game.Type).Annotations(entgql.RelayConnection()),
 	}
 }
 
@@ -43,6 +42,6 @@ func (Season) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate()),
 		entkit.IndexRoute(),
-		entkit.Actions(entkit.DefaultActions...),
+		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
 	}
 }

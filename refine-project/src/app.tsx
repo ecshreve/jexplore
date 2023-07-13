@@ -45,6 +45,31 @@ function App() {
                     catchAll={<ErrorComponent />}
                     resources={[
                         {
+                            name: "category",
+                            list: window.environment.appPath + "category",
+                            show:
+                                window.environment.appPath +
+                                "category/show/:id",
+                            create:
+                                window.environment.appPath + "category/create",
+                            edit:
+                                window.environment.appPath +
+                                "category/edit/:id",
+                            meta: {
+                                icon: <AntdIcons.FileOutlined />,
+                            },
+                        },
+                        {
+                            name: "clue",
+                            list: window.environment.appPath + "clue",
+                            show: window.environment.appPath + "clue/show/:id",
+                            create: window.environment.appPath + "clue/create",
+                            edit: window.environment.appPath + "clue/edit/:id",
+                            meta: {
+                                icon: <AntdIcons.FileOutlined />,
+                            },
+                        },
+                        {
                             name: "game",
                             list: window.environment.appPath + "game",
                             show: window.environment.appPath + "game/show/:id",

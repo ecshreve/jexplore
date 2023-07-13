@@ -71,6 +71,68 @@ export const SearchComponent: React.FC = () => {
             </Link>
         ),
     });
+    const { refetch: refetchCategory } =
+        useList<Interfaces.JeppCategoryInterface>({
+            resource: "category",
+            metaData: {
+                fields: ["id", "id"],
+                searchQuery: value,
+            },
+            queryOptions: {
+                enabled: false,
+                onSuccess: (data) => {
+                    const storeOptionGroup = data.data.map((item) =>
+                        renderItem(
+                            String(item.id),
+                            null,
+                            window.environment.appPath +
+                                "category/show/:id".replace(
+                                    ":id",
+                                    String(item.id),
+                                ),
+                        ),
+                    );
+                    if (storeOptionGroup.length > 0) {
+                        setOptions((prevOptions) => [
+                            ...prevOptions,
+                            {
+                                label: renderTitle("Category"),
+                                options: storeOptionGroup,
+                            },
+                        ]);
+                    }
+                },
+            },
+        });
+    const { refetch: refetchClue } = useList<Interfaces.JeppClueInterface>({
+        resource: "clue",
+        metaData: {
+            fields: ["id", "id"],
+            searchQuery: value,
+        },
+        queryOptions: {
+            enabled: false,
+            onSuccess: (data) => {
+                const storeOptionGroup = data.data.map((item) =>
+                    renderItem(
+                        String(item.id),
+                        null,
+                        window.environment.appPath +
+                            "clue/show/:id".replace(":id", String(item.id)),
+                    ),
+                );
+                if (storeOptionGroup.length > 0) {
+                    setOptions((prevOptions) => [
+                        ...prevOptions,
+                        {
+                            label: renderTitle("Clue"),
+                            options: storeOptionGroup,
+                        },
+                    ]);
+                }
+            },
+        },
+    });
     const { refetch: refetchGame } = useList<Interfaces.JeppGameInterface>({
         resource: "game",
         metaData: {
@@ -135,6 +197,8 @@ export const SearchComponent: React.FC = () => {
         if (value.length < 3) {
             return;
         }
+        refetchCategory();
+        refetchClue();
         refetchGame();
         refetchSeason();
     }, [value]);

@@ -8,13 +8,52 @@ import (
 )
 
 var (
+	// CategoriesColumns holds the columns for the "categories" table.
+	CategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+	}
+	// CategoriesTable holds the schema information for the "categories" table.
+	CategoriesTable = &schema.Table{
+		Name:       "categories",
+		Columns:    CategoriesColumns,
+		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
+	}
+	// CluesColumns holds the columns for the "clues" table.
+	CluesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "question", Type: field.TypeString, Size: 2147483647},
+		{Name: "answer", Type: field.TypeString, Size: 2147483647},
+		{Name: "category_id", Type: field.TypeInt, Nullable: true},
+		{Name: "game_id", Type: field.TypeInt, Nullable: true},
+	}
+	// CluesTable holds the schema information for the "clues" table.
+	CluesTable = &schema.Table{
+		Name:       "clues",
+		Columns:    CluesColumns,
+		PrimaryKey: []*schema.Column{CluesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "clues_categories_clues",
+				Columns:    []*schema.Column{CluesColumns[3]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "clues_games_clues",
+				Columns:    []*schema.Column{CluesColumns[4]},
+				RefColumns: []*schema.Column{GamesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// GamesColumns holds the columns for the "games" table.
 	GamesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "show", Type: field.TypeInt},
 		{Name: "air_date", Type: field.TypeTime},
 		{Name: "tape_date", Type: field.TypeTime},
-		{Name: "season_games", Type: field.TypeString, Nullable: true},
+		{Name: "season_id", Type: field.TypeInt, Nullable: true},
 	}
 	// GamesTable holds the schema information for the "games" table.
 	GamesTable = &schema.Table{
@@ -32,7 +71,7 @@ var (
 	}
 	// SeasonsColumns holds the columns for the "seasons" table.
 	SeasonsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "number", Type: field.TypeInt},
 		{Name: "start_date", Type: field.TypeTime},
 		{Name: "end_date", Type: field.TypeTime},
@@ -45,11 +84,15 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		CategoriesTable,
+		CluesTable,
 		GamesTable,
 		SeasonsTable,
 	}
 )
 
 func init() {
+	CluesTable.ForeignKeys[0].RefTable = CategoriesTable
+	CluesTable.ForeignKeys[1].RefTable = GamesTable
 	GamesTable.ForeignKeys[0].RefTable = SeasonsTable
 }

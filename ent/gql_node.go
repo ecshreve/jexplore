@@ -5,18 +5,32 @@ package ent
 import (
 	"context"
 	"fmt"
+	"sync"
+	"sync/atomic"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/schema"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/ecshreve/jexplore/ent/category"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/season"
 	"github.com/hashicorp/go-multierror"
+	"golang.org/x/sync/semaphore"
 )
 
 // Noder wraps the basic Node method.
 type Noder interface {
 	IsNode()
 }
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Category) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Clue) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Game) IsNode() {}
@@ -32,7 +46,7 @@ type NodeOption func(*nodeOptions)
 // WithNodeType sets the node Type resolver function (i.e. the table to query).
 // If was not provided, the table will be derived from the universal-id
 // configuration as described in: https://entgo.io/docs/migrate/#universal-ids.
-func WithNodeType(f func(context.Context, string) (string, error)) NodeOption {
+func WithNodeType(f func(context.Context, int) (string, error)) NodeOption {
 	return func(o *nodeOptions) {
 		o.nodeType = f
 	}
@@ -40,13 +54,13 @@ func WithNodeType(f func(context.Context, string) (string, error)) NodeOption {
 
 // WithFixedNodeType sets the Type of the node to a fixed value.
 func WithFixedNodeType(t string) NodeOption {
-	return WithNodeType(func(context.Context, string) (string, error) {
+	return WithNodeType(func(context.Context, int) (string, error) {
 		return t, nil
 	})
 }
 
 type nodeOptions struct {
-	nodeType func(context.Context, string) (string, error)
+	nodeType func(context.Context, int) (string, error)
 }
 
 func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
@@ -55,8 +69,8 @@ func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
 		opt(nopts)
 	}
 	if nopts.nodeType == nil {
-		nopts.nodeType = func(ctx context.Context, id string) (string, error) {
-			return "", fmt.Errorf("cannot resolve noder (%v) without its type", id)
+		nopts.nodeType = func(ctx context.Context, id int) (string, error) {
+			return c.tables.nodeType(ctx, c.driver, id)
 		}
 	}
 	return nopts
@@ -67,7 +81,7 @@ func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
 //
 //	c.Noder(ctx, id)
 //	c.Noder(ctx, id, ent.WithNodeType(typeResolver))
-func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ Noder, err error) {
+func (c *Client) Noder(ctx context.Context, id int, opts ...NodeOption) (_ Noder, err error) {
 	defer func() {
 		if IsNotFound(err) {
 			err = multierror.Append(err, entgql.ErrNodeNotFound(id))
@@ -80,8 +94,32 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 	return c.noder(ctx, table, id)
 }
 
-func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
+func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error) {
 	switch table {
+	case category.Table:
+		query := c.Category.Query().
+			Where(category.ID(id))
+		query, err := query.CollectFields(ctx, "Category")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case clue.Table:
+		query := c.Clue.Query().
+			Where(clue.ID(id))
+		query, err := query.CollectFields(ctx, "Clue")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case game.Table:
 		query := c.Game.Query().
 			Where(game.ID(id))
@@ -111,7 +149,7 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 	}
 }
 
-func (c *Client) Noders(ctx context.Context, ids []string, opts ...NodeOption) ([]Noder, error) {
+func (c *Client) Noders(ctx context.Context, ids []int, opts ...NodeOption) ([]Noder, error) {
 	switch len(ids) {
 	case 1:
 		noder, err := c.Noder(ctx, ids[0], opts...)
@@ -125,8 +163,8 @@ func (c *Client) Noders(ctx context.Context, ids []string, opts ...NodeOption) (
 
 	noders := make([]Noder, len(ids))
 	errors := make([]error, len(ids))
-	tables := make(map[string][]string)
-	id2idx := make(map[string][]int, len(ids))
+	tables := make(map[string][]int)
+	id2idx := make(map[int][]int, len(ids))
 	nopts := c.newNodeOpts(opts)
 	for i, id := range ids {
 		table, err := nopts.nodeType(ctx, id)
@@ -172,13 +210,45 @@ func (c *Client) Noders(ctx context.Context, ids []string, opts ...NodeOption) (
 	return noders, nil
 }
 
-func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Noder, error) {
+func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, error) {
 	noders := make([]Noder, len(ids))
-	idmap := make(map[string][]*Noder, len(ids))
+	idmap := make(map[int][]*Noder, len(ids))
 	for i, id := range ids {
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case category.Table:
+		query := c.Category.Query().
+			Where(category.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Category")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case clue.Table:
+		query := c.Clue.Query().
+			Where(clue.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Clue")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case game.Table:
 		query := c.Game.Query().
 			Where(game.IDIn(ids...))
@@ -215,4 +285,56 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		return nil, fmt.Errorf("cannot resolve noders from table %q: %w", table, errNodeInvalidID)
 	}
 	return noders, nil
+}
+
+type tables struct {
+	once  sync.Once
+	sem   *semaphore.Weighted
+	value atomic.Value
+}
+
+func (t *tables) nodeType(ctx context.Context, drv dialect.Driver, id int) (string, error) {
+	tables, err := t.Load(ctx, drv)
+	if err != nil {
+		return "", err
+	}
+	idx := int(id / (1<<32 - 1))
+	if idx < 0 || idx >= len(tables) {
+		return "", fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
+	}
+	return tables[idx], nil
+}
+
+func (t *tables) Load(ctx context.Context, drv dialect.Driver) ([]string, error) {
+	if tables := t.value.Load(); tables != nil {
+		return tables.([]string), nil
+	}
+	t.once.Do(func() { t.sem = semaphore.NewWeighted(1) })
+	if err := t.sem.Acquire(ctx, 1); err != nil {
+		return nil, err
+	}
+	defer t.sem.Release(1)
+	if tables := t.value.Load(); tables != nil {
+		return tables.([]string), nil
+	}
+	tables, err := t.load(ctx, drv)
+	if err == nil {
+		t.value.Store(tables)
+	}
+	return tables, err
+}
+
+func (*tables) load(ctx context.Context, drv dialect.Driver) ([]string, error) {
+	rows := &sql.Rows{}
+	query, args := sql.Dialect(drv.Dialect()).
+		Select("type").
+		From(sql.Table(schema.TypeTable)).
+		OrderBy(sql.Asc("id")).
+		Query()
+	if err := drv.Query(ctx, query, args, rows); err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var tables []string
+	return tables, sql.ScanSlice(rows, &tables)
 }

@@ -249,6 +249,74 @@ export const JeppURLViewOnForm: React.FC = JeppStringViewOnForm;
 
 // region Entity Badges
 
+export const CategoryBadge: React.FC<Partial<Type.JeppCategoryInterface>> = (
+    props,
+) => {
+    const Link = useLink();
+    return (
+        <Antd.Popover
+            overlayInnerStyle={{
+                width: "50vw",
+                height: "40vh",
+                maxHeight: "400px",
+                maxWidth: "500px",
+                overflow: "auto",
+            }}
+            content={
+                <Show.CategoryShow
+                    breadcrumb={false}
+                    title={props.id}
+                    id={props.id}
+                    withEdges={false}
+                    headerButtons={[]}
+                />
+            }
+        >
+            <Link
+                to={
+                    window.environment.appPath +
+                    "category/show/:id".replace(":id", String(props.id))
+                }
+            >
+                {props.id}
+            </Link>
+        </Antd.Popover>
+    );
+};
+
+export const ClueBadge: React.FC<Partial<Type.JeppClueInterface>> = (props) => {
+    const Link = useLink();
+    return (
+        <Antd.Popover
+            overlayInnerStyle={{
+                width: "50vw",
+                height: "40vh",
+                maxHeight: "400px",
+                maxWidth: "500px",
+                overflow: "auto",
+            }}
+            content={
+                <Show.ClueShow
+                    breadcrumb={false}
+                    title={props.id}
+                    id={props.id}
+                    withEdges={false}
+                    headerButtons={[]}
+                />
+            }
+        >
+            <Link
+                to={
+                    window.environment.appPath +
+                    "clue/show/:id".replace(":id", String(props.id))
+                }
+            >
+                {props.id}
+            </Link>
+        </Antd.Popover>
+    );
+};
+
 export const GameBadge: React.FC<Partial<Type.JeppGameInterface>> = (props) => {
     const Link = useLink();
     return (

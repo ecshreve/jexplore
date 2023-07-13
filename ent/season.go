@@ -16,7 +16,7 @@ import (
 type Season struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// Number holds the value of the "number" field.
 	Number int `json:"number,omitempty"`
 	// StartDate holds the value of the "startDate" field.
@@ -56,10 +56,8 @@ func (*Season) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case season.FieldNumber:
+		case season.FieldID, season.FieldNumber:
 			values[i] = new(sql.NullInt64)
-		case season.FieldID:
-			values[i] = new(sql.NullString)
 		case season.FieldStartDate, season.FieldEndDate:
 			values[i] = new(sql.NullTime)
 		default:
@@ -78,11 +76,11 @@ func (s *Season) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case season.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				s.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			s.ID = int(value.Int64)
 		case season.FieldNumber:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field number", values[i])

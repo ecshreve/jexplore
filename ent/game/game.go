@@ -18,8 +18,12 @@ const (
 	FieldAirDate = "air_date"
 	// FieldTapeDate holds the string denoting the tapedate field in the database.
 	FieldTapeDate = "tape_date"
+	// FieldSeasonID holds the string denoting the season_id field in the database.
+	FieldSeasonID = "season_id"
 	// EdgeSeason holds the string denoting the season edge name in mutations.
 	EdgeSeason = "season"
+	// EdgeClues holds the string denoting the clues edge name in mutations.
+	EdgeClues = "clues"
 	// Table holds the table name of the game in the database.
 	Table = "games"
 	// SeasonTable is the table that holds the season relation/edge.
@@ -28,7 +32,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "season" package.
 	SeasonInverseTable = "seasons"
 	// SeasonColumn is the table column denoting the season relation/edge.
-	SeasonColumn = "season_games"
+	SeasonColumn = "season_id"
+	// CluesTable is the table that holds the clues relation/edge.
+	CluesTable = "clues"
+	// CluesInverseTable is the table name for the Clue entity.
+	// It exists in this package in order to avoid circular dependency with the "clue" package.
+	CluesInverseTable = "clues"
+	// CluesColumn is the table column denoting the clues relation/edge.
+	CluesColumn = "game_id"
 )
 
 // Columns holds all SQL columns for game fields.
@@ -37,23 +48,13 @@ var Columns = []string{
 	FieldShow,
 	FieldAirDate,
 	FieldTapeDate,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "games"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"season_games",
+	FieldSeasonID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -83,10 +84,29 @@ func ByTapeDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTapeDate, opts...).ToFunc()
 }
 
+// BySeasonID orders the results by the season_id field.
+func BySeasonID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSeasonID, opts...).ToFunc()
+}
+
 // BySeasonField orders the results by season field.
 func BySeasonField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newSeasonStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCluesCount orders the results by clues count.
+func ByCluesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCluesStep(), opts...)
+	}
+}
+
+// ByClues orders the results by clues terms.
+func ByClues(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCluesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newSeasonStep() *sqlgraph.Step {
@@ -94,5 +114,12 @@ func newSeasonStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SeasonInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, SeasonTable, SeasonColumn),
+	)
+}
+func newCluesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CluesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CluesTable, CluesColumn),
 	)
 }

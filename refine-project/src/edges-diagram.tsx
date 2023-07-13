@@ -23,6 +23,208 @@ import * as Action from "./action";
 import * as RA from "@refinedev/antd";
 import { useShow } from "@refinedev/core";
 
+export type CategoryEdgesDiagramProps = {
+    id?: Type.JeppID;
+} & RA.ShowProps;
+export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
+    id,
+    ...showProps
+}) => {
+    const routeParams = useParams();
+    if (!id) {
+        id = routeParams.id?.toString();
+    }
+
+    const { queryResult } = useShow<Type.JeppCategoryInterface>({
+        resource: "category",
+        id,
+        metaData: {
+            fields: [
+                "id",
+                "name",
+                {
+                    operation: "clues",
+                    fields: [
+                        {
+                            edges: [
+                                {
+                                    node: [
+                                        "id",
+                                        "question",
+                                        "answer",
+                                        "categoryID",
+                                        "gameID",
+                                    ],
+                                },
+                            ],
+                        },
+                        "totalCount",
+                    ],
+                    variables: {
+                        first: 10,
+                    },
+                },
+            ],
+        },
+    });
+    const { data, isLoading } = queryResult;
+    const record = data?.data;
+    if (!record) {
+        return <></>;
+    }
+
+    const nodes: Array<Diagram.Node | undefined> = [
+        {
+            id: record.id.toString().toString(),
+            label: record.id.toString().toString(),
+        },
+        ...(record.clues || []).map((i) => {
+            return {
+                id: i.id.toString().toString(),
+                label: i.id.toString().toString(),
+            };
+        }),
+        Number(record._clues?.totalCount) > Number(record.clues?.length)
+            ? {
+                  id: "Clue_more",
+                  label: `More ${
+                      Number(record._clues?.totalCount) -
+                      Number(record.clues?.length)
+                  }`,
+              }
+            : undefined,
+    ];
+    const links: Array<Diagram.Link | undefined> = [
+        ...(record.clues || []).map((i) => {
+            return {
+                source: record.id.toString(),
+                target: i.id.toString(),
+                label: "Clues",
+            };
+        }),
+        Number(record._clues?.totalCount) > Number(record.clues?.length)
+            ? {
+                  source: record.id.toString(),
+                  target: "Clue_more",
+                  label: "Clues",
+              }
+            : undefined,
+    ];
+
+    return (
+        <RA.Show
+            isLoading={isLoading}
+            title={"Edges Diagram"}
+            headerButtons={() => (
+                <>
+                    <Action.CategoryShowAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.CategoryListAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.CategoryEditAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.CategoryDeleteAction recordItemIDs={[record.id.toString()]} />
+                </>
+            )}
+            {...showProps}
+        >
+            <Diagram.GoJS
+                nodes={nodes.filter(
+                    (n): n is Diagram.Node => typeof n !== "undefined",
+                )}
+                links={links.filter(
+                    (n): n is Diagram.Link => typeof n !== "undefined",
+                )}
+            />
+        </RA.Show>
+    );
+};
+
+export type ClueEdgesDiagramProps = {
+    id?: Type.JeppID;
+} & RA.ShowProps;
+export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
+    id,
+    ...showProps
+}) => {
+    const routeParams = useParams();
+    if (!id) {
+        id = routeParams.id?.toString();
+    }
+
+    const { queryResult } = useShow<Type.JeppClueInterface>({
+        resource: "clue",
+        id,
+        metaData: {
+            fields: [
+                "id",
+                "question",
+                "answer",
+                "categoryID",
+                "gameID",
+                {
+                    category: ["id", "name"],
+                },
+            ],
+        },
+    });
+    const { data, isLoading } = queryResult;
+    const record = data?.data;
+    if (!record) {
+        return <></>;
+    }
+
+    const nodes: Array<Diagram.Node | undefined> = [
+        {
+            id: record.id.toString().toString(),
+            label: record.id.toString().toString(),
+        },
+        record.category
+            ? {
+                  id: record.category.id.toString() || "n/a",
+                  label: record.category.id.toString() || "n/a",
+              }
+            : undefined,
+    ];
+    const links: Array<Diagram.Link | undefined> = [
+        record.category
+            ? {
+                  source: record.id.toString(),
+                  target: record.category?.id.toString() || "n/a",
+                  label: "Category",
+              }
+            : undefined,
+    ];
+
+    return (
+        <RA.Show
+            isLoading={isLoading}
+            title={"Edges Diagram"}
+            headerButtons={() => (
+                <>
+                    <Action.ClueShowAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.ClueListAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.ClueEditAction recordItemIDs={[record.id.toString()]} />
+
+                    <Action.ClueDeleteAction recordItemIDs={[record.id.toString()]} />
+                </>
+            )}
+            {...showProps}
+        >
+            <Diagram.GoJS
+                nodes={nodes.filter(
+                    (n): n is Diagram.Node => typeof n !== "undefined",
+                )}
+                links={links.filter(
+                    (n): n is Diagram.Link => typeof n !== "undefined",
+                )}
+            />
+        </RA.Show>
+    );
+};
+
 export type GameEdgesDiagramProps = {
     id?: Type.JeppID;
 } & RA.ShowProps;
@@ -32,7 +234,7 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id;
+        id = routeParams.id?.toString();
     }
 
     const { queryResult } = useShow<Type.JeppGameInterface>({
@@ -44,6 +246,7 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
                 "show",
                 "airdate",
                 "tapedate",
+                "seasonID",
                 {
                     season: ["id", "number", "startdate", "enddate"],
                 },
@@ -58,21 +261,21 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id,
-            label: record.id,
+            id: record.id.toString().toString(),
+            label: record.id.toString().toString(),
         },
         record.season
             ? {
-                  id: record.season.id || "n/a",
-                  label: record.season.id || "n/a",
+                  id: record.season.id.toString() || "n/a",
+                  label: record.season.id.toString() || "n/a",
               }
             : undefined,
     ];
     const links: Array<Diagram.Link | undefined> = [
         record.season
             ? {
-                  source: record.id,
-                  target: record.season?.id || "n/a",
+                  source: record.id.toString(),
+                  target: record.season?.id.toString() || "n/a",
                   label: "Season",
               }
             : undefined,
@@ -84,13 +287,13 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.GameShowAction recordItemIDs={[record.id]} />
+                    <Action.GameShowAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.GameListAction recordItemIDs={[record.id]} />
+                    <Action.GameListAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.GameEditAction recordItemIDs={[record.id]} />
+                    <Action.GameEditAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.GameDeleteAction recordItemIDs={[record.id]} />
+                    <Action.GameDeleteAction recordItemIDs={[record.id.toString()]} />
                 </>
             )}
             {...showProps}
@@ -116,7 +319,7 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id;
+        id = routeParams.id?.toString();
     }
 
     const { queryResult } = useShow<Type.JeppSeasonInterface>({
@@ -134,7 +337,13 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
                         {
                             edges: [
                                 {
-                                    node: ["id", "show", "airdate", "tapedate"],
+                                    node: [
+                                        "id",
+                                        "show",
+                                        "airdate",
+                                        "tapedate",
+                                        "seasonID",
+                                    ],
                                 },
                             ],
                         },
@@ -155,13 +364,13 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id,
-            label: record.id,
+            id: record.id.toString().toString(),
+            label: record.id.toString().toString(),
         },
         ...(record.games || []).map((i) => {
             return {
-                id: i.id,
-                label: i.id,
+                id: i.id.toString(),
+                label: i.id.toString(),
             };
         }),
         Number(record._games?.totalCount) > Number(record.games?.length)
@@ -177,14 +386,14 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
     const links: Array<Diagram.Link | undefined> = [
         ...(record.games || []).map((i) => {
             return {
-                source: record.id,
-                target: i.id,
+                source: record.id.toString(),
+                target: i.id.toString(),
                 label: "Games",
             };
         }),
         Number(record._games?.totalCount) > Number(record.games?.length)
             ? {
-                  source: record.id,
+                  source: record.id.toString(),
                   target: "Game_more",
                   label: "Games",
               }
@@ -197,13 +406,13 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.SeasonShowAction recordItemIDs={[record.id]} />
+                    <Action.SeasonShowAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.SeasonListAction recordItemIDs={[record.id]} />
+                    <Action.SeasonListAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.SeasonEditAction recordItemIDs={[record.id]} />
+                    <Action.SeasonEditAction recordItemIDs={[record.id.toString()]} />
 
-                    <Action.SeasonDeleteAction recordItemIDs={[record.id]} />
+                    <Action.SeasonDeleteAction recordItemIDs={[record.id.toString()]} />
                 </>
             )}
             {...showProps}

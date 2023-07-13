@@ -109,8 +109,8 @@ func (sq *SeasonQuery) FirstX(ctx context.Context) *Season {
 
 // FirstID returns the first Season ID from the query.
 // Returns a *NotFoundError when no Season ID was found.
-func (sq *SeasonQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (sq *SeasonQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = sq.Limit(1).IDs(setContextOp(ctx, sq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (sq *SeasonQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (sq *SeasonQuery) FirstIDX(ctx context.Context) string {
+func (sq *SeasonQuery) FirstIDX(ctx context.Context) int {
 	id, err := sq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -160,8 +160,8 @@ func (sq *SeasonQuery) OnlyX(ctx context.Context) *Season {
 // OnlyID is like Only, but returns the only Season ID in the query.
 // Returns a *NotSingularError when more than one Season ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (sq *SeasonQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (sq *SeasonQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = sq.Limit(2).IDs(setContextOp(ctx, sq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -177,7 +177,7 @@ func (sq *SeasonQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (sq *SeasonQuery) OnlyIDX(ctx context.Context) string {
+func (sq *SeasonQuery) OnlyIDX(ctx context.Context) int {
 	id, err := sq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -205,7 +205,7 @@ func (sq *SeasonQuery) AllX(ctx context.Context) []*Season {
 }
 
 // IDs executes the query and returns a list of Season IDs.
-func (sq *SeasonQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (sq *SeasonQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if sq.ctx.Unique == nil && sq.path != nil {
 		sq.Unique(true)
 	}
@@ -217,7 +217,7 @@ func (sq *SeasonQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (sq *SeasonQuery) IDsX(ctx context.Context) []string {
+func (sq *SeasonQuery) IDsX(ctx context.Context) []int {
 	ids, err := sq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -422,7 +422,7 @@ func (sq *SeasonQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Seaso
 
 func (sq *SeasonQuery) loadGames(ctx context.Context, query *GameQuery, nodes []*Season, init func(*Season), assign func(*Season, *Game)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*Season)
+	nodeids := make(map[int]*Season)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -430,7 +430,9 @@ func (sq *SeasonQuery) loadGames(ctx context.Context, query *GameQuery, nodes []
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(game.FieldSeasonID)
+	}
 	query.Where(predicate.Game(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(season.GamesColumn), fks...))
 	}))
@@ -439,13 +441,10 @@ func (sq *SeasonQuery) loadGames(ctx context.Context, query *GameQuery, nodes []
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.season_games
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "season_games" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.SeasonID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "season_games" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "season_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -465,7 +464,7 @@ func (sq *SeasonQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (sq *SeasonQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	_spec.From = sq.sql
 	if unique := sq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

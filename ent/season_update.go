@@ -55,14 +55,14 @@ func (su *SeasonUpdate) SetEndDate(t time.Time) *SeasonUpdate {
 }
 
 // AddGameIDs adds the "games" edge to the Game entity by IDs.
-func (su *SeasonUpdate) AddGameIDs(ids ...string) *SeasonUpdate {
+func (su *SeasonUpdate) AddGameIDs(ids ...int) *SeasonUpdate {
 	su.mutation.AddGameIDs(ids...)
 	return su
 }
 
 // AddGames adds the "games" edges to the Game entity.
 func (su *SeasonUpdate) AddGames(g ...*Game) *SeasonUpdate {
-	ids := make([]string, len(g))
+	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -81,14 +81,14 @@ func (su *SeasonUpdate) ClearGames() *SeasonUpdate {
 }
 
 // RemoveGameIDs removes the "games" edge to Game entities by IDs.
-func (su *SeasonUpdate) RemoveGameIDs(ids ...string) *SeasonUpdate {
+func (su *SeasonUpdate) RemoveGameIDs(ids ...int) *SeasonUpdate {
 	su.mutation.RemoveGameIDs(ids...)
 	return su
 }
 
 // RemoveGames removes "games" edges to Game entities.
 func (su *SeasonUpdate) RemoveGames(g ...*Game) *SeasonUpdate {
-	ids := make([]string, len(g))
+	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -123,7 +123,7 @@ func (su *SeasonUpdate) ExecX(ctx context.Context) {
 }
 
 func (su *SeasonUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -151,7 +151,7 @@ func (su *SeasonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -164,7 +164,7 @@ func (su *SeasonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -180,7 +180,7 @@ func (su *SeasonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -234,14 +234,14 @@ func (suo *SeasonUpdateOne) SetEndDate(t time.Time) *SeasonUpdateOne {
 }
 
 // AddGameIDs adds the "games" edge to the Game entity by IDs.
-func (suo *SeasonUpdateOne) AddGameIDs(ids ...string) *SeasonUpdateOne {
+func (suo *SeasonUpdateOne) AddGameIDs(ids ...int) *SeasonUpdateOne {
 	suo.mutation.AddGameIDs(ids...)
 	return suo
 }
 
 // AddGames adds the "games" edges to the Game entity.
 func (suo *SeasonUpdateOne) AddGames(g ...*Game) *SeasonUpdateOne {
-	ids := make([]string, len(g))
+	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -260,14 +260,14 @@ func (suo *SeasonUpdateOne) ClearGames() *SeasonUpdateOne {
 }
 
 // RemoveGameIDs removes the "games" edge to Game entities by IDs.
-func (suo *SeasonUpdateOne) RemoveGameIDs(ids ...string) *SeasonUpdateOne {
+func (suo *SeasonUpdateOne) RemoveGameIDs(ids ...int) *SeasonUpdateOne {
 	suo.mutation.RemoveGameIDs(ids...)
 	return suo
 }
 
 // RemoveGames removes "games" edges to Game entities.
 func (suo *SeasonUpdateOne) RemoveGames(g ...*Game) *SeasonUpdateOne {
-	ids := make([]string, len(g))
+	ids := make([]int, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -315,7 +315,7 @@ func (suo *SeasonUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (suo *SeasonUpdateOne) sqlSave(ctx context.Context) (_node *Season, err error) {
-	_spec := sqlgraph.NewUpdateSpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(season.Table, season.Columns, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	id, ok := suo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Season.id" for update`)}
@@ -360,7 +360,7 @@ func (suo *SeasonUpdateOne) sqlSave(ctx context.Context) (_node *Season, err err
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -373,7 +373,7 @@ func (suo *SeasonUpdateOne) sqlSave(ctx context.Context) (_node *Season, err err
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -389,7 +389,7 @@ func (suo *SeasonUpdateOne) sqlSave(ctx context.Context) (_node *Season, err err
 			Columns: []string{season.GamesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

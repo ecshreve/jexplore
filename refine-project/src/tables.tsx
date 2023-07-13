@@ -24,6 +24,471 @@ import * as Custom from "./custom";
 import * as View from "./view";
 import * as Action from "./action";
 
+export type CategoryTableProps =
+    Antd.TableProps<Interfaces.JeppCategoryInterface> & {
+        extendTable?: RA.useTableProps<
+            Interfaces.JeppCategoryInterface,
+            HttpError,
+            any,
+            Interfaces.JeppCategoryInterface
+        >;
+    };
+export const CategoryTable: React.FC<CategoryTableProps> = ({
+    extendTable,
+    ...props
+}) => {
+    const [cursors, setCursors] = useState<Cursors>({ first: 10 });
+    const [perPage, setPerPage] = useState<number>(10);
+    const table = RA.useTable<Interfaces.JeppCategoryInterface>({
+        resource: "category",
+        initialSorter: [
+            {
+                field: "name",
+                order: "asc",
+            },
+        ],
+        initialFilter: [
+            {
+                field: "id",
+                value: null,
+                operator: "eq",
+            },
+            {
+                field: "name",
+                value: null,
+                operator: "eq",
+            },
+        ],
+        metaData: {
+            fields: [
+                "id",
+                "name",
+                {
+                    clues: [
+                        /*{
+                        edges: [
+                            {
+                                node: [
+                                    "id",
+                                    "question",
+                                    "answer",
+                                    "categoryID",
+                                    "gameID",
+                                ]
+                            },
+                        ],
+                    },*/
+                        "totalCount",
+                    ],
+                },
+            ],
+            cursors,
+        },
+        hasPagination: true,
+        ...extendTable,
+    });
+
+    const data = table.tableQueryResult.data as any;
+
+    return (
+        <>
+            <Antd.Table
+                {...table.tableProps}
+                pagination={false}
+                rowKey="id"
+                {...props}
+            >
+                {/* region Fields */}
+                <Antd.Table.Column
+                    dataIndex="id"
+                    title="Id"
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "id",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="name"
+                    title="Name"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppStringViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "name",
+                        table.sorter,
+                    )}
+                />
+                {/* endregion */}
+
+                {/* region Edges */}
+                <Antd.Table.Column
+                    dataIndex="clues"
+                    title="Clues"
+                    render={(value) => (
+                        <span>{value?.totalCount || "No"} Items</span>
+                    )}
+                />
+                {/* endregion Edges*/}
+
+                <Antd.Table.Column<Interfaces.JeppCategoryInterface>
+                    title="Actions"
+                    dataIndex="actions"
+                    render={(_, record) => (
+                        <Antd.Space>
+                            <Action.CategoryShowAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                            <Action.CategoryEditAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                            <Action.CategoryDeleteAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                        </Antd.Space>
+                    )}
+                />
+            </Antd.Table>
+
+            <Antd.Space style={{ marginTop: 20 }}>
+                <Antd.Typography.Text type="secondary">
+                    Total {data?.total || 0}
+                </Antd.Typography.Text>
+                <Antd.Button
+                    disabled={!Boolean(data?.pageInfo?.hasPreviousPage)}
+                    onClick={() => {
+                        setCursors((ov) => ({
+                            ...ov,
+                            before: data?.pageInfo?.startCursor,
+                            last: perPage,
+                            after: undefined,
+                            first: undefined,
+                        }));
+                    }}
+                >
+                    <AntdIcons.LeftOutlined />
+                    Prev
+                </Antd.Button>
+                <Antd.Button
+                    disabled={!Boolean(data?.pageInfo?.hasNextPage)}
+                    onClick={() => {
+                        setCursors((ov) => {
+                            return {
+                                ...ov,
+                                after: data?.pageInfo?.endCursor,
+                                first: perPage,
+                                before: undefined,
+                                last: undefined,
+                            };
+                        });
+                    }}
+                >
+                    Next
+                    <AntdIcons.RightOutlined />
+                </Antd.Button>
+                <Antd.Select
+                    labelInValue
+                    defaultValue={{ value: 10, label: "10 / page" }}
+                    style={{ width: 110 }}
+                    onChange={(value) => {
+                        setPerPage(value.value);
+                        setCursors((ov) => ({
+                            ...ov,
+                            // Return to first page
+                            first: value.value,
+                            last: undefined,
+                            before: undefined,
+                            after: undefined,
+                        }));
+                    }}
+                    options={[
+                        { value: 10, label: "10 / page" },
+                        { value: 20, label: "20 / page" },
+                        { value: 50, label: "50 / page" },
+                        { value: 100, label: "100 / page" },
+                    ]}
+                />
+            </Antd.Space>
+        </>
+    );
+};
+export type ClueTableProps = Antd.TableProps<Interfaces.JeppClueInterface> & {
+    extendTable?: RA.useTableProps<
+        Interfaces.JeppClueInterface,
+        HttpError,
+        any,
+        Interfaces.JeppClueInterface
+    >;
+};
+export const ClueTable: React.FC<ClueTableProps> = ({
+    extendTable,
+    ...props
+}) => {
+    const [cursors, setCursors] = useState<Cursors>({ first: 10 });
+    const [perPage, setPerPage] = useState<number>(10);
+    const table = RA.useTable<Interfaces.JeppClueInterface>({
+        resource: "clue",
+        initialSorter: [
+            {
+                field: "question",
+                order: "asc",
+            },
+        ],
+        initialFilter: [
+            {
+                field: "id",
+                value: null,
+                operator: "eq",
+            },
+            {
+                field: "question",
+                value: null,
+                operator: "eq",
+            },
+            {
+                field: "answer",
+                value: null,
+                operator: "eq",
+            },
+            {
+                field: "categoryID",
+                value: null,
+                operator: "eq",
+            },
+            {
+                field: "gameID",
+                value: null,
+                operator: "eq",
+            },
+        ],
+        metaData: {
+            fields: [
+                "id",
+                "question",
+                "answer",
+                "categoryID",
+                "gameID",
+                {
+                    category: ["id", "name"],
+                },
+            ],
+            cursors,
+        },
+        hasPagination: true,
+        ...extendTable,
+    });
+
+    const data = table.tableQueryResult.data as any;
+
+    return (
+        <>
+            <Antd.Table
+                {...table.tableProps}
+                pagination={false}
+                rowKey="id"
+                {...props}
+            >
+                {/* region Fields */}
+                <Antd.Table.Column
+                    dataIndex="id"
+                    title="Id"
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "id",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="question"
+                    title="Question"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppStringViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "question",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="answer"
+                    title="Answer"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppStringViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "answer",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="categoryID"
+                    title="Category Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "category_id",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="gameID"
+                    title="Game Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "game_id",
+                        table.sorter,
+                    )}
+                />
+                {/* endregion */}
+
+                {/* region Edges */}
+                <Antd.Table.Column
+                    dataIndex="category"
+                    title="Category"
+                    render={(value) => <View.CategoryBadge {...value} />}
+                />
+                {/* endregion Edges*/}
+
+                <Antd.Table.Column<Interfaces.JeppClueInterface>
+                    title="Actions"
+                    dataIndex="actions"
+                    render={(_, record) => (
+                        <Antd.Space>
+                            <Action.ClueShowAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                            <Action.ClueEditAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                            <Action.ClueDeleteAction
+                                recordItemIDs={[record.id]}
+                                size="small"
+                                hideText={true}
+                            />
+                        </Antd.Space>
+                    )}
+                />
+            </Antd.Table>
+
+            <Antd.Space style={{ marginTop: 20 }}>
+                <Antd.Typography.Text type="secondary">
+                    Total {data?.total || 0}
+                </Antd.Typography.Text>
+                <Antd.Button
+                    disabled={!Boolean(data?.pageInfo?.hasPreviousPage)}
+                    onClick={() => {
+                        setCursors((ov) => ({
+                            ...ov,
+                            before: data?.pageInfo?.startCursor,
+                            last: perPage,
+                            after: undefined,
+                            first: undefined,
+                        }));
+                    }}
+                >
+                    <AntdIcons.LeftOutlined />
+                    Prev
+                </Antd.Button>
+                <Antd.Button
+                    disabled={!Boolean(data?.pageInfo?.hasNextPage)}
+                    onClick={() => {
+                        setCursors((ov) => {
+                            return {
+                                ...ov,
+                                after: data?.pageInfo?.endCursor,
+                                first: perPage,
+                                before: undefined,
+                                last: undefined,
+                            };
+                        });
+                    }}
+                >
+                    Next
+                    <AntdIcons.RightOutlined />
+                </Antd.Button>
+                <Antd.Select
+                    labelInValue
+                    defaultValue={{ value: 10, label: "10 / page" }}
+                    style={{ width: 110 }}
+                    onChange={(value) => {
+                        setPerPage(value.value);
+                        setCursors((ov) => ({
+                            ...ov,
+                            // Return to first page
+                            first: value.value,
+                            last: undefined,
+                            before: undefined,
+                            after: undefined,
+                        }));
+                    }}
+                    options={[
+                        { value: 10, label: "10 / page" },
+                        { value: 20, label: "20 / page" },
+                        { value: 50, label: "50 / page" },
+                        { value: 100, label: "100 / page" },
+                    ]}
+                />
+            </Antd.Space>
+        </>
+    );
+};
 export type GameTableProps = Antd.TableProps<Interfaces.JeppGameInterface> & {
     extendTable?: RA.useTableProps<
         Interfaces.JeppGameInterface,
@@ -67,6 +532,11 @@ export const GameTable: React.FC<GameTableProps> = ({
                 value: null,
                 operator: "eq",
             },
+            {
+                field: "seasonID",
+                value: null,
+                operator: "eq",
+            },
         ],
         metaData: {
             fields: [
@@ -74,6 +544,7 @@ export const GameTable: React.FC<GameTableProps> = ({
                 "show",
                 "airdate",
                 "tapedate",
+                "seasonID",
                 {
                     season: ["id", "number", "startdate", "enddate"],
                 },
@@ -99,7 +570,7 @@ export const GameTable: React.FC<GameTableProps> = ({
                     dataIndex="id"
                     title="Id"
                     render={(value) => {
-                        return <View.JeppStringViewOnList value={value} />;
+                        return <View.JeppNumberViewOnList value={value} />;
                     }}
                     filterDropdown={(props) => (
                         <RA.FilterDropdown {...props}>
@@ -159,6 +630,23 @@ export const GameTable: React.FC<GameTableProps> = ({
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
                         "tapeDate",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="seasonID"
+                    title="Season Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "season_id",
                         table.sorter,
                     )}
                 />
@@ -320,6 +808,7 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                                     "show",
                                     "airdate",
                                     "tapedate",
+                                    "seasonID",
                                 ]
                             },
                         ],
@@ -349,7 +838,7 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                     dataIndex="id"
                     title="Id"
                     render={(value) => {
-                        return <View.JeppStringViewOnList value={value} />;
+                        return <View.JeppNumberViewOnList value={value} />;
                     }}
                     filterDropdown={(props) => (
                         <RA.FilterDropdown {...props}>

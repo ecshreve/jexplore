@@ -14,6 +14,8 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/ecshreve/jexplore/ent/category"
+	"github.com/ecshreve/jexplore/ent/clue"
 	"github.com/ecshreve/jexplore/ent/game"
 	"github.com/ecshreve/jexplore/ent/season"
 )
@@ -23,10 +25,16 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
+	// Clue is the client for interacting with the Clue builders.
+	Clue *ClueClient
 	// Game is the client for interacting with the Game builders.
 	Game *GameClient
 	// Season is the client for interacting with the Season builders.
 	Season *SeasonClient
+	// additional fields for node api
+	tables tables
 }
 
 // NewClient creates a new client configured with the given options.
@@ -40,6 +48,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Category = NewCategoryClient(c.config)
+	c.Clue = NewClueClient(c.config)
 	c.Game = NewGameClient(c.config)
 	c.Season = NewSeasonClient(c.config)
 }
@@ -122,10 +132,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Game:   NewGameClient(cfg),
-		Season: NewSeasonClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Category: NewCategoryClient(cfg),
+		Clue:     NewClueClient(cfg),
+		Game:     NewGameClient(cfg),
+		Season:   NewSeasonClient(cfg),
 	}, nil
 }
 
@@ -143,17 +155,19 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Game:   NewGameClient(cfg),
-		Season: NewSeasonClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Category: NewCategoryClient(cfg),
+		Clue:     NewClueClient(cfg),
+		Game:     NewGameClient(cfg),
+		Season:   NewSeasonClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Game.
+//		Category.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -175,6 +189,8 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Category.Use(hooks...)
+	c.Clue.Use(hooks...)
 	c.Game.Use(hooks...)
 	c.Season.Use(hooks...)
 }
@@ -182,6 +198,8 @@ func (c *Client) Use(hooks ...Hook) {
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Category.Intercept(interceptors...)
+	c.Clue.Intercept(interceptors...)
 	c.Game.Intercept(interceptors...)
 	c.Season.Intercept(interceptors...)
 }
@@ -189,12 +207,300 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *CategoryMutation:
+		return c.Category.mutate(ctx, m)
+	case *ClueMutation:
+		return c.Clue.mutate(ctx, m)
 	case *GameMutation:
 		return c.Game.mutate(ctx, m)
 	case *SeasonMutation:
 		return c.Season.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// CategoryClient is a client for the Category schema.
+type CategoryClient struct {
+	config
+}
+
+// NewCategoryClient returns a client for the Category from the given config.
+func NewCategoryClient(c config) *CategoryClient {
+	return &CategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `category.Hooks(f(g(h())))`.
+func (c *CategoryClient) Use(hooks ...Hook) {
+	c.hooks.Category = append(c.hooks.Category, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `category.Intercept(f(g(h())))`.
+func (c *CategoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Category = append(c.inters.Category, interceptors...)
+}
+
+// Create returns a builder for creating a Category entity.
+func (c *CategoryClient) Create() *CategoryCreate {
+	mutation := newCategoryMutation(c.config, OpCreate)
+	return &CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Category entities.
+func (c *CategoryClient) CreateBulk(builders ...*CategoryCreate) *CategoryCreateBulk {
+	return &CategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Category.
+func (c *CategoryClient) Update() *CategoryUpdate {
+	mutation := newCategoryMutation(c.config, OpUpdate)
+	return &CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CategoryClient) UpdateOne(ca *Category) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategory(ca))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CategoryClient) UpdateOneID(id int) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategoryID(id))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Category.
+func (c *CategoryClient) Delete() *CategoryDelete {
+	mutation := newCategoryMutation(c.config, OpDelete)
+	return &CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CategoryClient) DeleteOne(ca *Category) *CategoryDeleteOne {
+	return c.DeleteOneID(ca.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CategoryClient) DeleteOneID(id int) *CategoryDeleteOne {
+	builder := c.Delete().Where(category.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for Category.
+func (c *CategoryClient) Query() *CategoryQuery {
+	return &CategoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCategory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Category entity by its id.
+func (c *CategoryClient) Get(ctx context.Context, id int) (*Category, error) {
+	return c.Query().Where(category.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CategoryClient) GetX(ctx context.Context, id int) *Category {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryClues queries the clues edge of a Category.
+func (c *CategoryClient) QueryClues(ca *Category) *ClueQuery {
+	query := (&ClueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, id),
+			sqlgraph.To(clue.Table, clue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, category.CluesTable, category.CluesColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CategoryClient) Hooks() []Hook {
+	return c.hooks.Category
+}
+
+// Interceptors returns the client interceptors.
+func (c *CategoryClient) Interceptors() []Interceptor {
+	return c.inters.Category
+}
+
+func (c *CategoryClient) mutate(ctx context.Context, m *CategoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Category mutation op: %q", m.Op())
+	}
+}
+
+// ClueClient is a client for the Clue schema.
+type ClueClient struct {
+	config
+}
+
+// NewClueClient returns a client for the Clue from the given config.
+func NewClueClient(c config) *ClueClient {
+	return &ClueClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `clue.Hooks(f(g(h())))`.
+func (c *ClueClient) Use(hooks ...Hook) {
+	c.hooks.Clue = append(c.hooks.Clue, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `clue.Intercept(f(g(h())))`.
+func (c *ClueClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Clue = append(c.inters.Clue, interceptors...)
+}
+
+// Create returns a builder for creating a Clue entity.
+func (c *ClueClient) Create() *ClueCreate {
+	mutation := newClueMutation(c.config, OpCreate)
+	return &ClueCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Clue entities.
+func (c *ClueClient) CreateBulk(builders ...*ClueCreate) *ClueCreateBulk {
+	return &ClueCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Clue.
+func (c *ClueClient) Update() *ClueUpdate {
+	mutation := newClueMutation(c.config, OpUpdate)
+	return &ClueUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ClueClient) UpdateOne(cl *Clue) *ClueUpdateOne {
+	mutation := newClueMutation(c.config, OpUpdateOne, withClue(cl))
+	return &ClueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ClueClient) UpdateOneID(id int) *ClueUpdateOne {
+	mutation := newClueMutation(c.config, OpUpdateOne, withClueID(id))
+	return &ClueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Clue.
+func (c *ClueClient) Delete() *ClueDelete {
+	mutation := newClueMutation(c.config, OpDelete)
+	return &ClueDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ClueClient) DeleteOne(cl *Clue) *ClueDeleteOne {
+	return c.DeleteOneID(cl.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ClueClient) DeleteOneID(id int) *ClueDeleteOne {
+	builder := c.Delete().Where(clue.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ClueDeleteOne{builder}
+}
+
+// Query returns a query builder for Clue.
+func (c *ClueClient) Query() *ClueQuery {
+	return &ClueQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeClue},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Clue entity by its id.
+func (c *ClueClient) Get(ctx context.Context, id int) (*Clue, error) {
+	return c.Query().Where(clue.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ClueClient) GetX(ctx context.Context, id int) *Clue {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryCategory queries the category edge of a Clue.
+func (c *ClueClient) QueryCategory(cl *Clue) *CategoryQuery {
+	query := (&CategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(clue.Table, clue.FieldID, id),
+			sqlgraph.To(category.Table, category.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, clue.CategoryTable, clue.CategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(cl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGame queries the game edge of a Clue.
+func (c *ClueClient) QueryGame(cl *Clue) *GameQuery {
+	query := (&GameClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(clue.Table, clue.FieldID, id),
+			sqlgraph.To(game.Table, game.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, clue.GameTable, clue.GameColumn),
+		)
+		fromV = sqlgraph.Neighbors(cl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ClueClient) Hooks() []Hook {
+	return c.hooks.Clue
+}
+
+// Interceptors returns the client interceptors.
+func (c *ClueClient) Interceptors() []Interceptor {
+	return c.inters.Clue
+}
+
+func (c *ClueClient) mutate(ctx context.Context, m *ClueMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ClueCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ClueUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ClueUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ClueDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Clue mutation op: %q", m.Op())
 	}
 }
 
@@ -244,7 +550,7 @@ func (c *GameClient) UpdateOne(ga *Game) *GameUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *GameClient) UpdateOneID(id string) *GameUpdateOne {
+func (c *GameClient) UpdateOneID(id int) *GameUpdateOne {
 	mutation := newGameMutation(c.config, OpUpdateOne, withGameID(id))
 	return &GameUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -261,7 +567,7 @@ func (c *GameClient) DeleteOne(ga *Game) *GameDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *GameClient) DeleteOneID(id string) *GameDeleteOne {
+func (c *GameClient) DeleteOneID(id int) *GameDeleteOne {
 	builder := c.Delete().Where(game.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -278,12 +584,12 @@ func (c *GameClient) Query() *GameQuery {
 }
 
 // Get returns a Game entity by its id.
-func (c *GameClient) Get(ctx context.Context, id string) (*Game, error) {
+func (c *GameClient) Get(ctx context.Context, id int) (*Game, error) {
 	return c.Query().Where(game.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *GameClient) GetX(ctx context.Context, id string) *Game {
+func (c *GameClient) GetX(ctx context.Context, id int) *Game {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -300,6 +606,22 @@ func (c *GameClient) QuerySeason(ga *Game) *SeasonQuery {
 			sqlgraph.From(game.Table, game.FieldID, id),
 			sqlgraph.To(season.Table, season.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, game.SeasonTable, game.SeasonColumn),
+		)
+		fromV = sqlgraph.Neighbors(ga.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryClues queries the clues edge of a Game.
+func (c *GameClient) QueryClues(ga *Game) *ClueQuery {
+	query := (&ClueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ga.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(game.Table, game.FieldID, id),
+			sqlgraph.To(clue.Table, clue.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, game.CluesTable, game.CluesColumn),
 		)
 		fromV = sqlgraph.Neighbors(ga.driver.Dialect(), step)
 		return fromV, nil
@@ -378,7 +700,7 @@ func (c *SeasonClient) UpdateOne(s *Season) *SeasonUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *SeasonClient) UpdateOneID(id string) *SeasonUpdateOne {
+func (c *SeasonClient) UpdateOneID(id int) *SeasonUpdateOne {
 	mutation := newSeasonMutation(c.config, OpUpdateOne, withSeasonID(id))
 	return &SeasonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -395,7 +717,7 @@ func (c *SeasonClient) DeleteOne(s *Season) *SeasonDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *SeasonClient) DeleteOneID(id string) *SeasonDeleteOne {
+func (c *SeasonClient) DeleteOneID(id int) *SeasonDeleteOne {
 	builder := c.Delete().Where(season.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -412,12 +734,12 @@ func (c *SeasonClient) Query() *SeasonQuery {
 }
 
 // Get returns a Season entity by its id.
-func (c *SeasonClient) Get(ctx context.Context, id string) (*Season, error) {
+func (c *SeasonClient) Get(ctx context.Context, id int) (*Season, error) {
 	return c.Query().Where(season.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *SeasonClient) GetX(ctx context.Context, id string) *Season {
+func (c *SeasonClient) GetX(ctx context.Context, id int) *Season {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -469,9 +791,9 @@ func (c *SeasonClient) mutate(ctx context.Context, m *SeasonMutation) (Value, er
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Game, Season []ent.Hook
+		Category, Clue, Game, Season []ent.Hook
 	}
 	inters struct {
-		Game, Season []ent.Interceptor
+		Category, Clue, Game, Season []ent.Interceptor
 	}
 )

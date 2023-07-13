@@ -1,3 +1,7 @@
-h1:mXi0ZmCU8a9RoAyAMZ6nmriqXs1xQgECqD1t6ClvJWM=
-20230713080352_base.sql h1:0T2/KumOcVM8N5Lu44V3ha99B2ZKdL/gkSh6wRQKosg=
-20230713080801_backfill-seasons.sql h1:nayUbHmo2OBPug/oaEHRokSkPbWdIdOTE/vyAqqSgoY=
+h1:oPJT60I4j5nMQSLkd19wWDjPxlgXai2Iah9A7bpExN4=
+20230713105046_base.sql h1:vafWEvaIeoYDCiAE6J0qMFq9pR21LevfzrvHBNbso9g=
+20230713105303_backfill-seasons.sql h1:FS0eoocTG/ieo8CKBHxJ1pllw2LE9usJNtiF7QZU/4o=
+20230713110151_backfill-categories.sql h1:+rNxjYRUPYIWXA1+zMoBAhiqIfCbDSluKN4LsfvMsuQ=
+20230713110256_backfill-games.sql h1:WQHtphRtFXfE5KELOth/GwxSKruYiAp3z6RXyP5/6zY=
+20230713110405_backfill-clues.sql h1:NVLVXEd2jCC9iessxBKRCsxabPLrkj5wU2lhYgFJ0U0=
+20230713114742_seas.sql h1:73EGhWWPvy5vQnL2DCGRdNyRZSIzjQfmjvUC048Oc8A=

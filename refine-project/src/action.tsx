@@ -31,6 +31,535 @@ import {
 import * as Custom from "./custom";
 import * as Type from "./typedefs";
 
+export type CategoryShowActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryShowAction: React.FC<CategoryShowActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "category/show/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.EyeOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Show"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type CategoryListActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryListAction: React.FC<CategoryListActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "category/".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.UnorderedListOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "List"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type CategoryCreateActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryCreateAction: React.FC<CategoryCreateActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "category/create".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.PlusCircleOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Create"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type CategoryEditActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryEditAction: React.FC<CategoryEditActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "category/edit/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.EditOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edit"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type CategoryDeleteActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryDeleteAction: React.FC<CategoryDeleteActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = { danger: true } || {};
+
+    const notification = useNotification();
+    const { mutate, isLoading } = useCustomMutation();
+    //const { mutate, isLoading } = useCustomMutation<Type.JeppCategoryInterface>();
+    const invalidate = useInvalidate();
+
+    return can ? (
+        <Popconfirm
+            key="delete"
+            okText="Delete"
+            cancelText="Cancel"
+            okType="primary"
+            title="Are you sure?"
+            okButtonProps={{ disabled: isLoading }}
+            onConfirm={(): void => {
+                mutate(
+                    {
+                        method: "post",
+                        url: "",
+                        values: {},
+                        metaData: {
+                            operation: "delete",
+                            variables: {
+                                where: {
+                                    value: {
+                                        idIn: recordItemIDs,
+                                    },
+                                    type: "CategoryWhereInput",
+                                    required: true,
+                                },
+                            },
+                            fields: null || undefined,
+                        },
+                    },
+                    {
+                        onSuccess: (resp) => {
+                            recordItemIDs.forEach((id: Type.JeppID) => {
+                                invalidate({
+                                    resource: "category",
+                                    invalidates: ["resourceAll"],
+                                    id,
+                                });
+                            });
+                            notification.open?.({
+                                type: "success",
+                                message: `Successfully`,
+                            });
+                            !onSuccess || onSuccess(resp);
+                        },
+                        onError: (error) => {
+                            notification.open?.({
+                                type: "error",
+                                message: error.message,
+                            });
+                        },
+                    },
+                );
+            }}
+        >
+            <Antd.Button
+                icon={<AntdIcons.DeleteOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Delete"}
+            </Antd.Button>
+        </Popconfirm>
+    ) : null;
+};
+
+export type CategoryEdgesDiagramActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const CategoryEdgesDiagramAction: React.FC<
+    CategoryEdgesDiagramActionProps
+> = ({ recordItemIDs, hideText, onSuccess, ...props }) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "category/edges/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.ClusterOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edges Diagram"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type ClueShowActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueShowAction: React.FC<ClueShowActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "clue/show/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.EyeOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Show"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type ClueListActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueListAction: React.FC<ClueListActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "clue/".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.UnorderedListOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "List"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type ClueCreateActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueCreateAction: React.FC<ClueCreateActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "clue/create".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.PlusCircleOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Create"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type ClueEditActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueEditAction: React.FC<ClueEditActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "clue/edit/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.EditOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edit"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
+export type ClueDeleteActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueDeleteAction: React.FC<ClueDeleteActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = { danger: true } || {};
+
+    const notification = useNotification();
+    const { mutate, isLoading } = useCustomMutation();
+    //const { mutate, isLoading } = useCustomMutation<Type.JeppClueInterface>();
+    const invalidate = useInvalidate();
+
+    return can ? (
+        <Popconfirm
+            key="delete"
+            okText="Delete"
+            cancelText="Cancel"
+            okType="primary"
+            title="Are you sure?"
+            okButtonProps={{ disabled: isLoading }}
+            onConfirm={(): void => {
+                mutate(
+                    {
+                        method: "post",
+                        url: "",
+                        values: {},
+                        metaData: {
+                            operation: "delete",
+                            variables: {
+                                where: {
+                                    value: {
+                                        idIn: recordItemIDs,
+                                    },
+                                    type: "ClueWhereInput",
+                                    required: true,
+                                },
+                            },
+                            fields: null || undefined,
+                        },
+                    },
+                    {
+                        onSuccess: (resp) => {
+                            recordItemIDs.forEach((id: Type.JeppID) => {
+                                invalidate({
+                                    resource: "clue",
+                                    invalidates: ["resourceAll"],
+                                    id,
+                                });
+                            });
+                            notification.open?.({
+                                type: "success",
+                                message: `Successfully`,
+                            });
+                            !onSuccess || onSuccess(resp);
+                        },
+                        onError: (error) => {
+                            notification.open?.({
+                                type: "error",
+                                message: error.message,
+                            });
+                        },
+                    },
+                );
+            }}
+        >
+            <Antd.Button
+                icon={<AntdIcons.DeleteOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Delete"}
+            </Antd.Button>
+        </Popconfirm>
+    ) : null;
+};
+
+export type ClueEdgesDiagramActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const ClueEdgesDiagramAction: React.FC<ClueEdgesDiagramActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "clue/edges/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.ClusterOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edges Diagram"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
 export type GameShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
@@ -261,6 +790,42 @@ export const GameDeleteAction: React.FC<GameDeleteActionProps> = ({
     ) : null;
 };
 
+export type GameEdgesDiagramActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const GameEdgesDiagramAction: React.FC<GameEdgesDiagramActionProps> = ({
+    recordItemIDs,
+    hideText,
+    onSuccess,
+    ...props
+}) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "game/edges/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.ClusterOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edges Diagram"}
+            </Antd.Button>
+        </Link>
+    ) : null;
+};
+
 export type SeasonShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
@@ -488,5 +1053,38 @@ export const SeasonDeleteAction: React.FC<SeasonDeleteActionProps> = ({
                 {hideText || "Delete"}
             </Antd.Button>
         </Popconfirm>
+    ) : null;
+};
+
+export type SeasonEdgesDiagramActionProps = ButtonProps &
+    RefineButtonCommonProps &
+    RefineButtonSingleProps &
+    RefineButtonLinkingProps & {
+        recordItemIDs: Type.JeppID[];
+        onSuccess?: (data: any) => void;
+    };
+
+export const SeasonEdgesDiagramAction: React.FC<
+    SeasonEdgesDiagramActionProps
+> = ({ recordItemIDs, hideText, onSuccess, ...props }) => {
+    const can = true;
+    const additionalProps = null || {};
+    const Link = useLink();
+
+    return can ? (
+        <Link
+            to={
+                window.environment.appPath +
+                "season/edges/:id".replace(":id", String(recordItemIDs[0]))
+            }
+        >
+            <Antd.Button
+                icon={<AntdIcons.ClusterOutlined />}
+                {...additionalProps}
+                {...props}
+            >
+                {hideText || "Edges Diagram"}
+            </Antd.Button>
+        </Link>
     ) : null;
 };

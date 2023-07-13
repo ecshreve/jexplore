@@ -40,7 +40,7 @@ func (sd *SeasonDelete) ExecX(ctx context.Context) int {
 }
 
 func (sd *SeasonDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(season.Table, sqlgraph.NewFieldSpec(season.FieldID, field.TypeString))
+	_spec := sqlgraph.NewDeleteSpec(season.Table, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	if ps := sd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
