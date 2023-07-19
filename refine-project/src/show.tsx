@@ -106,7 +106,7 @@ export const CategoryShow: React.FC<CategoryShowProps> = ({
                             {
                                 label: (
                                     <span>
-                                        <AntdIcons.FileOutlined />
+                                        <AntdIcons.QuestionCircleOutlined />
                                         Clues
                                     </span>
                                 ),
@@ -170,6 +170,9 @@ export const ClueShow: React.FC<ClueShowProps> = ({
                 {
                     category: ["id", "name"],
                 },
+                {
+                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                },
             ],
         },
     });
@@ -216,6 +219,9 @@ export const ClueShow: React.FC<ClueShowProps> = ({
                         <Antd.Descriptions.Item label="Category">
                             <View.CategoryBadge {...record?.category} />
                         </Antd.Descriptions.Item>
+                        <Antd.Descriptions.Item label="Game">
+                            <View.GameBadge {...record?.game} />
+                        </Antd.Descriptions.Item>
                     </Antd.Descriptions>
                     <Antd.Tabs defaultActiveKey="0" items={[]} />
                 </>
@@ -253,6 +259,28 @@ export const GameShow: React.FC<GameShowProps> = ({
                 "seasonID",
                 {
                     season: ["id", "number", "startdate", "enddate"],
+                },
+                {
+                    operation: "clues",
+                    fields: [
+                        {
+                            edges: [
+                                {
+                                    node: [
+                                        "id",
+                                        "question",
+                                        "answer",
+                                        "categoryID",
+                                        "gameID",
+                                    ],
+                                },
+                            ],
+                        },
+                        "totalCount",
+                    ],
+                    variables: {
+                        first: 10,
+                    },
                 },
             ],
         },
@@ -301,7 +329,40 @@ export const GameShow: React.FC<GameShowProps> = ({
                             <View.SeasonBadge {...record?.season} />
                         </Antd.Descriptions.Item>
                     </Antd.Descriptions>
-                    <Antd.Tabs defaultActiveKey="0" items={[]} />
+                    <Antd.Tabs
+                        defaultActiveKey="0"
+                        items={[
+                            {
+                                label: (
+                                    <span>
+                                        <AntdIcons.QuestionCircleOutlined />
+                                        Clues
+                                    </span>
+                                ),
+                                key: "1",
+                                children: (
+                                    <Lists.ClueList
+                                        key={"clues-games"}
+                                        breadcrumb={false}
+                                        tableProps={{
+                                            extendTable: {
+                                                permanentFilter: [
+                                                    {
+                                                        operator:
+                                                            "hasGameWith" as any,
+                                                        field: "",
+                                                        value: {
+                                                            id: record?.id,
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    />
+                                ),
+                            },
+                        ]}
+                    />
                 </>
             ) : null}
         </RA.Show>
@@ -403,7 +464,7 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
                             {
                                 label: (
                                     <span>
-                                        <AntdIcons.FileOutlined />
+                                        <AntdIcons.PlusSquareOutlined />
                                         Games
                                     </span>
                                 ),

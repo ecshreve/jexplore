@@ -110,6 +110,9 @@ export const ClueEdit: React.FC = () => {
                     {
                         category: ["id"],
                     },
+                    {
+                        game: ["id"],
+                    },
                 ],
             },
         });
@@ -123,6 +126,25 @@ export const ClueEdit: React.FC = () => {
             optionValue: "id",
             metaData: {
                 cursors: categoryCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
+    const [gameCursors, setGameCursors] = useState<Cursors>({});
+
+    const { selectProps: gameSelectProps } =
+        RA.useSelect<Interfaces.JeppGameInterface>({
+            resource: "Game",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: gameCursors,
                 fields: ["id", "id"],
             },
             onSearch: (value: string) => [
@@ -156,6 +178,13 @@ export const ClueEdit: React.FC = () => {
                 >
                     <Antd.Select {...categorySelectProps} mode={undefined} />
                 </Antd.Form.Item>
+                <Antd.Form.Item
+                    label="Game"
+                    name="gameID"
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...gameSelectProps} mode={undefined} />
+                </Antd.Form.Item>
             </Antd.Form>
         </RA.Edit>
     );
@@ -175,6 +204,17 @@ export const GameEdit: React.FC = () => {
                     {
                         season: ["id"],
                     },
+                    {
+                        clues: [
+                            {
+                                edges: [
+                                    {
+                                        node: ["id"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 ],
             },
         });
@@ -188,6 +228,25 @@ export const GameEdit: React.FC = () => {
             optionValue: "id",
             metaData: {
                 cursors: seasonCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
+    const [cluesCursors, setCluesCursors] = useState<Cursors>({});
+
+    const { selectProps: cluesSelectProps } =
+        RA.useSelect<Interfaces.JeppClueInterface>({
+            resource: "Clue",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: cluesCursors,
                 fields: ["id", "id"],
             },
             onSearch: (value: string) => [
@@ -220,6 +279,13 @@ export const GameEdit: React.FC = () => {
                     rules={[{ required: false }]}
                 >
                     <Antd.Select {...seasonSelectProps} mode={undefined} />
+                </Antd.Form.Item>
+                <Antd.Form.Item
+                    label="Clues"
+                    name={["clueIDs"]}
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...cluesSelectProps} mode={"multiple"} />
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Edit>

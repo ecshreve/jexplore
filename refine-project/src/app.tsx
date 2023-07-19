@@ -56,7 +56,7 @@ function App() {
                                 window.environment.appPath +
                                 "category/edit/:id",
                             meta: {
-                                icon: <AntdIcons.FileOutlined />,
+                                icon: <AntdIcons.GroupOutlined />,
                             },
                         },
                         {
@@ -66,7 +66,7 @@ function App() {
                             create: window.environment.appPath + "clue/create",
                             edit: window.environment.appPath + "clue/edit/:id",
                             meta: {
-                                icon: <AntdIcons.FileOutlined />,
+                                icon: <AntdIcons.QuestionCircleOutlined />,
                             },
                         },
                         {
@@ -76,7 +76,7 @@ function App() {
                             create: window.environment.appPath + "game/create",
                             edit: window.environment.appPath + "game/edit/:id",
                             meta: {
-                                icon: <AntdIcons.FileOutlined />,
+                                icon: <AntdIcons.PlusSquareOutlined />,
                             },
                         },
                         {
@@ -89,7 +89,7 @@ function App() {
                             edit:
                                 window.environment.appPath + "season/edit/:id",
                             meta: {
-                                icon: <AntdIcons.FileOutlined />,
+                                icon: <AntdIcons.CalendarOutlined />,
                             },
                         },
                     ]}

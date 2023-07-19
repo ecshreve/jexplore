@@ -43,5 +43,6 @@ func (Season) Annotations() []schema.Annotation {
 		entgql.Mutations(entgql.MutationCreate()),
 		entkit.IndexRoute(),
 		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+		entkit.Icon("CalendarOutlined"),
 	}
 }

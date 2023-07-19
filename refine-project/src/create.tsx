@@ -97,6 +97,25 @@ export const ClueCreate: React.FC = () => {
                 },
             ],
         });
+    const [gameCursors, setGameCursors] = useState<Cursors>({});
+
+    const { selectProps: gameSelectProps } =
+        RA.useSelect<Interfaces.JeppGameInterface>({
+            resource: "Game",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: gameCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
 
     return (
         <RA.Create
@@ -143,6 +162,13 @@ export const ClueCreate: React.FC = () => {
                 >
                     <Antd.Select {...categorySelectProps} mode={undefined} />
                 </Antd.Form.Item>
+                <Antd.Form.Item
+                    label="Game"
+                    name="gameID"
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...gameSelectProps} mode={undefined} />
+                </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>
     );
@@ -160,6 +186,25 @@ export const GameCreate: React.FC = () => {
             optionValue: "id",
             metaData: {
                 cursors: seasonCursors,
+                fields: ["id", "id"],
+            },
+            onSearch: (value: string) => [
+                {
+                    field: "id",
+                    operator: "contains",
+                    value,
+                },
+            ],
+        });
+    const [cluesCursors, setCluesCursors] = useState<Cursors>({});
+
+    const { selectProps: cluesSelectProps } =
+        RA.useSelect<Interfaces.JeppClueInterface>({
+            resource: "Clue",
+            optionLabel: "id",
+            optionValue: "id",
+            metaData: {
+                cursors: cluesCursors,
                 fields: ["id", "id"],
             },
             onSearch: (value: string) => [
@@ -221,6 +266,13 @@ export const GameCreate: React.FC = () => {
                     rules={[{ required: false }]}
                 >
                     <Antd.Select {...seasonSelectProps} mode={undefined} />
+                </Antd.Form.Item>
+                <Antd.Form.Item
+                    label="Clues"
+                    name={["clueIDs"]}
+                    rules={[{ required: false }]}
+                >
+                    <Antd.Select {...cluesSelectProps} mode={"multiple"} />
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>

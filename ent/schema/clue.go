@@ -47,5 +47,6 @@ func (Clue) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+		entkit.Icon("QuestionCircleOutlined"),
 	}
 }

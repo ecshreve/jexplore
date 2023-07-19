@@ -10,7 +10,6 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/joho/godotenv v1.5.1
-	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/urfave/cli/v2 v2.24.4
 	github.com/vektah/gqlparser/v2 v2.5.1
 	go.uber.org/zap v1.24.0
@@ -53,6 +52,7 @@ require (
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

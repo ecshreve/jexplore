@@ -290,6 +290,9 @@ export const ClueTable: React.FC<ClueTableProps> = ({
                 {
                     category: ["id", "name"],
                 },
+                {
+                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                },
             ],
             cursors,
         },
@@ -399,6 +402,11 @@ export const ClueTable: React.FC<ClueTableProps> = ({
                     dataIndex="category"
                     title="Category"
                     render={(value) => <View.CategoryBadge {...value} />}
+                />
+                <Antd.Table.Column
+                    dataIndex="game"
+                    title="Game"
+                    render={(value) => <View.GameBadge {...value} />}
                 />
                 {/* endregion Edges*/}
 
@@ -548,6 +556,24 @@ export const GameTable: React.FC<GameTableProps> = ({
                 {
                     season: ["id", "number", "startdate", "enddate"],
                 },
+                {
+                    clues: [
+                        /*{
+                        edges: [
+                            {
+                                node: [
+                                    "id",
+                                    "question",
+                                    "answer",
+                                    "categoryID",
+                                    "gameID",
+                                ]
+                            },
+                        ],
+                    },*/
+                        "totalCount",
+                    ],
+                },
             ],
             cursors,
         },
@@ -657,6 +683,13 @@ export const GameTable: React.FC<GameTableProps> = ({
                     dataIndex="season"
                     title="Season"
                     render={(value) => <View.SeasonBadge {...value} />}
+                />
+                <Antd.Table.Column
+                    dataIndex="clues"
+                    title="Clues"
+                    render={(value) => (
+                        <span>{value?.totalCount || "No"} Items</span>
+                    )}
                 />
                 {/* endregion Edges*/}
 

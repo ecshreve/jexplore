@@ -32,7 +32,7 @@ export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id?.toString();
+        id = routeParams.id;
     }
 
     const { queryResult } = useShow<Type.JeppCategoryInterface>({
@@ -75,8 +75,8 @@ export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id.toString().toString(),
-            label: record.id.toString().toString(),
+            id: record.id.toString(),
+            label: record.id.toString(),
         },
         ...(record.clues || []).map((i) => {
             return {
@@ -117,13 +117,21 @@ export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.CategoryShowAction recordItemIDs={[record.id.toString()]} />
+                    <Action.CategoryShowAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.CategoryListAction recordItemIDs={[record.id.toString()]} />
+                    <Action.CategoryListAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.CategoryEditAction recordItemIDs={[record.id.toString()]} />
+                    <Action.CategoryEditAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.CategoryDeleteAction recordItemIDs={[record.id.toString()]} />
+                    <Action.CategoryDeleteAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
                 </>
             )}
             {...showProps}
@@ -149,7 +157,7 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id?.toString();
+        id = routeParams.id;
     }
 
     const { queryResult } = useShow<Type.JeppClueInterface>({
@@ -165,6 +173,9 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
                 {
                     category: ["id", "name"],
                 },
+                {
+                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                },
             ],
         },
     });
@@ -176,13 +187,19 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id.toString().toString(),
-            label: record.id.toString().toString(),
+            id: record.id.toString(),
+            label: record.id.toString(),
         },
         record.category
             ? {
                   id: record.category.id.toString() || "n/a",
                   label: record.category.id.toString() || "n/a",
+              }
+            : undefined,
+        record.game
+            ? {
+                  id: record.game.id.toString() || "n/a",
+                  label: record.game.id.toString() || "n/a",
               }
             : undefined,
     ];
@@ -194,6 +211,13 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
                   label: "Category",
               }
             : undefined,
+        record.game
+            ? {
+                  source: record.id.toString(),
+                  target: record.game?.id.toString() || "n/a",
+                  label: "Game",
+              }
+            : undefined,
     ];
 
     return (
@@ -202,13 +226,21 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.ClueShowAction recordItemIDs={[record.id.toString()]} />
+                    <Action.ClueShowAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.ClueListAction recordItemIDs={[record.id.toString()]} />
+                    <Action.ClueListAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.ClueEditAction recordItemIDs={[record.id.toString()]} />
+                    <Action.ClueEditAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.ClueDeleteAction recordItemIDs={[record.id.toString()]} />
+                    <Action.ClueDeleteAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
                 </>
             )}
             {...showProps}
@@ -234,7 +266,7 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id?.toString();
+        id = routeParams.id;
     }
 
     const { queryResult } = useShow<Type.JeppGameInterface>({
@@ -250,6 +282,28 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
                 {
                     season: ["id", "number", "startdate", "enddate"],
                 },
+                {
+                    operation: "clues",
+                    fields: [
+                        {
+                            edges: [
+                                {
+                                    node: [
+                                        "id",
+                                        "question",
+                                        "answer",
+                                        "categoryID",
+                                        "gameID",
+                                    ],
+                                },
+                            ],
+                        },
+                        "totalCount",
+                    ],
+                    variables: {
+                        first: 10,
+                    },
+                },
             ],
         },
     });
@@ -261,13 +315,28 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id.toString().toString(),
-            label: record.id.toString().toString(),
+            id: record.id.toString(),
+            label: record.id.toString(),
         },
         record.season
             ? {
                   id: record.season.id.toString() || "n/a",
                   label: record.season.id.toString() || "n/a",
+              }
+            : undefined,
+        ...(record.clues || []).map((i) => {
+            return {
+                id: i.id.toString(),
+                label: i.id.toString(),
+            };
+        }),
+        Number(record._clues?.totalCount) > Number(record.clues?.length)
+            ? {
+                  id: "Clue_more",
+                  label: `More ${
+                      Number(record._clues?.totalCount) -
+                      Number(record.clues?.length)
+                  }`,
               }
             : undefined,
     ];
@@ -279,6 +348,20 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
                   label: "Season",
               }
             : undefined,
+        ...(record.clues || []).map((i) => {
+            return {
+                source: record.id.toString(),
+                target: i.id.toString(),
+                label: "Clues",
+            };
+        }),
+        Number(record._clues?.totalCount) > Number(record.clues?.length)
+            ? {
+                  source: record.id.toString(),
+                  target: "Clue_more",
+                  label: "Clues",
+              }
+            : undefined,
     ];
 
     return (
@@ -287,13 +370,21 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.GameShowAction recordItemIDs={[record.id.toString()]} />
+                    <Action.GameShowAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.GameListAction recordItemIDs={[record.id.toString()]} />
+                    <Action.GameListAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.GameEditAction recordItemIDs={[record.id.toString()]} />
+                    <Action.GameEditAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.GameDeleteAction recordItemIDs={[record.id.toString()]} />
+                    <Action.GameDeleteAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
                 </>
             )}
             {...showProps}
@@ -319,7 +410,7 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
 }) => {
     const routeParams = useParams();
     if (!id) {
-        id = routeParams.id?.toString();
+        id = routeParams.id;
     }
 
     const { queryResult } = useShow<Type.JeppSeasonInterface>({
@@ -364,8 +455,8 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
 
     const nodes: Array<Diagram.Node | undefined> = [
         {
-            id: record.id.toString().toString(),
-            label: record.id.toString().toString(),
+            id: record.id.toString(),
+            label: record.id.toString(),
         },
         ...(record.games || []).map((i) => {
             return {
@@ -406,13 +497,21 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
             title={"Edges Diagram"}
             headerButtons={() => (
                 <>
-                    <Action.SeasonShowAction recordItemIDs={[record.id.toString()]} />
+                    <Action.SeasonShowAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.SeasonListAction recordItemIDs={[record.id.toString()]} />
+                    <Action.SeasonListAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.SeasonEditAction recordItemIDs={[record.id.toString()]} />
+                    <Action.SeasonEditAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
 
-                    <Action.SeasonDeleteAction recordItemIDs={[record.id.toString()]} />
+                    <Action.SeasonDeleteAction
+                        recordItemIDs={[record.id.toString()]}
+                    />
                 </>
             )}
             {...showProps}
