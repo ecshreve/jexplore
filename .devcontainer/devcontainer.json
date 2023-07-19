@@ -2,7 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
   "name": "jex-wrk",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "features": {
     "ghcr.io/devcontainers/features/go:1": {
       "version": "1.20"
