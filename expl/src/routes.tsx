@@ -49,7 +49,7 @@ export const RoutesBundle: React.FC = () => {
                                     // collapsed is a boolean value that indicates whether the <Sidebar> is collapsed or not
                                     collapsed={collapsed}
                                     // icon={collapsed ? <MySmallIcon /> : <MyLargeIcon />}
-                                    text="EntKit"
+                                    text="xxx"
                                 />
                             )}
                         >

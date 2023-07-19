@@ -53,24 +53,41 @@
   cmd = "go generate ./..."
 
 [[task]]
-  id = "build"
+  id = "build-expl"
   type = "short"
-  cmd = "cd expl && npm run lint && npm run build"
-
-[[task]]
-  id = "update"
-  type = "short"
-  dependencies = ["build"]
+  watch = ["./expl/src/..."]
   cmd = """
-  rm -rf jsrv/expl
-  mkdir jsrv/expl
-  cp -r expl/build/* jsrv/expl
+    echo "Building expl..."
+    cd expl
+    yarn lint
+    yarn build
   """
 
+[[task]]
+  id = "build"
+  type = "short"
+  triggers = ["build-expl"]
+  cmd = """
+    echo "Building jsrv..."
+    rm -rf jsrv/expl
+    mkdir jsrv/expl
+    cp -r expl/build/* jsrv/expl
+  """
+  
 [[task]]
   id = "serve"
   type = "long"
+  triggers = ["build"]
   cmd = """
-  echo "running dev server"
-  go run ./jsrv/*.go serve -db-dsn "file:file.db?mode=rwc&cache=shared&_fk=1" -u expl
+    echo "Starting jsrv server..."
+    go run ./jsrv/*.go serve -db-dsn "file:file.db?mode=rwc&cache=shared&_fk=1" -u expl
   """
+
+  [[task]]
+  id = "dev"
+  type = "long"
+  dependencies = ["serve"]
+  cmd = """
+    echo "Starting dev server..."
+  """
+

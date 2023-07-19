@@ -35,7 +35,7 @@ func main() {
 		graphqlUri = "http://localhost/query"
 	}
 
-	entRefine, err := entkit.NewExtension(
+	_, err = entkit.NewExtension(
 		entkit.WithGenerator("expl", entkit.DefaultRefineAdapter),
 		entkit.WithGenerator("jsrv", entkit.DefaultServerAdapter),
 		entkit.WithGraphqlURL(graphqlUri),
@@ -51,7 +51,7 @@ func main() {
 		Features: []gen.Feature{gen.FeatureVersionedMigration},
 	}, entc.Extensions(
 		gqlEx,
-		entRefine,
+		// entRefine,
 	))
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)
