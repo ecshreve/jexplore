@@ -17,10 +17,9 @@ import (
 	"github.com/entkit/entkit/v2"
 )
 
+type CustomAdapter struct{}
+
 func main() {
-	// The codegen is executed from internal/todo/gen.go.
-	// So the path for the config file, ent schema, and the GQL schema
-	// starts from internal/todo.
 	gqlEx, err := entkit.NewEntgqlExtension(
 		entgql.WithConfigPath("./gqlgen.yml"),
 		entgql.WithSchemaGenerator(),
@@ -37,14 +36,8 @@ func main() {
 	}
 
 	entRefine, err := entkit.NewExtension(
-		//entkit.WithGenerator(filepath.Join("typescript-project"), entkit.DefaultTypescriptAdapter),
-		entkit.WithGenerator("refine-project", entkit.DefaultRefineAdapter),
-		//entkit.WithGenerator(
-		//	"other-refine-project",
-		//	entkit.DefaultRefineAdapter,
-		//	entkit.TargetPath(filepath.Join("other-refine-project-root/project")),
-		//),
-		entkit.WithGenerator("my-server", entkit.DefaultServerAdapter),
+		entkit.WithGenerator("expl", entkit.DefaultRefineAdapter),
+		entkit.WithGenerator("jsrv", entkit.DefaultServerAdapter),
 		entkit.WithGraphqlURL(graphqlUri),
 		entkit.WithPrefix("Jepp"),
 		entkit.IgnoreUncommittedChanges(),

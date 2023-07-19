@@ -29,6 +29,7 @@ func (Game) Fields() []ent.Field {
 		field.Int("season_id").Optional().
 			Annotations(
 				entgql.OrderField("SEASON_ID"),
+				entkit.HideOnList(),
 			),
 	}
 }
@@ -45,7 +46,8 @@ func (Game) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+
+		entkit.Actions(entkit.ListAction, entkit.ShowAction),
 		entkit.Icon("PlusSquareOutlined"),
 	}
 }

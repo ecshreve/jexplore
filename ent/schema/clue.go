@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/entc/gen"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -19,17 +20,21 @@ func (Clue) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("question").Annotations(
 			entgql.OrderField("QUESTION"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.Text("answer").Annotations(
 			entgql.OrderField("ANSWER"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.Int("category_id").Optional().
 			Annotations(
 				entgql.OrderField("CATEGORY_ID"),
+				entkit.HideOnList(),
 			),
 		field.Int("game_id").Optional().
 			Annotations(
 				entgql.OrderField("GAME_ID"),
+				entkit.HideOnList(),
 			),
 	}
 }
@@ -46,7 +51,8 @@ func (Clue) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+
+		entkit.Actions(entkit.ListAction, entkit.ShowAction),
 		entkit.Icon("QuestionCircleOutlined"),
 	}
 }

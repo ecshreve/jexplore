@@ -53,6 +53,24 @@
   cmd = "go generate ./..."
 
 [[task]]
-  id = "serve/dev"
+  id = "build"
+  type = "short"
+  cmd = "cd expl && npm run lint && npm run build"
+
+[[task]]
+  id = "update"
+  type = "short"
+  dependencies = ["build"]
+  cmd = """
+  rm -rf jsrv/expl
+  mkdir jsrv/expl
+  cp -r expl/build/* jsrv/expl
+  """
+
+[[task]]
+  id = "serve"
   type = "long"
-  cmd = "go run ./my-server/*.go serve -u refine-project"
+  cmd = """
+  echo "running dev server"
+  go run ./jsrv/*.go serve -db-dsn "file:file.db?mode=rwc&cache=shared&_fk=1" -u expl
+  """

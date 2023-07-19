@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/entc/gen"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -19,6 +20,8 @@ func (Category) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Annotations(
 			entgql.OrderField("NAME"),
+			entkit.TitleField(),
+			entkit.FilterOperator(gen.Contains),
 		),
 	}
 }
@@ -34,7 +37,8 @@ func (Category) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+
+		entkit.Actions(entkit.ListAction, entkit.ShowAction),
 		entkit.Icon("GroupOutlined"),
 	}
 }

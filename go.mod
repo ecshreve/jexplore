@@ -25,7 +25,6 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
@@ -76,9 +75,8 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/zclconf/go-cty v1.13.1 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/goleak v1.2.1 // indirect
-	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/atomic v1.10.0 // indirect
+	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect

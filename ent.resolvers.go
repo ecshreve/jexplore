@@ -24,22 +24,22 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 
 // Categories is the resolver for the categories field.
 func (r *queryResolver) Categories(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.CategoryOrder, where *ent.CategoryWhereInput, q *string) (*ent.CategoryConnection, error) {
-	return r.client.Category.Query().Paginate(ctx, after, first, before, last, ent.WithCategoryFilter(where.Filter), ent.WithCategoryOrder(orderBy))
+	return r.client.Category.Query().Paginate(ctx, after, first, before, last, ent.WithCategoryFilter(where.ApplySearchQuery(q).Filter), ent.WithCategoryOrder(orderBy))
 }
 
 // Clues is the resolver for the clues field.
 func (r *queryResolver) Clues(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.ClueOrder, where *ent.ClueWhereInput, q *string) (*ent.ClueConnection, error) {
-	return r.client.Clue.Query().Paginate(ctx, after, first, before, last, ent.WithClueFilter(where.Filter), ent.WithClueOrder(orderBy))
+	return r.client.Clue.Query().Paginate(ctx, after, first, before, last, ent.WithClueFilter(where.ApplySearchQuery(q).Filter), ent.WithClueOrder(orderBy))
 }
 
 // Games is the resolver for the games field.
 func (r *queryResolver) Games(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.GameOrder, where *ent.GameWhereInput, q *string) (*ent.GameConnection, error) {
-	return r.client.Game.Query().Paginate(ctx, after, first, before, last, ent.WithGameFilter(where.Filter), ent.WithGameOrder(orderBy))
+	return r.client.Game.Query().Paginate(ctx, after, first, before, last, ent.WithGameFilter(where.ApplySearchQuery(q).Filter), ent.WithGameOrder(orderBy))
 }
 
 // Seasons is the resolver for the seasons field.
 func (r *queryResolver) Seasons(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.SeasonOrder, where *ent.SeasonWhereInput, q *string) (*ent.SeasonConnection, error) {
-	return r.client.Season.Query().Paginate(ctx, after, first, before, last, ent.WithSeasonFilter(where.Filter), ent.WithSeasonOrder(orderBy))
+	return r.client.Season.Query().Paginate(ctx, after, first, before, last, ent.WithSeasonFilter(where.ApplySearchQuery(q).Filter), ent.WithSeasonOrder(orderBy))
 }
 
 // Query returns QueryResolver implementation.

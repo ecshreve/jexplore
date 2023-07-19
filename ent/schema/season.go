@@ -19,6 +19,7 @@ func (Season) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("number").Annotations(
 			entgql.OrderField("NUMBER"),
+			entkit.TitleField(),
 		),
 		field.Time("startDate").Annotations(
 			entgql.OrderField("START_DATE"),
@@ -40,9 +41,9 @@ func (Season) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entgql.Mutations(entgql.MutationCreate()),
+
 		entkit.IndexRoute(),
-		entkit.Actions(append(entkit.DefaultActions, entkit.EdgesDiagramAction)...),
+		entkit.Actions(entkit.ListAction, entkit.ShowAction),
 		entkit.Icon("CalendarOutlined"),
 	}
 }

@@ -586,7 +586,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCategoryWhereInput,
 		ec.unmarshalInputClueOrder,
 		ec.unmarshalInputClueWhereInput,
-		ec.unmarshalInputCreateSeasonInput,
 		ec.unmarshalInputGameOrder,
 		ec.unmarshalInputGameWhereInput,
 		ec.unmarshalInputSeasonOrder,
@@ -6383,58 +6382,6 @@ func (ec *executionContext) unmarshalInputClueWhereInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGameWith"))
 			it.HasGameWith, err = ec.unmarshalOGameWhereInput2ᚕᚖgithubᚗcomᚋecshreveᚋjexploreᚋentᚐGameWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputCreateSeasonInput(ctx context.Context, obj interface{}) (ent.CreateSeasonInput, error) {
-	var it ent.CreateSeasonInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"number", "startdate", "enddate", "gameIDs"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "number":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("number"))
-			it.Number, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "startdate":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdate"))
-			it.StartDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "enddate":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddate"))
-			it.EndDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "gameIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameIDs"))
-			it.GameIDs, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

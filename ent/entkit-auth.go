@@ -63,21 +63,12 @@ type JeppScope int
 
 const (
 	JeppReadScope JeppScope = iota
-	JeppCreateScope
-	JeppUpdateScope
-	JeppDeleteScope
 )
 
 func (e JeppScope) String() string {
 	switch e {
 	case JeppReadScope:
 		return "JeppRead"
-	case JeppCreateScope:
-		return "JeppCreate"
-	case JeppUpdateScope:
-		return "JeppUpdate"
-	case JeppDeleteScope:
-		return "JeppDelete"
 	default:
 		return "unknown"
 	}
@@ -92,64 +83,16 @@ func JeppEnforceCategoryRead(ctx context.Context) error {
 	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppReadScope)
 }
 
-func JeppEnforceCategoryCreate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppCreateScope)
-}
-
-func JeppEnforceCategoryUpdate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppUpdateScope)
-}
-
-func JeppEnforceCategoryDelete(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppCategoryResource, JeppDeleteScope)
-}
-
 func JeppEnforceClueRead(ctx context.Context) error {
 	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppReadScope)
-}
-
-func JeppEnforceClueCreate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppCreateScope)
-}
-
-func JeppEnforceClueUpdate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppUpdateScope)
-}
-
-func JeppEnforceClueDelete(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppClueResource, JeppDeleteScope)
 }
 
 func JeppEnforceGameRead(ctx context.Context) error {
 	return JeppAuthorizeByResource(ctx, JeppGameResource, JeppReadScope)
 }
 
-func JeppEnforceGameCreate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppGameResource, JeppCreateScope)
-}
-
-func JeppEnforceGameUpdate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppGameResource, JeppUpdateScope)
-}
-
-func JeppEnforceGameDelete(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppGameResource, JeppDeleteScope)
-}
-
 func JeppEnforceSeasonRead(ctx context.Context) error {
 	return JeppAuthorizeByResource(ctx, JeppSeasonResource, JeppReadScope)
-}
-
-func JeppEnforceSeasonCreate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppSeasonResource, JeppCreateScope)
-}
-
-func JeppEnforceSeasonUpdate(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppSeasonResource, JeppUpdateScope)
-}
-
-func JeppEnforceSeasonDelete(ctx context.Context) error {
-	return JeppAuthorizeByResource(ctx, JeppSeasonResource, JeppDeleteScope)
 }
 
 func JeppAuthContextFromRequestContext(ctx context.Context) (*entkit.AuthContext, error) {

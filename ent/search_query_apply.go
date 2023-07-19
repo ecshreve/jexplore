@@ -20,7 +20,8 @@ func (cwi *CategoryWhereInput) ApplySearchQuery(q *string) *CategoryWhereInput {
 	}
 
 	var orPredicates []predicate.Category
-	orPredicates = append(orPredicates, category.NameEQ(*q))
+
+	orPredicates = append(orPredicates, category.NameContains(*q))
 	cwi.AddPredicates(category.Or(orPredicates...))
 	return cwi
 }
@@ -35,8 +36,10 @@ func (cwi *ClueWhereInput) ApplySearchQuery(q *string) *ClueWhereInput {
 	}
 
 	var orPredicates []predicate.Clue
-	orPredicates = append(orPredicates, clue.QuestionEQ(*q))
-	orPredicates = append(orPredicates, clue.AnswerEQ(*q))
+
+	orPredicates = append(orPredicates, clue.QuestionContains(*q))
+
+	orPredicates = append(orPredicates, clue.AnswerContains(*q))
 	cwi.AddPredicates(clue.Or(orPredicates...))
 	return cwi
 }
