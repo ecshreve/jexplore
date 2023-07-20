@@ -30,5 +30,5 @@
   cmd = """
   atlas migrate apply \
     --dir "file://migrations" \
-    --url "sqlite://../../file.db?_fk=1"
+    --url "sqlite://file.db?_fk=1"
   """

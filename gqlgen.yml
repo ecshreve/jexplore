@@ -1,16 +1,16 @@
 skip_mod_tidy: false
 
 schema:
-  - ./*.graphql
+  - ./jex/*.graphql
 
 exec:
-  dir: ./
-  filename: gql-generated.go
+  dir: ./jex/
+  filename: ./jex/gql-generated.go
   package: jexplore
 
 resolver:
   layout: follow-schema
-  dir: ./
+  dir: ./jex/
   package: jexplore
 
 autobind:

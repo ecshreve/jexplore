@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/ecshreve/jexplore"
 	"github.com/ecshreve/jexplore/ent"
+	jexplore "github.com/ecshreve/jexplore/jex"
 	"github.com/urfave/cli/v2"
 )
 

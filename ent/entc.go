@@ -23,7 +23,7 @@ func main() {
 	gqlEx, err := entkit.NewEntgqlExtension(
 		entgql.WithConfigPath("./gqlgen.yml"),
 		entgql.WithSchemaGenerator(),
-		entgql.WithSchemaPath("./ent.graphql"),
+		entgql.WithSchemaPath("./jex/ent.graphql"),
 		entgql.WithWhereInputs(true),
 	)
 	if err != nil {

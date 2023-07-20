@@ -30,7 +30,7 @@
   triggers = ["build"]
   cmd = """
     echo "Starting jsrv server..."
-    go run ./jsrv/*.go serve -db-dsn "file:file.db?mode=rwc&cache=shared&_fk=1" -u expl
+    go run ./jsrv/*.go serve -db-dsn "file:ent/migrate/file.db?mode=rwc&cache=shared&_fk=1" -u expl
   """
 
   [[task]]

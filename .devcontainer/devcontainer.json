@@ -10,5 +10,6 @@
       "version": "1.20"
     },
     "ghcr.io/devcontainers-contrib/features/ts-node": {}
-  }
+  },
+  "postCreateCommand": "fisher install jorgebucaran/nvm.fish && curl -sSf https://atlasgo.sh | sh"
 }
