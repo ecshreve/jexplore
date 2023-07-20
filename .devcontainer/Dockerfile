@@ -21,10 +21,3 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     wget \
     software-properties-common \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
-
-RUN apt-add-repository ppa:fish-shell/release-3 \
-    && apt-get update && apt-get install -y fish
-
-COPY ./fish_config/* $HOME/.config/fish
-
-
