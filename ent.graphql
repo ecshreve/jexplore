@@ -247,6 +247,7 @@ input GameOrder {
 }
 """Properties by which Game connections can be ordered."""
 enum GameOrderField {
+  ID
   SHOW
   AIR_DATE
   TAPE_DATE

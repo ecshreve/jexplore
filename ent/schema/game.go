@@ -17,6 +17,9 @@ type Game struct {
 // Fields of the Game.
 func (Game) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id").Unique().Annotations(
+			entgql.OrderField("ID"),
+		),
 		field.Int("show").Annotations(
 			entgql.OrderField("SHOW"),
 		),

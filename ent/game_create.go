@@ -54,6 +54,12 @@ func (gc *GameCreate) SetNillableSeasonID(i *int) *GameCreate {
 	return gc
 }
 
+// SetID sets the "id" field.
+func (gc *GameCreate) SetID(i int) *GameCreate {
+	gc.mutation.SetID(i)
+	return gc
+}
+
 // SetSeason sets the "season" edge to the Season entity.
 func (gc *GameCreate) SetSeason(s *Season) *GameCreate {
 	return gc.SetSeasonID(s.ID)
@@ -131,8 +137,10 @@ func (gc *GameCreate) sqlSave(ctx context.Context) (*Game, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	gc.mutation.id = &_node.ID
 	gc.mutation.done = true
 	return _node, nil
@@ -143,6 +151,10 @@ func (gc *GameCreate) createSpec() (*Game, *sqlgraph.CreateSpec) {
 		_node = &Game{config: gc.config}
 		_spec = sqlgraph.NewCreateSpec(game.Table, sqlgraph.NewFieldSpec(game.FieldID, field.TypeInt))
 	)
+	if id, ok := gc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := gc.mutation.Show(); ok {
 		_spec.SetField(game.FieldShow, field.TypeInt, value)
 		_node.Show = value
@@ -231,7 +243,7 @@ func (gcb *GameCreateBulk) Save(ctx context.Context) ([]*Game, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

@@ -1,0 +1,9 @@
+[[task]]
+  id = "build"
+  type = "short"
+  watch = ["src/..."]
+  cmd = """
+    echo "Building expl..."
+    yarn lint
+    yarn build
+  """

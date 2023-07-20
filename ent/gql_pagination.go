@@ -947,6 +947,20 @@ func (ga *GameQuery) Paginate(
 }
 
 var (
+	// GameOrderFieldID orders Game by id.
+	GameOrderFieldID = &GameOrderField{
+		Value: func(ga *Game) (ent.Value, error) {
+			return ga.ID, nil
+		},
+		column: game.FieldID,
+		toTerm: game.ByID,
+		toCursor: func(ga *Game) Cursor {
+			return Cursor{
+				ID:    ga.ID,
+				Value: ga.ID,
+			}
+		},
+	}
 	// GameOrderFieldShow orders Game by show.
 	GameOrderFieldShow = &GameOrderField{
 		Value: func(ga *Game) (ent.Value, error) {
@@ -1009,6 +1023,8 @@ var (
 func (f GameOrderField) String() string {
 	var str string
 	switch f.column {
+	case GameOrderFieldID.column:
+		str = "ID"
 	case GameOrderFieldShow.column:
 		str = "SHOW"
 	case GameOrderFieldAirDate.column:
@@ -1033,6 +1049,8 @@ func (f *GameOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("GameOrderField %T must be a string", v)
 	}
 	switch str {
+	case "ID":
+		*f = *GameOrderFieldID
 	case "SHOW":
 		*f = *GameOrderFieldShow
 	case "AIR_DATE":

@@ -22,7 +22,7 @@ func (Category) Fields() []ent.Field {
 			entgql.OrderField("NAME"),
 			entkit.TitleField(),
 			entkit.FilterOperator(gen.Contains),
-		),
+		).Unique(),
 	}
 }
 

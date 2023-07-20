@@ -18,7 +18,7 @@
   id = "migrate/gen"
   type = "short"
   cmd = """
-  atlas migrate diff GENERATED_MIGRATION \
+  atlas migrate diff seed2 \
     --dir "file://ent/migrate/migrations" \
     --to "ent://ent/schema" \
     --dev-url "sqlite://file?mode=memory&_fk=1"
@@ -28,17 +28,26 @@
   id = "migrate/apply/dev"
   type = "short"
   cmd = """
-  atlas migrate apply   
-    --dir "file://ent/migrate/migrations"   
+  atlas migrate apply \
+    --dir "file://ent/migrate/migrations" \
     --url "sqlite://file?mode=memory&_fk=1"
+  """
+
+[[task]]
+  id = "migrate/apply/play"
+  type = "short"
+  cmd = """
+  atlas migrate apply \
+    --dir "file://ent/migrate/migrations" \
+    --url "sqlite://play.db?_fk=1"
   """
 
 [[task]]
   id = "migrate/apply/prod"
   type = "short"
   cmd = """
-  atlas migrate apply   
-    --dir "file://ent/migrate/migrations"   
+  atlas migrate apply \
+    --dir "file://ent/migrate/migrations" \
     --url "sqlite://file.db?_fk=1"
   """
 
@@ -53,20 +62,9 @@
   cmd = "go generate ./..."
 
 [[task]]
-  id = "build-expl"
-  type = "short"
-  watch = ["./expl/src/..."]
-  cmd = """
-    echo "Building expl..."
-    cd expl
-    yarn lint
-    yarn build
-  """
-
-[[task]]
   id = "build"
   type = "short"
-  triggers = ["build-expl"]
+  triggers = ["expl/build"]
   cmd = """
     echo "Building jsrv..."
     rm -rf jsrv/expl
