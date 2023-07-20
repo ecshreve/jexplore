@@ -1,60 +1,12 @@
 [[task]]
-  id = "migrate/man"
-  type = "short"
-  cmd = """
-  atlas migrate new MANUAL_MIGRATION \
-    --dir "file://ent/migrate/migrations"
-  """
-
-[[task]]
-  id = "migrate/hash"
-  type = "short"
-  cmd = """
-  atlas migrate hash \
-    --dir "file://ent/migrate/migrations"
-  """
-
-[[task]]
-  id = "migrate/gen"
-  type = "short"
-  cmd = """
-  atlas migrate diff seed2 \
-    --dir "file://ent/migrate/migrations" \
-    --to "ent://ent/schema" \
-    --dev-url "sqlite://file?mode=memory&_fk=1"
-  """
-
-[[task]]
-  id = "migrate/apply/dev"
-  type = "short"
-  cmd = """
-  atlas migrate apply \
-    --dir "file://ent/migrate/migrations" \
-    --url "sqlite://file?mode=memory&_fk=1"
-  """
-
-[[task]]
-  id = "migrate/apply/play"
-  type = "short"
-  cmd = """
-  atlas migrate apply \
-    --dir "file://ent/migrate/migrations" \
-    --url "sqlite://play.db?_fk=1"
-  """
-
-[[task]]
-  id = "migrate/apply/prod"
-  type = "short"
-  cmd = """
-  atlas migrate apply \
-    --dir "file://ent/migrate/migrations" \
-    --url "sqlite://file.db?_fk=1"
-  """
-
-[[task]]
   id = "test"
   type = "short"
   cmd = "go test ./... -v"
+
+[[task]]
+  id = "migrate"
+  type = "group"
+  dependencies = ["ent/migrate/apply"]
 
 [[task]]
   id = "generate"
@@ -84,7 +36,7 @@
   [[task]]
   id = "dev"
   type = "long"
-  dependencies = ["serve"]
+  dependencies = ["serve", "migrate"]
   cmd = """
     echo "Starting dev server..."
   """

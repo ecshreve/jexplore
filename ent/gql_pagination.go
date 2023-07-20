@@ -307,6 +307,20 @@ func (c *CategoryQuery) Paginate(
 }
 
 var (
+	// CategoryOrderFieldID orders Category by id.
+	CategoryOrderFieldID = &CategoryOrderField{
+		Value: func(c *Category) (ent.Value, error) {
+			return c.ID, nil
+		},
+		column: category.FieldID,
+		toTerm: category.ByID,
+		toCursor: func(c *Category) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.ID,
+			}
+		},
+	}
 	// CategoryOrderFieldName orders Category by name.
 	CategoryOrderFieldName = &CategoryOrderField{
 		Value: func(c *Category) (ent.Value, error) {
@@ -327,6 +341,8 @@ var (
 func (f CategoryOrderField) String() string {
 	var str string
 	switch f.column {
+	case CategoryOrderFieldID.column:
+		str = "ID"
 	case CategoryOrderFieldName.column:
 		str = "NAME"
 	}
@@ -345,6 +361,8 @@ func (f *CategoryOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("CategoryOrderField %T must be a string", v)
 	}
 	switch str {
+	case "ID":
+		*f = *CategoryOrderFieldID
 	case "NAME":
 		*f = *CategoryOrderFieldName
 	default:
@@ -600,6 +618,20 @@ func (c *ClueQuery) Paginate(
 }
 
 var (
+	// ClueOrderFieldID orders Clue by id.
+	ClueOrderFieldID = &ClueOrderField{
+		Value: func(c *Clue) (ent.Value, error) {
+			return c.ID, nil
+		},
+		column: clue.FieldID,
+		toTerm: clue.ByID,
+		toCursor: func(c *Clue) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.ID,
+			}
+		},
+	}
 	// ClueOrderFieldQuestion orders Clue by question.
 	ClueOrderFieldQuestion = &ClueOrderField{
 		Value: func(c *Clue) (ent.Value, error) {
@@ -662,6 +694,8 @@ var (
 func (f ClueOrderField) String() string {
 	var str string
 	switch f.column {
+	case ClueOrderFieldID.column:
+		str = "ID"
 	case ClueOrderFieldQuestion.column:
 		str = "QUESTION"
 	case ClueOrderFieldAnswer.column:
@@ -686,6 +720,8 @@ func (f *ClueOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("ClueOrderField %T must be a string", v)
 	}
 	switch str {
+	case "ID":
+		*f = *ClueOrderFieldID
 	case "QUESTION":
 		*f = *ClueOrderFieldQuestion
 	case "ANSWER":
@@ -1312,6 +1348,20 @@ func (s *SeasonQuery) Paginate(
 }
 
 var (
+	// SeasonOrderFieldID orders Season by id.
+	SeasonOrderFieldID = &SeasonOrderField{
+		Value: func(s *Season) (ent.Value, error) {
+			return s.ID, nil
+		},
+		column: season.FieldID,
+		toTerm: season.ByID,
+		toCursor: func(s *Season) Cursor {
+			return Cursor{
+				ID:    s.ID,
+				Value: s.ID,
+			}
+		},
+	}
 	// SeasonOrderFieldNumber orders Season by number.
 	SeasonOrderFieldNumber = &SeasonOrderField{
 		Value: func(s *Season) (ent.Value, error) {
@@ -1360,6 +1410,8 @@ var (
 func (f SeasonOrderField) String() string {
 	var str string
 	switch f.column {
+	case SeasonOrderFieldID.column:
+		str = "ID"
 	case SeasonOrderFieldNumber.column:
 		str = "NUMBER"
 	case SeasonOrderFieldStartDate.column:
@@ -1382,6 +1434,8 @@ func (f *SeasonOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("SeasonOrderField %T must be a string", v)
 	}
 	switch str {
+	case "ID":
+		*f = *SeasonOrderFieldID
 	case "NUMBER":
 		*f = *SeasonOrderFieldNumber
 	case "START_DATE":

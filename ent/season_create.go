@@ -39,6 +39,12 @@ func (sc *SeasonCreate) SetEndDate(t time.Time) *SeasonCreate {
 	return sc
 }
 
+// SetID sets the "id" field.
+func (sc *SeasonCreate) SetID(i int) *SeasonCreate {
+	sc.mutation.SetID(i)
+	return sc
+}
+
 // AddGameIDs adds the "games" edge to the Game entity by IDs.
 func (sc *SeasonCreate) AddGameIDs(ids ...int) *SeasonCreate {
 	sc.mutation.AddGameIDs(ids...)
@@ -111,8 +117,10 @@ func (sc *SeasonCreate) sqlSave(ctx context.Context) (*Season, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	sc.mutation.id = &_node.ID
 	sc.mutation.done = true
 	return _node, nil
@@ -123,6 +131,10 @@ func (sc *SeasonCreate) createSpec() (*Season, *sqlgraph.CreateSpec) {
 		_node = &Season{config: sc.config}
 		_spec = sqlgraph.NewCreateSpec(season.Table, sqlgraph.NewFieldSpec(season.FieldID, field.TypeInt))
 	)
+	if id, ok := sc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := sc.mutation.Number(); ok {
 		_spec.SetField(season.FieldNumber, field.TypeInt, value)
 		_node.Number = value
@@ -194,7 +206,7 @@ func (scb *SeasonCreateBulk) Save(ctx context.Context) ([]*Season, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

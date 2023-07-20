@@ -18,6 +18,9 @@ type Category struct {
 // Fields of the Category.
 func (Category) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id").Unique().Annotations(
+			entgql.OrderField("ID"),
+		),
 		field.String("name").Annotations(
 			entgql.OrderField("NAME"),
 			entkit.TitleField(),

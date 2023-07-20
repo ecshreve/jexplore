@@ -61,6 +61,12 @@ func (cc *ClueCreate) SetNillableGameID(i *int) *ClueCreate {
 	return cc
 }
 
+// SetID sets the "id" field.
+func (cc *ClueCreate) SetID(i int) *ClueCreate {
+	cc.mutation.SetID(i)
+	return cc
+}
+
 // SetCategory sets the "category" edge to the Category entity.
 func (cc *ClueCreate) SetCategory(c *Category) *ClueCreate {
 	return cc.SetCategoryID(c.ID)
@@ -125,8 +131,10 @@ func (cc *ClueCreate) sqlSave(ctx context.Context) (*Clue, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	cc.mutation.id = &_node.ID
 	cc.mutation.done = true
 	return _node, nil
@@ -137,6 +145,10 @@ func (cc *ClueCreate) createSpec() (*Clue, *sqlgraph.CreateSpec) {
 		_node = &Clue{config: cc.config}
 		_spec = sqlgraph.NewCreateSpec(clue.Table, sqlgraph.NewFieldSpec(clue.FieldID, field.TypeInt))
 	)
+	if id, ok := cc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := cc.mutation.Question(); ok {
 		_spec.SetField(clue.FieldQuestion, field.TypeString, value)
 		_node.Question = value
@@ -222,7 +234,7 @@ func (ccb *ClueCreateBulk) Save(ctx context.Context) ([]*Clue, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

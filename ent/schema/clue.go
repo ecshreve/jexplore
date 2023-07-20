@@ -18,6 +18,9 @@ type Clue struct {
 // Fields of the Clue.
 func (Clue) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id").Unique().Annotations(
+			entgql.OrderField("ID"),
+		),
 		field.Text("question").Annotations(
 			entgql.OrderField("QUESTION"),
 			entkit.FilterOperator(gen.Contains),

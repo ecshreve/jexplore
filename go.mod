@@ -11,13 +11,12 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/sirupsen/logrus v1.9.3
 	github.com/urfave/cli/v2 v2.24.4
 	github.com/vektah/gqlparser/v2 v2.5.1
 	go.uber.org/zap v1.24.0
 	golang.org/x/sync v0.3.0
 )
-
-require github.com/kr/text v0.2.0 // indirect
 
 require (
 	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
@@ -61,7 +60,6 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
-	github.com/kr/pretty v0.3.1
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect

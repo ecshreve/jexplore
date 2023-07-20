@@ -48,6 +48,7 @@ input CategoryOrder {
 }
 """Properties by which Category connections can be ordered."""
 enum CategoryOrderField {
+  ID
   NAME
 }
 """
@@ -119,6 +120,7 @@ input ClueOrder {
 }
 """Properties by which Clue connections can be ordered."""
 enum ClueOrderField {
+  ID
   QUESTION
   ANSWER
   CATEGORY_ID
@@ -490,6 +492,7 @@ input SeasonOrder {
 }
 """Properties by which Season connections can be ordered."""
 enum SeasonOrderField {
+  ID
   NUMBER
   START_DATE
   END_DATE

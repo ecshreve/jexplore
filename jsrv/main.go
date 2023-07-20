@@ -63,7 +63,7 @@ func main() {
 		&cli.BoolFlag{
 			Name:    "DevMode",
 			Aliases: []string{"dev-mode", "dev"},
-			Value:   false,
+			Value:   true,
 			EnvVars: []string{"DEV_MODE"},
 		},
 	}

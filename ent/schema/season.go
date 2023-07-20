@@ -17,6 +17,9 @@ type Season struct {
 // Fields of the Season.
 func (Season) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id").Unique().Annotations(
+			entgql.OrderField("ID"),
+		),
 		field.Int("number").Annotations(
 			entgql.OrderField("NUMBER"),
 			entkit.TitleField(),
