@@ -51,8 +51,8 @@ export interface JeppClueInterface {
 export interface JeppGameInterface {
     id: JeppNumber; // int
     show: JeppNumber; // int
-    airdate: JeppDate; // time.Time
-    tapedate: JeppDate; // time.Time
+    airDate: JeppDate; // time.Time
+    tapeDate: JeppDate; // time.Time
     seasonID: JeppNumber; // int
     season?: JeppSeasonInterface;
     clues?: JeppClueInterface[];
@@ -61,8 +61,8 @@ export interface JeppGameInterface {
 export interface JeppSeasonInterface {
     id: JeppNumber; // int
     number: JeppNumber; // int
-    startdate: JeppDate; // time.Time
-    enddate: JeppDate; // time.Time
+    startDate: JeppDate; // time.Time
+    endDate: JeppDate; // time.Time
     games?: JeppGameInterface[];
     _games?: gqlField<JeppGameInterface>;
 }

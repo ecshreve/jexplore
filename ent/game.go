@@ -20,10 +20,10 @@ type Game struct {
 	ID int `json:"id,omitempty"`
 	// Show holds the value of the "show" field.
 	Show int `json:"show,omitempty"`
-	// AirDate holds the value of the "airDate" field.
-	AirDate time.Time `json:"airDate,omitempty"`
-	// TapeDate holds the value of the "tapeDate" field.
-	TapeDate time.Time `json:"tapeDate,omitempty"`
+	// AirDate holds the value of the "air_date" field.
+	AirDate time.Time `json:"air_date,omitempty"`
+	// TapeDate holds the value of the "tape_date" field.
+	TapeDate time.Time `json:"tape_date,omitempty"`
 	// SeasonID holds the value of the "season_id" field.
 	SeasonID int `json:"season_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -107,13 +107,13 @@ func (ga *Game) assignValues(columns []string, values []any) error {
 			}
 		case game.FieldAirDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field airDate", values[i])
+				return fmt.Errorf("unexpected type %T for field air_date", values[i])
 			} else if value.Valid {
 				ga.AirDate = value.Time
 			}
 		case game.FieldTapeDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field tapeDate", values[i])
+				return fmt.Errorf("unexpected type %T for field tape_date", values[i])
 			} else if value.Valid {
 				ga.TapeDate = value.Time
 			}
@@ -172,10 +172,10 @@ func (ga *Game) String() string {
 	builder.WriteString("show=")
 	builder.WriteString(fmt.Sprintf("%v", ga.Show))
 	builder.WriteString(", ")
-	builder.WriteString("airDate=")
+	builder.WriteString("air_date=")
 	builder.WriteString(ga.AirDate.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("tapeDate=")
+	builder.WriteString("tape_date=")
 	builder.WriteString(ga.TapeDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("season_id=")

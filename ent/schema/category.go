@@ -20,6 +20,7 @@ func (Category) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id").Unique().Annotations(
 			entgql.OrderField("ID"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.String("name").Annotations(
 			entgql.OrderField("NAME"),

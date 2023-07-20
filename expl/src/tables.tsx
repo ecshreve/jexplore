@@ -43,7 +43,7 @@ export const CategoryTable: React.FC<CategoryTableProps> = ({
         resource: "category",
         initialSorter: [
             {
-                field: "name",
+                field: "id",
                 order: "asc",
             },
         ],
@@ -51,7 +51,7 @@ export const CategoryTable: React.FC<CategoryTableProps> = ({
             {
                 field: "id",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
                 field: "name",
@@ -102,6 +102,7 @@ export const CategoryTable: React.FC<CategoryTableProps> = ({
                 <Antd.Table.Column
                     dataIndex="id"
                     title="Id"
+                    sorter={{}}
                     render={(value) => {
                         return <View.JeppNumberViewOnList value={value} />;
                     }}
@@ -239,7 +240,7 @@ export const ClueTable: React.FC<ClueTableProps> = ({
         resource: "clue",
         initialSorter: [
             {
-                field: "question",
+                field: "id",
                 order: "asc",
             },
         ],
@@ -247,7 +248,7 @@ export const ClueTable: React.FC<ClueTableProps> = ({
             {
                 field: "id",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
                 field: "question",
@@ -256,6 +257,16 @@ export const ClueTable: React.FC<ClueTableProps> = ({
             },
             {
                 field: "answer",
+                value: null,
+                operator: "contains",
+            },
+            {
+                field: "categoryID",
+                value: null,
+                operator: "contains",
+            },
+            {
+                field: "gameID",
                 value: null,
                 operator: "contains",
             },
@@ -271,7 +282,7 @@ export const ClueTable: React.FC<ClueTableProps> = ({
                     category: ["id", "name"],
                 },
                 {
-                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                    game: ["id", "show", "airDate", "tapeDate", "seasonID"],
                 },
             ],
             cursors,
@@ -294,6 +305,7 @@ export const ClueTable: React.FC<ClueTableProps> = ({
                 <Antd.Table.Column
                     dataIndex="id"
                     title="Id"
+                    sorter={{}}
                     render={(value) => {
                         return <View.JeppNumberViewOnList value={value} />;
                     }}
@@ -338,6 +350,40 @@ export const ClueTable: React.FC<ClueTableProps> = ({
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
                         "answer",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="categoryID"
+                    title="Category Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "category_id",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="gameID"
+                    title="Game Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "game_id",
                         table.sorter,
                     )}
                 />
@@ -451,7 +497,7 @@ export const GameTable: React.FC<GameTableProps> = ({
         resource: "game",
         initialSorter: [
             {
-                field: "show",
+                field: "id",
                 order: "asc",
             },
         ],
@@ -459,33 +505,38 @@ export const GameTable: React.FC<GameTableProps> = ({
             {
                 field: "id",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
                 field: "show",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
-                field: "airdate",
+                field: "airDate",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
-                field: "tapedate",
+                field: "tapeDate",
                 value: null,
-                operator: "eq",
+                operator: "contains",
+            },
+            {
+                field: "seasonID",
+                value: null,
+                operator: "contains",
             },
         ],
         metaData: {
             fields: [
                 "id",
                 "show",
-                "airdate",
-                "tapedate",
+                "airDate",
+                "tapeDate",
                 "seasonID",
                 {
-                    season: ["id", "number", "startdate", "enddate"],
+                    season: ["id", "number", "startDate", "endDate"],
                 },
                 {
                     clues: [
@@ -526,6 +577,7 @@ export const GameTable: React.FC<GameTableProps> = ({
                 <Antd.Table.Column
                     dataIndex="id"
                     title="Id"
+                    sorter={{}}
                     render={(value) => {
                         return <View.JeppNumberViewOnList value={value} />;
                     }}
@@ -557,8 +609,8 @@ export const GameTable: React.FC<GameTableProps> = ({
                     )}
                 />
                 <Antd.Table.Column
-                    dataIndex="airdate"
-                    title="AirDate"
+                    dataIndex="airDate"
+                    title="Air Date"
                     sorter={{}}
                     render={(value) => {
                         return <View.JeppDateViewOnList value={value} />;
@@ -569,13 +621,13 @@ export const GameTable: React.FC<GameTableProps> = ({
                         </RA.FilterDropdown>
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
-                        "airDate",
+                        "air_date",
                         table.sorter,
                     )}
                 />
                 <Antd.Table.Column
-                    dataIndex="tapedate"
-                    title="TapeDate"
+                    dataIndex="tapeDate"
+                    title="Tape Date"
                     sorter={{}}
                     render={(value) => {
                         return <View.JeppDateViewOnList value={value} />;
@@ -586,7 +638,24 @@ export const GameTable: React.FC<GameTableProps> = ({
                         </RA.FilterDropdown>
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
-                        "tapeDate",
+                        "tape_date",
+                        table.sorter,
+                    )}
+                />
+                <Antd.Table.Column
+                    dataIndex="seasonID"
+                    title="Season Id"
+                    sorter={{}}
+                    render={(value) => {
+                        return <View.JeppNumberViewOnList value={value} />;
+                    }}
+                    filterDropdown={(props) => (
+                        <RA.FilterDropdown {...props}>
+                            <Antd.Input />
+                        </RA.FilterDropdown>
+                    )}
+                    defaultSortOrder={RA.getDefaultSortOrder(
+                        "season_id",
                         table.sorter,
                     )}
                 />
@@ -703,7 +772,7 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
         resource: "season",
         initialSorter: [
             {
-                field: "number",
+                field: "id",
                 order: "asc",
             },
         ],
@@ -711,30 +780,30 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
             {
                 field: "id",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
                 field: "number",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
-                field: "startdate",
+                field: "startDate",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
             {
-                field: "enddate",
+                field: "endDate",
                 value: null,
-                operator: "eq",
+                operator: "contains",
             },
         ],
         metaData: {
             fields: [
                 "id",
                 "number",
-                "startdate",
-                "enddate",
+                "startDate",
+                "endDate",
                 {
                     games: [
                         /*{
@@ -743,8 +812,8 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                                 node: [
                                     "id",
                                     "show",
-                                    "airdate",
-                                    "tapedate",
+                                    "airDate",
+                                    "tapeDate",
                                     "seasonID",
                                 ]
                             },
@@ -774,6 +843,7 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                 <Antd.Table.Column
                     dataIndex="id"
                     title="Id"
+                    sorter={{}}
                     render={(value) => {
                         return <View.JeppNumberViewOnList value={value} />;
                     }}
@@ -805,8 +875,8 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                     )}
                 />
                 <Antd.Table.Column
-                    dataIndex="startdate"
-                    title="StartDate"
+                    dataIndex="startDate"
+                    title="Start Date"
                     sorter={{}}
                     render={(value) => {
                         return <View.JeppDateViewOnList value={value} />;
@@ -817,13 +887,13 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                         </RA.FilterDropdown>
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
-                        "startDate",
+                        "start_date",
                         table.sorter,
                     )}
                 />
                 <Antd.Table.Column
-                    dataIndex="enddate"
-                    title="EndDate"
+                    dataIndex="endDate"
+                    title="End Date"
                     sorter={{}}
                     render={(value) => {
                         return <View.JeppDateViewOnList value={value} />;
@@ -834,7 +904,7 @@ export const SeasonTable: React.FC<SeasonTableProps> = ({
                         </RA.FilterDropdown>
                     )}
                     defaultSortOrder={RA.getDefaultSortOrder(
-                        "endDate",
+                        "end_date",
                         table.sorter,
                     )}
                 />

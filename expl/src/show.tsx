@@ -166,7 +166,7 @@ export const ClueShow: React.FC<ClueShowProps> = ({
                     category: ["id", "name"],
                 },
                 {
-                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                    game: ["id", "show", "airDate", "tapeDate", "seasonID"],
                 },
             ],
         },
@@ -244,11 +244,11 @@ export const GameShow: React.FC<GameShowProps> = ({
             fields: [
                 "id",
                 "show",
-                "airdate",
-                "tapedate",
+                "airDate",
+                "tapeDate",
                 "seasonID",
                 {
-                    season: ["id", "number", "startdate", "enddate"],
+                    season: ["id", "number", "startDate", "endDate"],
                 },
                 {
                     operation: "clues",
@@ -297,10 +297,10 @@ export const GameShow: React.FC<GameShowProps> = ({
             <View.JeppNumberViewOnShow value={record?.id} />
             <Antd.Typography.Title level={5}>Show</Antd.Typography.Title>
             <View.JeppNumberViewOnShow value={record?.show} />
-            <Antd.Typography.Title level={5}>AirDate</Antd.Typography.Title>
-            <View.JeppDateViewOnShow value={record?.airdate} />
-            <Antd.Typography.Title level={5}>TapeDate</Antd.Typography.Title>
-            <View.JeppDateViewOnShow value={record?.tapedate} />
+            <Antd.Typography.Title level={5}>Air Date</Antd.Typography.Title>
+            <View.JeppDateViewOnShow value={record?.airDate} />
+            <Antd.Typography.Title level={5}>Tape Date</Antd.Typography.Title>
+            <View.JeppDateViewOnShow value={record?.tapeDate} />
             <Antd.Typography.Title level={5}>Season Id</Antd.Typography.Title>
             <View.JeppNumberViewOnShow value={record?.seasonID} />
 
@@ -378,8 +378,8 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
             fields: [
                 "id",
                 "number",
-                "startdate",
-                "enddate",
+                "startDate",
+                "endDate",
                 {
                     operation: "games",
                     fields: [
@@ -389,8 +389,8 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
                                     node: [
                                         "id",
                                         "show",
-                                        "airdate",
-                                        "tapedate",
+                                        "airDate",
+                                        "tapeDate",
                                         "seasonID",
                                     ],
                                 },
@@ -427,10 +427,10 @@ export const SeasonShow: React.FC<SeasonShowProps> = ({
             <View.JeppNumberViewOnShow value={record?.id} />
             <Antd.Typography.Title level={5}>Number</Antd.Typography.Title>
             <View.JeppNumberViewOnShow value={record?.number} />
-            <Antd.Typography.Title level={5}>StartDate</Antd.Typography.Title>
-            <View.JeppDateViewOnShow value={record?.startdate} />
-            <Antd.Typography.Title level={5}>EndDate</Antd.Typography.Title>
-            <View.JeppDateViewOnShow value={record?.enddate} />
+            <Antd.Typography.Title level={5}>Start Date</Antd.Typography.Title>
+            <View.JeppDateViewOnShow value={record?.startDate} />
+            <Antd.Typography.Title level={5}>End Date</Antd.Typography.Title>
+            <View.JeppDateViewOnShow value={record?.endDate} />
 
             {withEdges ? (
                 <>

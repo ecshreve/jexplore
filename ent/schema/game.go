@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/entc/gen"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -19,20 +20,25 @@ func (Game) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id").Unique().Annotations(
 			entgql.OrderField("ID"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.Int("show").Annotations(
 			entgql.OrderField("SHOW"),
+			entkit.FilterOperator(gen.Contains),
+			entkit.TitleField(),
 		),
-		field.Time("airDate").Annotations(
+		field.Time("air_date").Annotations(
 			entgql.OrderField("AIR_DATE"),
+			entkit.FilterOperator(gen.Contains),
 		),
-		field.Time("tapeDate").Annotations(
+		field.Time("tape_date").Annotations(
 			entgql.OrderField("TAPE_DATE"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.Int("season_id").Optional().
 			Annotations(
 				entgql.OrderField("SEASON_ID"),
-				entkit.HideOnList(),
+				entkit.FilterOperator(gen.Contains),
 			),
 	}
 }

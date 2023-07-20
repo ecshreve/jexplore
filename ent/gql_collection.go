@@ -445,12 +445,12 @@ func (ga *GameQuery) collectField(ctx context.Context, opCtx *graphql.OperationC
 				selectedFields = append(selectedFields, game.FieldShow)
 				fieldSeen[game.FieldShow] = struct{}{}
 			}
-		case "airdate":
+		case "airDate":
 			if _, ok := fieldSeen[game.FieldAirDate]; !ok {
 				selectedFields = append(selectedFields, game.FieldAirDate)
 				fieldSeen[game.FieldAirDate] = struct{}{}
 			}
-		case "tapedate":
+		case "tapeDate":
 			if _, ok := fieldSeen[game.FieldTapeDate]; !ok {
 				selectedFields = append(selectedFields, game.FieldTapeDate)
 				fieldSeen[game.FieldTapeDate] = struct{}{}
@@ -633,12 +633,12 @@ func (s *SeasonQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, season.FieldNumber)
 				fieldSeen[season.FieldNumber] = struct{}{}
 			}
-		case "startdate":
+		case "startDate":
 			if _, ok := fieldSeen[season.FieldStartDate]; !ok {
 				selectedFields = append(selectedFields, season.FieldStartDate)
 				fieldSeen[season.FieldStartDate] = struct{}{}
 			}
-		case "enddate":
+		case "endDate":
 			if _, ok := fieldSeen[season.FieldEndDate]; !ok {
 				selectedFields = append(selectedFields, season.FieldEndDate)
 				fieldSeen[season.FieldEndDate] = struct{}{}

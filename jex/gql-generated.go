@@ -310,7 +310,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClueEdge.Node(childComplexity), true
 
-	case "Game.airdate":
+	case "Game.airDate":
 		if e.complexity.Game.AirDate == nil {
 			break
 		}
@@ -357,7 +357,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Show(childComplexity), true
 
-	case "Game.tapedate":
+	case "Game.tapeDate":
 		if e.complexity.Game.TapeDate == nil {
 			break
 		}
@@ -499,7 +499,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Seasons(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["orderBy"].(*ent.SeasonOrder), args["where"].(*ent.SeasonWhereInput), args["q"].(*string)), true
 
-	case "Season.enddate":
+	case "Season.endDate":
 		if e.complexity.Season.EndDate == nil {
 			break
 		}
@@ -532,7 +532,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Season.Number(childComplexity), true
 
-	case "Season.startdate":
+	case "Season.startDate":
 		if e.complexity.Season.StartDate == nil {
 			break
 		}
@@ -1885,10 +1885,10 @@ func (ec *executionContext) fieldContext_Clue_game(ctx context.Context, field gr
 				return ec.fieldContext_Game_id(ctx, field)
 			case "show":
 				return ec.fieldContext_Game_show(ctx, field)
-			case "airdate":
-				return ec.fieldContext_Game_airdate(ctx, field)
-			case "tapedate":
-				return ec.fieldContext_Game_tapedate(ctx, field)
+			case "airDate":
+				return ec.fieldContext_Game_airDate(ctx, field)
+			case "tapeDate":
+				return ec.fieldContext_Game_tapeDate(ctx, field)
 			case "seasonID":
 				return ec.fieldContext_Game_seasonID(ctx, field)
 			case "season":
@@ -2236,8 +2236,8 @@ func (ec *executionContext) fieldContext_Game_show(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Game_airdate(ctx context.Context, field graphql.CollectedField, obj *ent.Game) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Game_airdate(ctx, field)
+func (ec *executionContext) _Game_airDate(ctx context.Context, field graphql.CollectedField, obj *ent.Game) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Game_airDate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2267,7 +2267,7 @@ func (ec *executionContext) _Game_airdate(ctx context.Context, field graphql.Col
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Game_airdate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Game_airDate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Game",
 		Field:      field,
@@ -2280,8 +2280,8 @@ func (ec *executionContext) fieldContext_Game_airdate(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Game_tapedate(ctx context.Context, field graphql.CollectedField, obj *ent.Game) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Game_tapedate(ctx, field)
+func (ec *executionContext) _Game_tapeDate(ctx context.Context, field graphql.CollectedField, obj *ent.Game) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Game_tapeDate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2311,7 +2311,7 @@ func (ec *executionContext) _Game_tapedate(ctx context.Context, field graphql.Co
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Game_tapedate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Game_tapeDate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Game",
 		Field:      field,
@@ -2405,10 +2405,10 @@ func (ec *executionContext) fieldContext_Game_season(ctx context.Context, field 
 				return ec.fieldContext_Season_id(ctx, field)
 			case "number":
 				return ec.fieldContext_Season_number(ctx, field)
-			case "startdate":
-				return ec.fieldContext_Season_startdate(ctx, field)
-			case "enddate":
-				return ec.fieldContext_Season_enddate(ctx, field)
+			case "startDate":
+				return ec.fieldContext_Season_startDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_Season_endDate(ctx, field)
 			case "games":
 				return ec.fieldContext_Season_games(ctx, field)
 			}
@@ -2666,10 +2666,10 @@ func (ec *executionContext) fieldContext_GameEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_Game_id(ctx, field)
 			case "show":
 				return ec.fieldContext_Game_show(ctx, field)
-			case "airdate":
-				return ec.fieldContext_Game_airdate(ctx, field)
-			case "tapedate":
-				return ec.fieldContext_Game_tapedate(ctx, field)
+			case "airDate":
+				return ec.fieldContext_Game_airDate(ctx, field)
+			case "tapeDate":
+				return ec.fieldContext_Game_tapeDate(ctx, field)
 			case "seasonID":
 				return ec.fieldContext_Game_seasonID(ctx, field)
 			case "season":
@@ -3473,8 +3473,8 @@ func (ec *executionContext) fieldContext_Season_number(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Season_startdate(ctx context.Context, field graphql.CollectedField, obj *ent.Season) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Season_startdate(ctx, field)
+func (ec *executionContext) _Season_startDate(ctx context.Context, field graphql.CollectedField, obj *ent.Season) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Season_startDate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3504,7 +3504,7 @@ func (ec *executionContext) _Season_startdate(ctx context.Context, field graphql
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Season_startdate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Season_startDate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Season",
 		Field:      field,
@@ -3517,8 +3517,8 @@ func (ec *executionContext) fieldContext_Season_startdate(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Season_enddate(ctx context.Context, field graphql.CollectedField, obj *ent.Season) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Season_enddate(ctx, field)
+func (ec *executionContext) _Season_endDate(ctx context.Context, field graphql.CollectedField, obj *ent.Season) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Season_endDate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3548,7 +3548,7 @@ func (ec *executionContext) _Season_enddate(ctx context.Context, field graphql.C
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Season_enddate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Season_endDate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Season",
 		Field:      field,
@@ -3809,10 +3809,10 @@ func (ec *executionContext) fieldContext_SeasonEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Season_id(ctx, field)
 			case "number":
 				return ec.fieldContext_Season_number(ctx, field)
-			case "startdate":
-				return ec.fieldContext_Season_startdate(ctx, field)
-			case "enddate":
-				return ec.fieldContext_Season_enddate(ctx, field)
+			case "startDate":
+				return ec.fieldContext_Season_startDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_Season_endDate(ctx, field)
 			case "games":
 				return ec.fieldContext_Season_games(ctx, field)
 			}
@@ -6438,7 +6438,7 @@ func (ec *executionContext) unmarshalInputGameWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "show", "showNEQ", "showIn", "showNotIn", "showGT", "showGTE", "showLT", "showLTE", "airdate", "airdateNEQ", "airdateIn", "airdateNotIn", "airdateGT", "airdateGTE", "airdateLT", "airdateLTE", "tapedate", "tapedateNEQ", "tapedateIn", "tapedateNotIn", "tapedateGT", "tapedateGTE", "tapedateLT", "tapedateLTE", "seasonID", "seasonIDNEQ", "seasonIDIn", "seasonIDNotIn", "seasonIDIsNil", "seasonIDNotNil", "hasSeason", "hasSeasonWith", "hasClues", "hasCluesWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "show", "showNEQ", "showIn", "showNotIn", "showGT", "showGTE", "showLT", "showLTE", "airDate", "airDateNEQ", "airDateIn", "airDateNotIn", "airDateGT", "airDateGTE", "airDateLT", "airDateLTE", "tapeDate", "tapeDateNEQ", "tapeDateIn", "tapeDateNotIn", "tapeDateGT", "tapeDateGTE", "tapeDateLT", "tapeDateLTE", "seasonID", "seasonIDNEQ", "seasonIDIn", "seasonIDNotIn", "seasonIDIsNil", "seasonIDNotNil", "hasSeason", "hasSeasonWith", "hasClues", "hasCluesWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6597,130 +6597,130 @@ func (ec *executionContext) unmarshalInputGameWhereInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "airdate":
+		case "airDate":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdate"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDate"))
 			it.AirDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateNEQ":
+		case "airDateNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateNEQ"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateNEQ"))
 			it.AirDateNEQ, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateIn":
+		case "airDateIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateIn"))
 			it.AirDateIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateNotIn":
+		case "airDateNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateNotIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateNotIn"))
 			it.AirDateNotIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateGT":
+		case "airDateGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateGT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateGT"))
 			it.AirDateGT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateGTE":
+		case "airDateGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateGTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateGTE"))
 			it.AirDateGTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateLT":
+		case "airDateLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateLT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateLT"))
 			it.AirDateLT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "airdateLTE":
+		case "airDateLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airdateLTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("airDateLTE"))
 			it.AirDateLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedate":
+		case "tapeDate":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedate"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDate"))
 			it.TapeDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateNEQ":
+		case "tapeDateNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateNEQ"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateNEQ"))
 			it.TapeDateNEQ, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateIn":
+		case "tapeDateIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateIn"))
 			it.TapeDateIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateNotIn":
+		case "tapeDateNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateNotIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateNotIn"))
 			it.TapeDateNotIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateGT":
+		case "tapeDateGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateGT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateGT"))
 			it.TapeDateGT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateGTE":
+		case "tapeDateGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateGTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateGTE"))
 			it.TapeDateGTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateLT":
+		case "tapeDateLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateLT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateLT"))
 			it.TapeDateLT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "tapedateLTE":
+		case "tapeDateLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapedateLTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tapeDateLTE"))
 			it.TapeDateLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
@@ -6858,7 +6858,7 @@ func (ec *executionContext) unmarshalInputSeasonWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "number", "numberNEQ", "numberIn", "numberNotIn", "numberGT", "numberGTE", "numberLT", "numberLTE", "startdate", "startdateNEQ", "startdateIn", "startdateNotIn", "startdateGT", "startdateGTE", "startdateLT", "startdateLTE", "enddate", "enddateNEQ", "enddateIn", "enddateNotIn", "enddateGT", "enddateGTE", "enddateLT", "enddateLTE", "hasGames", "hasGamesWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "number", "numberNEQ", "numberIn", "numberNotIn", "numberGT", "numberGTE", "numberLT", "numberLTE", "startDate", "startDateNEQ", "startDateIn", "startDateNotIn", "startDateGT", "startDateGTE", "startDateLT", "startDateLTE", "endDate", "endDateNEQ", "endDateIn", "endDateNotIn", "endDateGT", "endDateGTE", "endDateLT", "endDateLTE", "hasGames", "hasGamesWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7017,130 +7017,130 @@ func (ec *executionContext) unmarshalInputSeasonWhereInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "startdate":
+		case "startDate":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdate"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
 			it.StartDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateNEQ":
+		case "startDateNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateNEQ"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateNEQ"))
 			it.StartDateNEQ, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateIn":
+		case "startDateIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateIn"))
 			it.StartDateIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateNotIn":
+		case "startDateNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateNotIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateNotIn"))
 			it.StartDateNotIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateGT":
+		case "startDateGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateGT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateGT"))
 			it.StartDateGT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateGTE":
+		case "startDateGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateGTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateGTE"))
 			it.StartDateGTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateLT":
+		case "startDateLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateLT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateLT"))
 			it.StartDateLT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "startdateLTE":
+		case "startDateLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startdateLTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateLTE"))
 			it.StartDateLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddate":
+		case "endDate":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddate"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
 			it.EndDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateNEQ":
+		case "endDateNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateNEQ"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateNEQ"))
 			it.EndDateNEQ, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateIn":
+		case "endDateIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateIn"))
 			it.EndDateIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateNotIn":
+		case "endDateNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateNotIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateNotIn"))
 			it.EndDateNotIn, err = ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateGT":
+		case "endDateGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateGT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateGT"))
 			it.EndDateGT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateGTE":
+		case "endDateGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateGTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateGTE"))
 			it.EndDateGTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateLT":
+		case "endDateLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateLT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateLT"))
 			it.EndDateLT, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "enddateLTE":
+		case "endDateLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enddateLTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDateLTE"))
 			it.EndDateLTE, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
@@ -7509,16 +7509,16 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "airdate":
+		case "airDate":
 
-			out.Values[i] = ec._Game_airdate(ctx, field, obj)
+			out.Values[i] = ec._Game_airDate(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "tapedate":
+		case "tapeDate":
 
-			out.Values[i] = ec._Game_tapedate(ctx, field, obj)
+			out.Values[i] = ec._Game_tapeDate(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -7890,16 +7890,16 @@ func (ec *executionContext) _Season(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "startdate":
+		case "startDate":
 
-			out.Values[i] = ec._Season_startdate(ctx, field, obj)
+			out.Values[i] = ec._Season_startDate(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "enddate":
+		case "endDate":
 
-			out.Values[i] = ec._Season_enddate(ctx, field, obj)
+			out.Values[i] = ec._Season_endDate(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)

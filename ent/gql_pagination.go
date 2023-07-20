@@ -1011,7 +1011,7 @@ var (
 			}
 		},
 	}
-	// GameOrderFieldAirDate orders Game by airDate.
+	// GameOrderFieldAirDate orders Game by air_date.
 	GameOrderFieldAirDate = &GameOrderField{
 		Value: func(ga *Game) (ent.Value, error) {
 			return ga.AirDate, nil
@@ -1025,7 +1025,7 @@ var (
 			}
 		},
 	}
-	// GameOrderFieldTapeDate orders Game by tapeDate.
+	// GameOrderFieldTapeDate orders Game by tape_date.
 	GameOrderFieldTapeDate = &GameOrderField{
 		Value: func(ga *Game) (ent.Value, error) {
 			return ga.TapeDate, nil
@@ -1376,7 +1376,7 @@ var (
 			}
 		},
 	}
-	// SeasonOrderFieldStartDate orders Season by startDate.
+	// SeasonOrderFieldStartDate orders Season by start_date.
 	SeasonOrderFieldStartDate = &SeasonOrderField{
 		Value: func(s *Season) (ent.Value, error) {
 			return s.StartDate, nil
@@ -1390,7 +1390,7 @@ var (
 			}
 		},
 	}
-	// SeasonOrderFieldEndDate orders Season by endDate.
+	// SeasonOrderFieldEndDate orders Season by end_date.
 	SeasonOrderFieldEndDate = &SeasonOrderField{
 		Value: func(s *Season) (ent.Value, error) {
 			return s.EndDate, nil

@@ -27,7 +27,7 @@ export type Node = {
 export type Link = {
     source: string | number;
     target: string | number;
-    label: string;
+    label: string | number;
 };
 export type DiagramProps = {
     nodes: Node[];

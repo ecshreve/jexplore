@@ -200,8 +200,8 @@ scalar Cursor
 type Game implements Node {
   id: ID!
   show: Int!
-  airdate: Time! @goField(name: "AirDate", forceResolver: false)
-  tapedate: Time! @goField(name: "TapeDate", forceResolver: false)
+  airDate: Time!
+  tapeDate: Time!
   seasonID: ID
   season: Season
   clues(
@@ -281,24 +281,24 @@ input GameWhereInput {
   showGTE: Int
   showLT: Int
   showLTE: Int
-  """airDate field predicates"""
-  airdate: Time
-  airdateNEQ: Time
-  airdateIn: [Time!]
-  airdateNotIn: [Time!]
-  airdateGT: Time
-  airdateGTE: Time
-  airdateLT: Time
-  airdateLTE: Time
-  """tapeDate field predicates"""
-  tapedate: Time
-  tapedateNEQ: Time
-  tapedateIn: [Time!]
-  tapedateNotIn: [Time!]
-  tapedateGT: Time
-  tapedateGTE: Time
-  tapedateLT: Time
-  tapedateLTE: Time
+  """air_date field predicates"""
+  airDate: Time
+  airDateNEQ: Time
+  airDateIn: [Time!]
+  airDateNotIn: [Time!]
+  airDateGT: Time
+  airDateGTE: Time
+  airDateLT: Time
+  airDateLTE: Time
+  """tape_date field predicates"""
+  tapeDate: Time
+  tapeDateNEQ: Time
+  tapeDateIn: [Time!]
+  tapeDateNotIn: [Time!]
+  tapeDateGT: Time
+  tapeDateGTE: Time
+  tapeDateLT: Time
+  tapeDateLTE: Time
   """season_id field predicates"""
   seasonID: ID
   seasonIDNEQ: ID
@@ -445,8 +445,8 @@ type Query {
 type Season implements Node {
   id: ID!
   number: Int!
-  startdate: Time! @goField(name: "StartDate", forceResolver: false)
-  enddate: Time! @goField(name: "EndDate", forceResolver: false)
+  startDate: Time!
+  endDate: Time!
   games(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
@@ -523,24 +523,24 @@ input SeasonWhereInput {
   numberGTE: Int
   numberLT: Int
   numberLTE: Int
-  """startDate field predicates"""
-  startdate: Time
-  startdateNEQ: Time
-  startdateIn: [Time!]
-  startdateNotIn: [Time!]
-  startdateGT: Time
-  startdateGTE: Time
-  startdateLT: Time
-  startdateLTE: Time
-  """endDate field predicates"""
-  enddate: Time
-  enddateNEQ: Time
-  enddateIn: [Time!]
-  enddateNotIn: [Time!]
-  enddateGT: Time
-  enddateGTE: Time
-  enddateLT: Time
-  enddateLTE: Time
+  """start_date field predicates"""
+  startDate: Time
+  startDateNEQ: Time
+  startDateIn: [Time!]
+  startDateNotIn: [Time!]
+  startDateGT: Time
+  startDateGTE: Time
+  startDateLT: Time
+  startDateLTE: Time
+  """end_date field predicates"""
+  endDate: Time
+  endDateNEQ: Time
+  endDateIn: [Time!]
+  endDateNotIn: [Time!]
+  endDateGT: Time
+  endDateGTE: Time
+  endDateLT: Time
+  endDateLTE: Time
   """games edge predicates"""
   hasGames: Boolean
   hasGamesWith: [GameWhereInput!]

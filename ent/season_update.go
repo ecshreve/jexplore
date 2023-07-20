@@ -42,13 +42,13 @@ func (su *SeasonUpdate) AddNumber(i int) *SeasonUpdate {
 	return su
 }
 
-// SetStartDate sets the "startDate" field.
+// SetStartDate sets the "start_date" field.
 func (su *SeasonUpdate) SetStartDate(t time.Time) *SeasonUpdate {
 	su.mutation.SetStartDate(t)
 	return su
 }
 
-// SetEndDate sets the "endDate" field.
+// SetEndDate sets the "end_date" field.
 func (su *SeasonUpdate) SetEndDate(t time.Time) *SeasonUpdate {
 	su.mutation.SetEndDate(t)
 	return su
@@ -221,13 +221,13 @@ func (suo *SeasonUpdateOne) AddNumber(i int) *SeasonUpdateOne {
 	return suo
 }
 
-// SetStartDate sets the "startDate" field.
+// SetStartDate sets the "start_date" field.
 func (suo *SeasonUpdateOne) SetStartDate(t time.Time) *SeasonUpdateOne {
 	suo.mutation.SetStartDate(t)
 	return suo
 }
 
-// SetEndDate sets the "endDate" field.
+// SetEndDate sets the "end_date" field.
 func (suo *SeasonUpdateOne) SetEndDate(t time.Time) *SeasonUpdateOne {
 	suo.mutation.SetEndDate(t)
 	return suo

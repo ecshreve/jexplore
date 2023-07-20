@@ -20,6 +20,8 @@ func (Clue) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id").Unique().Annotations(
 			entgql.OrderField("ID"),
+			entkit.FilterOperator(gen.Contains),
+			entkit.TitleField(),
 		),
 		field.Text("question").Annotations(
 			entgql.OrderField("QUESTION"),
@@ -32,12 +34,12 @@ func (Clue) Fields() []ent.Field {
 		field.Int("category_id").Optional().
 			Annotations(
 				entgql.OrderField("CATEGORY_ID"),
-				entkit.HideOnList(),
+				entkit.FilterOperator(gen.Contains),
 			),
 		field.Int("game_id").Optional().
 			Annotations(
 				entgql.OrderField("GAME_ID"),
-				entkit.HideOnList(),
+				entkit.FilterOperator(gen.Contains),
 			),
 	}
 }

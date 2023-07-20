@@ -28,13 +28,13 @@ func (gc *GameCreate) SetShow(i int) *GameCreate {
 	return gc
 }
 
-// SetAirDate sets the "airDate" field.
+// SetAirDate sets the "air_date" field.
 func (gc *GameCreate) SetAirDate(t time.Time) *GameCreate {
 	gc.mutation.SetAirDate(t)
 	return gc
 }
 
-// SetTapeDate sets the "tapeDate" field.
+// SetTapeDate sets the "tape_date" field.
 func (gc *GameCreate) SetTapeDate(t time.Time) *GameCreate {
 	gc.mutation.SetTapeDate(t)
 	return gc
@@ -118,10 +118,10 @@ func (gc *GameCreate) check() error {
 		return &ValidationError{Name: "show", err: errors.New(`ent: missing required field "Game.show"`)}
 	}
 	if _, ok := gc.mutation.AirDate(); !ok {
-		return &ValidationError{Name: "airDate", err: errors.New(`ent: missing required field "Game.airDate"`)}
+		return &ValidationError{Name: "air_date", err: errors.New(`ent: missing required field "Game.air_date"`)}
 	}
 	if _, ok := gc.mutation.TapeDate(); !ok {
-		return &ValidationError{Name: "tapeDate", err: errors.New(`ent: missing required field "Game.tapeDate"`)}
+		return &ValidationError{Name: "tape_date", err: errors.New(`ent: missing required field "Game.tape_date"`)}
 	}
 	return nil
 }

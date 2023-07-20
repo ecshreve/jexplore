@@ -27,13 +27,13 @@ func (sc *SeasonCreate) SetNumber(i int) *SeasonCreate {
 	return sc
 }
 
-// SetStartDate sets the "startDate" field.
+// SetStartDate sets the "start_date" field.
 func (sc *SeasonCreate) SetStartDate(t time.Time) *SeasonCreate {
 	sc.mutation.SetStartDate(t)
 	return sc
 }
 
-// SetEndDate sets the "endDate" field.
+// SetEndDate sets the "end_date" field.
 func (sc *SeasonCreate) SetEndDate(t time.Time) *SeasonCreate {
 	sc.mutation.SetEndDate(t)
 	return sc
@@ -98,10 +98,10 @@ func (sc *SeasonCreate) check() error {
 		return &ValidationError{Name: "number", err: errors.New(`ent: missing required field "Season.number"`)}
 	}
 	if _, ok := sc.mutation.StartDate(); !ok {
-		return &ValidationError{Name: "startDate", err: errors.New(`ent: missing required field "Season.startDate"`)}
+		return &ValidationError{Name: "start_date", err: errors.New(`ent: missing required field "Season.start_date"`)}
 	}
 	if _, ok := sc.mutation.EndDate(); !ok {
-		return &ValidationError{Name: "endDate", err: errors.New(`ent: missing required field "Season.endDate"`)}
+		return &ValidationError{Name: "end_date", err: errors.New(`ent: missing required field "Season.end_date"`)}
 	}
 	return nil
 }

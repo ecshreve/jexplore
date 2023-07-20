@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/entc/gen"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -19,16 +20,20 @@ func (Season) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id").Unique().Annotations(
 			entgql.OrderField("ID"),
+			entkit.FilterOperator(gen.Contains),
 		),
 		field.Int("number").Annotations(
 			entgql.OrderField("NUMBER"),
 			entkit.TitleField(),
+			entkit.FilterOperator(gen.Contains),
 		),
-		field.Time("startDate").Annotations(
+		field.Time("start_date").Annotations(
 			entgql.OrderField("START_DATE"),
+			entkit.FilterOperator(gen.Contains),
 		),
-		field.Time("endDate").Annotations(
+		field.Time("end_date").Annotations(
 			entgql.OrderField("END_DATE"),
+			entkit.FilterOperator(gen.Contains),
 		),
 	}
 }

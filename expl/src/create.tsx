@@ -102,15 +102,15 @@ export const ClueCreate: React.FC = () => {
     const { selectProps: gameSelectProps } =
         RA.useSelect<Interfaces.JeppGameInterface>({
             resource: "Game",
-            optionLabel: "id",
+            optionLabel: "show",
             optionValue: "id",
             metaData: {
                 cursors: gameCursors,
-                fields: ["id", "id"],
+                fields: ["id", "show"],
             },
             onSearch: (value: string) => [
                 {
-                    field: "id",
+                    field: "show",
                     operator: "contains",
                     value,
                 },
@@ -231,8 +231,8 @@ export const GameCreate: React.FC = () => {
                 </Antd.Form.Item>
 
                 <Antd.Form.Item
-                    name="airdate"
-                    label="AirDate"
+                    name="airDate"
+                    label="Air Date"
                     rules={[{ required: true }]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
@@ -242,8 +242,8 @@ export const GameCreate: React.FC = () => {
                 </Antd.Form.Item>
 
                 <Antd.Form.Item
-                    name="tapedate"
-                    label="TapeDate"
+                    name="tapeDate"
+                    label="Tape Date"
                     rules={[{ required: true }]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
@@ -287,15 +287,15 @@ export const SeasonCreate: React.FC = () => {
     const { selectProps: gamesSelectProps } =
         RA.useSelect<Interfaces.JeppGameInterface>({
             resource: "Game",
-            optionLabel: "id",
+            optionLabel: "show",
             optionValue: "id",
             metaData: {
                 cursors: gamesCursors,
-                fields: ["id", "id"],
+                fields: ["id", "show"],
             },
             onSearch: (value: string) => [
                 {
-                    field: "id",
+                    field: "show",
                     operator: "contains",
                     value,
                 },
@@ -317,8 +317,8 @@ export const SeasonCreate: React.FC = () => {
                 </Antd.Form.Item>
 
                 <Antd.Form.Item
-                    name="startdate"
-                    label="StartDate"
+                    name="startDate"
+                    label="Start Date"
                     rules={[{ required: true }]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
@@ -328,8 +328,8 @@ export const SeasonCreate: React.FC = () => {
                 </Antd.Form.Item>
 
                 <Antd.Form.Item
-                    name="enddate"
-                    label="EndDate"
+                    name="endDate"
+                    label="End Date"
                     rules={[{ required: true }]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",

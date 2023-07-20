@@ -162,7 +162,7 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
                     category: ["id", "name"],
                 },
                 {
-                    game: ["id", "show", "airdate", "tapedate", "seasonID"],
+                    game: ["id", "show", "airDate", "tapeDate", "seasonID"],
                 },
             ],
         },
@@ -252,11 +252,11 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
             fields: [
                 "id",
                 "show",
-                "airdate",
-                "tapedate",
+                "airDate",
+                "tapeDate",
                 "seasonID",
                 {
-                    season: ["id", "number", "startdate", "enddate"],
+                    season: ["id", "number", "startDate", "endDate"],
                 },
                 {
                     operation: "clues",
@@ -384,8 +384,8 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
             fields: [
                 "id",
                 "number",
-                "startdate",
-                "enddate",
+                "startDate",
+                "endDate",
                 {
                     operation: "games",
                     fields: [
@@ -395,8 +395,8 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
                                     node: [
                                         "id",
                                         "show",
-                                        "airdate",
-                                        "tapedate",
+                                        "airDate",
+                                        "tapeDate",
                                         "seasonID",
                                     ],
                                 },

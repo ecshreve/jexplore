@@ -14,10 +14,9 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	jexplore "github.com/ecshreve/jexplore/jex"
 	"github.com/entkit/entkit/v2"
 )
-
-type CustomAdapter struct{}
 
 func main() {
 	gqlEx, err := entkit.NewEntgqlExtension(
@@ -35,8 +34,9 @@ func main() {
 		graphqlUri = "http://localhost/query"
 	}
 
-	_, err = entkit.NewExtension(
+	entRefine, err := entkit.NewExtension(
 		entkit.WithGenerator("expl", entkit.DefaultRefineAdapter),
+		entkit.WithGenerator("jex", jexplore.DefaultCustomTemplate, entkit.TargetPath("./expl")),
 		entkit.WithGenerator("jsrv", entkit.DefaultServerAdapter),
 		entkit.WithGraphqlURL(graphqlUri),
 		entkit.WithPrefix("Jepp"),
@@ -51,7 +51,7 @@ func main() {
 		Features: []gen.Feature{gen.FeatureVersionedMigration},
 	}, entc.Extensions(
 		gqlEx,
-		// entRefine,
+		entRefine,
 	))
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)

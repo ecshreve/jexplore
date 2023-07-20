@@ -14,9 +14,9 @@ const (
 	FieldID = "id"
 	// FieldShow holds the string denoting the show field in the database.
 	FieldShow = "show"
-	// FieldAirDate holds the string denoting the airdate field in the database.
+	// FieldAirDate holds the string denoting the air_date field in the database.
 	FieldAirDate = "air_date"
-	// FieldTapeDate holds the string denoting the tapedate field in the database.
+	// FieldTapeDate holds the string denoting the tape_date field in the database.
 	FieldTapeDate = "tape_date"
 	// FieldSeasonID holds the string denoting the season_id field in the database.
 	FieldSeasonID = "season_id"
@@ -74,12 +74,12 @@ func ByShow(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldShow, opts...).ToFunc()
 }
 
-// ByAirDate orders the results by the airDate field.
+// ByAirDate orders the results by the air_date field.
 func ByAirDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAirDate, opts...).ToFunc()
 }
 
-// ByTapeDate orders the results by the tapeDate field.
+// ByTapeDate orders the results by the tape_date field.
 func ByTapeDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTapeDate, opts...).ToFunc()
 }

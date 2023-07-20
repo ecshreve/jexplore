@@ -569,25 +569,25 @@ type GameWhereInput struct {
 	ShowLT    *int  `json:"showLT,omitempty"`
 	ShowLTE   *int  `json:"showLTE,omitempty"`
 
-	// "airDate" field predicates.
-	AirDate      *time.Time  `json:"airdate,omitempty"`
-	AirDateNEQ   *time.Time  `json:"airdateNEQ,omitempty"`
-	AirDateIn    []time.Time `json:"airdateIn,omitempty"`
-	AirDateNotIn []time.Time `json:"airdateNotIn,omitempty"`
-	AirDateGT    *time.Time  `json:"airdateGT,omitempty"`
-	AirDateGTE   *time.Time  `json:"airdateGTE,omitempty"`
-	AirDateLT    *time.Time  `json:"airdateLT,omitempty"`
-	AirDateLTE   *time.Time  `json:"airdateLTE,omitempty"`
+	// "air_date" field predicates.
+	AirDate      *time.Time  `json:"airDate,omitempty"`
+	AirDateNEQ   *time.Time  `json:"airDateNEQ,omitempty"`
+	AirDateIn    []time.Time `json:"airDateIn,omitempty"`
+	AirDateNotIn []time.Time `json:"airDateNotIn,omitempty"`
+	AirDateGT    *time.Time  `json:"airDateGT,omitempty"`
+	AirDateGTE   *time.Time  `json:"airDateGTE,omitempty"`
+	AirDateLT    *time.Time  `json:"airDateLT,omitempty"`
+	AirDateLTE   *time.Time  `json:"airDateLTE,omitempty"`
 
-	// "tapeDate" field predicates.
-	TapeDate      *time.Time  `json:"tapedate,omitempty"`
-	TapeDateNEQ   *time.Time  `json:"tapedateNEQ,omitempty"`
-	TapeDateIn    []time.Time `json:"tapedateIn,omitempty"`
-	TapeDateNotIn []time.Time `json:"tapedateNotIn,omitempty"`
-	TapeDateGT    *time.Time  `json:"tapedateGT,omitempty"`
-	TapeDateGTE   *time.Time  `json:"tapedateGTE,omitempty"`
-	TapeDateLT    *time.Time  `json:"tapedateLT,omitempty"`
-	TapeDateLTE   *time.Time  `json:"tapedateLTE,omitempty"`
+	// "tape_date" field predicates.
+	TapeDate      *time.Time  `json:"tapeDate,omitempty"`
+	TapeDateNEQ   *time.Time  `json:"tapeDateNEQ,omitempty"`
+	TapeDateIn    []time.Time `json:"tapeDateIn,omitempty"`
+	TapeDateNotIn []time.Time `json:"tapeDateNotIn,omitempty"`
+	TapeDateGT    *time.Time  `json:"tapeDateGT,omitempty"`
+	TapeDateGTE   *time.Time  `json:"tapeDateGTE,omitempty"`
+	TapeDateLT    *time.Time  `json:"tapeDateLT,omitempty"`
+	TapeDateLTE   *time.Time  `json:"tapeDateLTE,omitempty"`
 
 	// "season_id" field predicates.
 	SeasonID       *int  `json:"seasonID,omitempty"`
@@ -865,25 +865,25 @@ type SeasonWhereInput struct {
 	NumberLT    *int  `json:"numberLT,omitempty"`
 	NumberLTE   *int  `json:"numberLTE,omitempty"`
 
-	// "startDate" field predicates.
-	StartDate      *time.Time  `json:"startdate,omitempty"`
-	StartDateNEQ   *time.Time  `json:"startdateNEQ,omitempty"`
-	StartDateIn    []time.Time `json:"startdateIn,omitempty"`
-	StartDateNotIn []time.Time `json:"startdateNotIn,omitempty"`
-	StartDateGT    *time.Time  `json:"startdateGT,omitempty"`
-	StartDateGTE   *time.Time  `json:"startdateGTE,omitempty"`
-	StartDateLT    *time.Time  `json:"startdateLT,omitempty"`
-	StartDateLTE   *time.Time  `json:"startdateLTE,omitempty"`
+	// "start_date" field predicates.
+	StartDate      *time.Time  `json:"startDate,omitempty"`
+	StartDateNEQ   *time.Time  `json:"startDateNEQ,omitempty"`
+	StartDateIn    []time.Time `json:"startDateIn,omitempty"`
+	StartDateNotIn []time.Time `json:"startDateNotIn,omitempty"`
+	StartDateGT    *time.Time  `json:"startDateGT,omitempty"`
+	StartDateGTE   *time.Time  `json:"startDateGTE,omitempty"`
+	StartDateLT    *time.Time  `json:"startDateLT,omitempty"`
+	StartDateLTE   *time.Time  `json:"startDateLTE,omitempty"`
 
-	// "endDate" field predicates.
-	EndDate      *time.Time  `json:"enddate,omitempty"`
-	EndDateNEQ   *time.Time  `json:"enddateNEQ,omitempty"`
-	EndDateIn    []time.Time `json:"enddateIn,omitempty"`
-	EndDateNotIn []time.Time `json:"enddateNotIn,omitempty"`
-	EndDateGT    *time.Time  `json:"enddateGT,omitempty"`
-	EndDateGTE   *time.Time  `json:"enddateGTE,omitempty"`
-	EndDateLT    *time.Time  `json:"enddateLT,omitempty"`
-	EndDateLTE   *time.Time  `json:"enddateLTE,omitempty"`
+	// "end_date" field predicates.
+	EndDate      *time.Time  `json:"endDate,omitempty"`
+	EndDateNEQ   *time.Time  `json:"endDateNEQ,omitempty"`
+	EndDateIn    []time.Time `json:"endDateIn,omitempty"`
+	EndDateNotIn []time.Time `json:"endDateNotIn,omitempty"`
+	EndDateGT    *time.Time  `json:"endDateGT,omitempty"`
+	EndDateGTE   *time.Time  `json:"endDateGTE,omitempty"`
+	EndDateLT    *time.Time  `json:"endDateLT,omitempty"`
+	EndDateLTE   *time.Time  `json:"endDateLTE,omitempty"`
 
 	// "games" edge predicates.
 	HasGames     *bool             `json:"hasGames,omitempty"`

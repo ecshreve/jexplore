@@ -14,9 +14,9 @@ const (
 	FieldID = "id"
 	// FieldNumber holds the string denoting the number field in the database.
 	FieldNumber = "number"
-	// FieldStartDate holds the string denoting the startdate field in the database.
+	// FieldStartDate holds the string denoting the start_date field in the database.
 	FieldStartDate = "start_date"
-	// FieldEndDate holds the string denoting the enddate field in the database.
+	// FieldEndDate holds the string denoting the end_date field in the database.
 	FieldEndDate = "end_date"
 	// EdgeGames holds the string denoting the games edge name in mutations.
 	EdgeGames = "games"
@@ -62,12 +62,12 @@ func ByNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNumber, opts...).ToFunc()
 }
 
-// ByStartDate orders the results by the startDate field.
+// ByStartDate orders the results by the start_date field.
 func ByStartDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStartDate, opts...).ToFunc()
 }
 
-// ByEndDate orders the results by the endDate field.
+// ByEndDate orders the results by the end_date field.
 func ByEndDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEndDate, opts...).ToFunc()
 }

@@ -43,13 +43,13 @@ func (gu *GameUpdate) AddShow(i int) *GameUpdate {
 	return gu
 }
 
-// SetAirDate sets the "airDate" field.
+// SetAirDate sets the "air_date" field.
 func (gu *GameUpdate) SetAirDate(t time.Time) *GameUpdate {
 	gu.mutation.SetAirDate(t)
 	return gu
 }
 
-// SetTapeDate sets the "tapeDate" field.
+// SetTapeDate sets the "tape_date" field.
 func (gu *GameUpdate) SetTapeDate(t time.Time) *GameUpdate {
 	gu.mutation.SetTapeDate(t)
 	return gu
@@ -282,13 +282,13 @@ func (guo *GameUpdateOne) AddShow(i int) *GameUpdateOne {
 	return guo
 }
 
-// SetAirDate sets the "airDate" field.
+// SetAirDate sets the "air_date" field.
 func (guo *GameUpdateOne) SetAirDate(t time.Time) *GameUpdateOne {
 	guo.mutation.SetAirDate(t)
 	return guo
 }
 
-// SetTapeDate sets the "tapeDate" field.
+// SetTapeDate sets the "tape_date" field.
 func (guo *GameUpdateOne) SetTapeDate(t time.Time) *GameUpdateOne {
 	guo.mutation.SetTapeDate(t)
 	return guo

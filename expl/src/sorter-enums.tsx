@@ -14,22 +14,26 @@
 // ---------------------------------------------------------
 
 export const CategorySorterEnums = {
+    id: "ID",
     name: "NAME",
 };
 export const ClueSorterEnums = {
+    id: "ID",
     question: "QUESTION",
     answer: "ANSWER",
     categoryID: "CATEGORY_ID",
     gameID: "GAME_ID",
 };
 export const GameSorterEnums = {
+    id: "ID",
     show: "SHOW",
-    airdate: "AIR_DATE",
-    tapedate: "TAPE_DATE",
+    airDate: "AIR_DATE",
+    tapeDate: "TAPE_DATE",
     seasonID: "SEASON_ID",
 };
 export const SeasonSorterEnums = {
+    id: "ID",
     number: "NUMBER",
-    startdate: "START_DATE",
-    enddate: "END_DATE",
+    startDate: "START_DATE",
+    endDate: "END_DATE",
 };

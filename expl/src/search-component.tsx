@@ -136,7 +136,7 @@ export const SearchComponent: React.FC = () => {
     const { refetch: refetchGame } = useList<Interfaces.JeppGameInterface>({
         resource: "game",
         metaData: {
-            fields: ["id", "id"],
+            fields: ["id", "show"],
             searchQuery: value,
         },
         queryOptions: {
@@ -144,7 +144,7 @@ export const SearchComponent: React.FC = () => {
             onSuccess: (data) => {
                 const storeOptionGroup = data.data.map((item) =>
                     renderItem(
-                        String(item.id),
+                        String(item.show),
                         null,
                         window.environment.appPath +
                             "game/show/:id".replace(":id", String(item.id)),

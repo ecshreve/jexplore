@@ -1102,8 +1102,8 @@ type GameMutation struct {
 	id            *int
 	show          *int
 	addshow       *int
-	airDate       *time.Time
-	tapeDate      *time.Time
+	air_date      *time.Time
+	tape_date     *time.Time
 	clearedFields map[string]struct{}
 	season        *int
 	clearedseason bool
@@ -1275,21 +1275,21 @@ func (m *GameMutation) ResetShow() {
 	m.addshow = nil
 }
 
-// SetAirDate sets the "airDate" field.
+// SetAirDate sets the "air_date" field.
 func (m *GameMutation) SetAirDate(t time.Time) {
-	m.airDate = &t
+	m.air_date = &t
 }
 
-// AirDate returns the value of the "airDate" field in the mutation.
+// AirDate returns the value of the "air_date" field in the mutation.
 func (m *GameMutation) AirDate() (r time.Time, exists bool) {
-	v := m.airDate
+	v := m.air_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAirDate returns the old "airDate" field's value of the Game entity.
+// OldAirDate returns the old "air_date" field's value of the Game entity.
 // If the Game object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *GameMutation) OldAirDate(ctx context.Context) (v time.Time, err error) {
@@ -1306,26 +1306,26 @@ func (m *GameMutation) OldAirDate(ctx context.Context) (v time.Time, err error) 
 	return oldValue.AirDate, nil
 }
 
-// ResetAirDate resets all changes to the "airDate" field.
+// ResetAirDate resets all changes to the "air_date" field.
 func (m *GameMutation) ResetAirDate() {
-	m.airDate = nil
+	m.air_date = nil
 }
 
-// SetTapeDate sets the "tapeDate" field.
+// SetTapeDate sets the "tape_date" field.
 func (m *GameMutation) SetTapeDate(t time.Time) {
-	m.tapeDate = &t
+	m.tape_date = &t
 }
 
-// TapeDate returns the value of the "tapeDate" field in the mutation.
+// TapeDate returns the value of the "tape_date" field in the mutation.
 func (m *GameMutation) TapeDate() (r time.Time, exists bool) {
-	v := m.tapeDate
+	v := m.tape_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTapeDate returns the old "tapeDate" field's value of the Game entity.
+// OldTapeDate returns the old "tape_date" field's value of the Game entity.
 // If the Game object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *GameMutation) OldTapeDate(ctx context.Context) (v time.Time, err error) {
@@ -1342,9 +1342,9 @@ func (m *GameMutation) OldTapeDate(ctx context.Context) (v time.Time, err error)
 	return oldValue.TapeDate, nil
 }
 
-// ResetTapeDate resets all changes to the "tapeDate" field.
+// ResetTapeDate resets all changes to the "tape_date" field.
 func (m *GameMutation) ResetTapeDate() {
-	m.tapeDate = nil
+	m.tape_date = nil
 }
 
 // SetSeasonID sets the "season_id" field.
@@ -1514,10 +1514,10 @@ func (m *GameMutation) Fields() []string {
 	if m.show != nil {
 		fields = append(fields, game.FieldShow)
 	}
-	if m.airDate != nil {
+	if m.air_date != nil {
 		fields = append(fields, game.FieldAirDate)
 	}
-	if m.tapeDate != nil {
+	if m.tape_date != nil {
 		fields = append(fields, game.FieldTapeDate)
 	}
 	if m.season != nil {
@@ -1792,8 +1792,8 @@ type SeasonMutation struct {
 	id            *int
 	number        *int
 	addnumber     *int
-	startDate     *time.Time
-	endDate       *time.Time
+	start_date    *time.Time
+	end_date      *time.Time
 	clearedFields map[string]struct{}
 	games         map[int]struct{}
 	removedgames  map[int]struct{}
@@ -1963,21 +1963,21 @@ func (m *SeasonMutation) ResetNumber() {
 	m.addnumber = nil
 }
 
-// SetStartDate sets the "startDate" field.
+// SetStartDate sets the "start_date" field.
 func (m *SeasonMutation) SetStartDate(t time.Time) {
-	m.startDate = &t
+	m.start_date = &t
 }
 
-// StartDate returns the value of the "startDate" field in the mutation.
+// StartDate returns the value of the "start_date" field in the mutation.
 func (m *SeasonMutation) StartDate() (r time.Time, exists bool) {
-	v := m.startDate
+	v := m.start_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldStartDate returns the old "startDate" field's value of the Season entity.
+// OldStartDate returns the old "start_date" field's value of the Season entity.
 // If the Season object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SeasonMutation) OldStartDate(ctx context.Context) (v time.Time, err error) {
@@ -1994,26 +1994,26 @@ func (m *SeasonMutation) OldStartDate(ctx context.Context) (v time.Time, err err
 	return oldValue.StartDate, nil
 }
 
-// ResetStartDate resets all changes to the "startDate" field.
+// ResetStartDate resets all changes to the "start_date" field.
 func (m *SeasonMutation) ResetStartDate() {
-	m.startDate = nil
+	m.start_date = nil
 }
 
-// SetEndDate sets the "endDate" field.
+// SetEndDate sets the "end_date" field.
 func (m *SeasonMutation) SetEndDate(t time.Time) {
-	m.endDate = &t
+	m.end_date = &t
 }
 
-// EndDate returns the value of the "endDate" field in the mutation.
+// EndDate returns the value of the "end_date" field in the mutation.
 func (m *SeasonMutation) EndDate() (r time.Time, exists bool) {
-	v := m.endDate
+	v := m.end_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldEndDate returns the old "endDate" field's value of the Season entity.
+// OldEndDate returns the old "end_date" field's value of the Season entity.
 // If the Season object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SeasonMutation) OldEndDate(ctx context.Context) (v time.Time, err error) {
@@ -2030,9 +2030,9 @@ func (m *SeasonMutation) OldEndDate(ctx context.Context) (v time.Time, err error
 	return oldValue.EndDate, nil
 }
 
-// ResetEndDate resets all changes to the "endDate" field.
+// ResetEndDate resets all changes to the "end_date" field.
 func (m *SeasonMutation) ResetEndDate() {
-	m.endDate = nil
+	m.end_date = nil
 }
 
 // AddGameIDs adds the "games" edge to the Game entity by ids.
@@ -2127,10 +2127,10 @@ func (m *SeasonMutation) Fields() []string {
 	if m.number != nil {
 		fields = append(fields, season.FieldNumber)
 	}
-	if m.startDate != nil {
+	if m.start_date != nil {
 		fields = append(fields, season.FieldStartDate)
 	}
-	if m.endDate != nil {
+	if m.end_date != nil {
 		fields = append(fields, season.FieldEndDate)
 	}
 	return fields

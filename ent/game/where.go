@@ -60,12 +60,12 @@ func Show(v int) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldShow, v))
 }
 
-// AirDate applies equality check predicate on the "airDate" field. It's identical to AirDateEQ.
+// AirDate applies equality check predicate on the "air_date" field. It's identical to AirDateEQ.
 func AirDate(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldAirDate, v))
 }
 
-// TapeDate applies equality check predicate on the "tapeDate" field. It's identical to TapeDateEQ.
+// TapeDate applies equality check predicate on the "tape_date" field. It's identical to TapeDateEQ.
 func TapeDate(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldTapeDate, v))
 }
@@ -115,82 +115,82 @@ func ShowLTE(v int) predicate.Game {
 	return predicate.Game(sql.FieldLTE(FieldShow, v))
 }
 
-// AirDateEQ applies the EQ predicate on the "airDate" field.
+// AirDateEQ applies the EQ predicate on the "air_date" field.
 func AirDateEQ(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldAirDate, v))
 }
 
-// AirDateNEQ applies the NEQ predicate on the "airDate" field.
+// AirDateNEQ applies the NEQ predicate on the "air_date" field.
 func AirDateNEQ(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldNEQ(FieldAirDate, v))
 }
 
-// AirDateIn applies the In predicate on the "airDate" field.
+// AirDateIn applies the In predicate on the "air_date" field.
 func AirDateIn(vs ...time.Time) predicate.Game {
 	return predicate.Game(sql.FieldIn(FieldAirDate, vs...))
 }
 
-// AirDateNotIn applies the NotIn predicate on the "airDate" field.
+// AirDateNotIn applies the NotIn predicate on the "air_date" field.
 func AirDateNotIn(vs ...time.Time) predicate.Game {
 	return predicate.Game(sql.FieldNotIn(FieldAirDate, vs...))
 }
 
-// AirDateGT applies the GT predicate on the "airDate" field.
+// AirDateGT applies the GT predicate on the "air_date" field.
 func AirDateGT(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldGT(FieldAirDate, v))
 }
 
-// AirDateGTE applies the GTE predicate on the "airDate" field.
+// AirDateGTE applies the GTE predicate on the "air_date" field.
 func AirDateGTE(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldGTE(FieldAirDate, v))
 }
 
-// AirDateLT applies the LT predicate on the "airDate" field.
+// AirDateLT applies the LT predicate on the "air_date" field.
 func AirDateLT(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldLT(FieldAirDate, v))
 }
 
-// AirDateLTE applies the LTE predicate on the "airDate" field.
+// AirDateLTE applies the LTE predicate on the "air_date" field.
 func AirDateLTE(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldLTE(FieldAirDate, v))
 }
 
-// TapeDateEQ applies the EQ predicate on the "tapeDate" field.
+// TapeDateEQ applies the EQ predicate on the "tape_date" field.
 func TapeDateEQ(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldEQ(FieldTapeDate, v))
 }
 
-// TapeDateNEQ applies the NEQ predicate on the "tapeDate" field.
+// TapeDateNEQ applies the NEQ predicate on the "tape_date" field.
 func TapeDateNEQ(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldNEQ(FieldTapeDate, v))
 }
 
-// TapeDateIn applies the In predicate on the "tapeDate" field.
+// TapeDateIn applies the In predicate on the "tape_date" field.
 func TapeDateIn(vs ...time.Time) predicate.Game {
 	return predicate.Game(sql.FieldIn(FieldTapeDate, vs...))
 }
 
-// TapeDateNotIn applies the NotIn predicate on the "tapeDate" field.
+// TapeDateNotIn applies the NotIn predicate on the "tape_date" field.
 func TapeDateNotIn(vs ...time.Time) predicate.Game {
 	return predicate.Game(sql.FieldNotIn(FieldTapeDate, vs...))
 }
 
-// TapeDateGT applies the GT predicate on the "tapeDate" field.
+// TapeDateGT applies the GT predicate on the "tape_date" field.
 func TapeDateGT(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldGT(FieldTapeDate, v))
 }
 
-// TapeDateGTE applies the GTE predicate on the "tapeDate" field.
+// TapeDateGTE applies the GTE predicate on the "tape_date" field.
 func TapeDateGTE(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldGTE(FieldTapeDate, v))
 }
 
-// TapeDateLT applies the LT predicate on the "tapeDate" field.
+// TapeDateLT applies the LT predicate on the "tape_date" field.
 func TapeDateLT(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldLT(FieldTapeDate, v))
 }
 
-// TapeDateLTE applies the LTE predicate on the "tapeDate" field.
+// TapeDateLTE applies the LTE predicate on the "tape_date" field.
 func TapeDateLTE(v time.Time) predicate.Game {
 	return predicate.Game(sql.FieldLTE(FieldTapeDate, v))
 }

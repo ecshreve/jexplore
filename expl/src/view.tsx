@@ -331,7 +331,7 @@ export const GameBadge: React.FC<Partial<Type.JeppGameInterface>> = (props) => {
             content={
                 <Show.GameShow
                     breadcrumb={false}
-                    title={props.id}
+                    title={props.show}
                     id={props.id}
                     withEdges={false}
                     headerButtons={[]}
@@ -344,7 +344,7 @@ export const GameBadge: React.FC<Partial<Type.JeppGameInterface>> = (props) => {
                     "game/show/:id".replace(":id", String(props.id))
                 }
             >
-                {props.id}
+                {props.show}
             </Link>
         </Antd.Popover>
     );

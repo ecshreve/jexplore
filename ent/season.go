@@ -19,10 +19,10 @@ type Season struct {
 	ID int `json:"id,omitempty"`
 	// Number holds the value of the "number" field.
 	Number int `json:"number,omitempty"`
-	// StartDate holds the value of the "startDate" field.
-	StartDate time.Time `json:"startDate,omitempty"`
-	// EndDate holds the value of the "endDate" field.
-	EndDate time.Time `json:"endDate,omitempty"`
+	// StartDate holds the value of the "start_date" field.
+	StartDate time.Time `json:"start_date,omitempty"`
+	// EndDate holds the value of the "end_date" field.
+	EndDate time.Time `json:"end_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SeasonQuery when eager-loading is set.
 	Edges        SeasonEdges `json:"edges"`
@@ -89,13 +89,13 @@ func (s *Season) assignValues(columns []string, values []any) error {
 			}
 		case season.FieldStartDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field startDate", values[i])
+				return fmt.Errorf("unexpected type %T for field start_date", values[i])
 			} else if value.Valid {
 				s.StartDate = value.Time
 			}
 		case season.FieldEndDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field endDate", values[i])
+				return fmt.Errorf("unexpected type %T for field end_date", values[i])
 			} else if value.Valid {
 				s.EndDate = value.Time
 			}
@@ -143,10 +143,10 @@ func (s *Season) String() string {
 	builder.WriteString("number=")
 	builder.WriteString(fmt.Sprintf("%v", s.Number))
 	builder.WriteString(", ")
-	builder.WriteString("startDate=")
+	builder.WriteString("start_date=")
 	builder.WriteString(s.StartDate.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("endDate=")
+	builder.WriteString("end_date=")
 	builder.WriteString(s.EndDate.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
