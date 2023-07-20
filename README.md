@@ -1,7 +1,10 @@
 # jexplore
 
+generate gqlserver and data explorer ui from ent schema
+
 ## [wip]
-<img src="./img/jexplore.gif">
+
+![jexplore](https://github.com/ecshreve/jexplore/assets/1425775/8e8be54b-0dc1-4387-aee1-88b977fab542)
 
 ## where i found stuff
 
@@ -17,68 +20,13 @@
 
 This repo uses [`run`](https://github.com/amonks/run) as a general task executor, tasks are defined in `./tasks.toml`.
 
-<br>
+To see available tasks run `run -list` from the root of the repo, and/or read the `./tasks.toml` files.
+
+example:
+`run dev` starts the gqlserver and webapp in dev mode, and watches for changes to the app source,
+rebuilding as needed.
 
 ---
-`run migrate/man`
-
-create a new empty atlas migration
-```
-atlas migrate new MANUAL_MIGRATION \
-  --dir "file://ent/migrate/migrations"
-```
-
----
-
-`run migrate/diff`
-generate migration file from diff
-```
-atlas migrate diff some-migration-name \
-  --dir "file://ent/migrate/migrations" \
-  --to "ent://ent/schema" \
-  --dev-url "sqlite://file?mode=memory&_fk=1"
-```
-
----
-
-`run migrate/hash`
-
-update atlas.sum hash file after making changes to the empty migration
-```
-atlas migrate hash   
-  --dir "file://ent/migrate/migrations"
-```
-
---- 
-
-`run migrate/apply/dev`
-
-apply migrations to the dev database
-```
-atlas migrate apply   
-  --dir "file://ent/migrate/migrations"   
-  --url "sqlite://file?mode=memory&_fk=1"
-```
-
---- 
-
-`run migrate/apply/prod`
-
-apply migrations to the file.db database
-```
-atlas migrate apply   
-  --dir "file://ent/migrate/migrations"   
-  --url "sqlite://file.db?_fk=1"
-```
-
----
-
-`run serve/dev`
-
-run the generated server and web ui (in unified mode)
-```
-go run ./my-server/*.go serve -u refine-project
-```
 
 ## where / what stuff is
 
@@ -102,10 +50,6 @@ go run ./my-server/*.go serve -u refine-project
 - https://entgo.io/docs/versioned-migrations/
 - migration files and data seeding
 
-`./my-server/` + `./refine-app/`
+`./jsrv/` + `./expl/`
 - https://github.com/entkit/entkit
-- gqlserver + react app, generated from ent schema
-- some small tweaks made after generation to make it work
-  - remove an auth type declaration from `my-server/main.go`
-  - coerce record IDs from number to string in `refine-app/src/edges-diagram.tsx`
-  - something else i'm forgetting...
+- gqlserver + react ui, generated from ent schema
