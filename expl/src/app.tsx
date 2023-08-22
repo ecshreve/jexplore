@@ -12,8 +12,8 @@
 // how to modify the library, extend its functionality or contribute
 // to the project: https://entkit.com
 // ---------------------------------------------------------
-import React, { useState } from "react";
-import { AuthBindings, Authenticated, Refine } from "@refinedev/core";
+import React, {useState} from "react";
+import {AuthBindings,Authenticated, Refine} from "@refinedev/core";
 import {
     ErrorComponent,
     notificationProvider,
@@ -21,7 +21,7 @@ import {
 } from "@refinedev/antd";
 import { ConfigProvider } from "antd";
 import "@refinedev/antd/dist/reset.css";
-import { GraphQLClient } from "graphql-request";
+import {GraphQLClient} from "graphql-request";
 import dataProvider from "./data-provider";
 import routerProvider, {
     NavigateToResource,
@@ -42,46 +42,45 @@ function App() {
                     routerProvider={routerProvider}
                     dataProvider={dataProvider(client)}
                     notificationProvider={notificationProvider}
-                    catchAll={<ErrorComponent />}
-                    resources={[
-                        {
-                            name: "category",
-                            list: window.environment.appPath + "category",
-                            show:
-                                window.environment.appPath +
-                                "category/show/:id",
-                            meta: {
-                                icon: <AntdIcons.GroupOutlined />,
+                    catchAll={<ErrorComponent/>}
+                    resources={
+                        [
+                            {
+                                name: "category",
+                                list: window.environment.appPath + "category",
+                                show: window.environment.appPath + "category/show/:id",
+                                meta: {
+                                    icon: <AntdIcons.GroupOutlined/>,
+                                }
                             },
-                        },
-                        {
-                            name: "clue",
-                            list: window.environment.appPath + "clue",
-                            show: window.environment.appPath + "clue/show/:id",
-                            meta: {
-                                icon: <AntdIcons.QuestionCircleOutlined />,
+                            {
+                                name: "clue",
+                                list: window.environment.appPath + "clue",
+                                show: window.environment.appPath + "clue/show/:id",
+                                meta: {
+                                    icon: <AntdIcons.QuestionCircleOutlined/>,
+                                }
                             },
-                        },
-                        {
-                            name: "game",
-                            list: window.environment.appPath + "game",
-                            show: window.environment.appPath + "game/show/:id",
-                            meta: {
-                                icon: <AntdIcons.PlusSquareOutlined />,
+                            {
+                                name: "game",
+                                list: window.environment.appPath + "game",
+                                show: window.environment.appPath + "game/show/:id",
+                                meta: {
+                                    icon: <AntdIcons.PlusSquareOutlined/>,
+                                }
                             },
-                        },
-                        {
-                            name: "season",
-                            list: window.environment.appPath + "season",
-                            show:
-                                window.environment.appPath + "season/show/:id",
-                            meta: {
-                                icon: <AntdIcons.CalendarOutlined />,
+                            {
+                                name: "season",
+                                list: window.environment.appPath + "season",
+                                show: window.environment.appPath + "season/show/:id",
+                                meta: {
+                                    icon: <AntdIcons.CalendarOutlined/>,
+                                }
                             },
-                        },
-                    ]}
+                        ]
+                    }
                 >
-                    <RoutesBundle />
+                    <RoutesBundle/>
                     <UnsavedChangesNotifier />
                 </Refine>
             </ConfigProvider>

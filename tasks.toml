@@ -1,7 +1,8 @@
 [[task]]
   id = "test"
+  description = "Run all go tests"
   type = "short"
-  cmd = "go test ./... -v"
+  cmd = "go test -v ./..."
 
 [[task]]
   id = "migrate"
@@ -9,25 +10,18 @@
   dependencies = ["ent/migrate/apply"]
 
 [[task]]
-  id = "generate"
+  id = "schemagen"
   type = "short"
-  cmd = "go generate ./..."
-
-[[task]]
-  id = "build"
-  type = "short"
-  triggers = ["expl/build"]
   cmd = """
-    echo "Building jsrv..."
-    rm -rf jsrv/expl
-    mkdir jsrv/expl
-    cp -r expl/build/* jsrv/expl
+    echo "Generating schema..."
+    go generate ./...
   """
-  
+
 [[task]]
   id = "serve"
   type = "long"
-  triggers = ["build"]
+  dependencies = ["schemagen"]
+  triggers = ["expl/build"]
   cmd = """
     echo "Starting jsrv server..."
     go run ./jsrv/*.go serve -db-dsn "file:ent/migrate/file.db?mode=rwc&cache=shared&_fk=1" -u expl
@@ -36,7 +30,7 @@
   [[task]]
   id = "dev"
   type = "long"
-  dependencies = ["serve", "migrate"]
+  dependencies = ["serve"]
   cmd = """
     echo "Starting dev server..."
   """

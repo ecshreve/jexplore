@@ -13,126 +13,84 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import * as RA from "@refinedev/antd";
 import * as Tables from "./tables";
 import * as Type from "./typedefs";
 import * as Action from "./action";
-export type CategoryListProps = RA.ListProps & {
-    tableProps?: Tables.CategoryTableProps;
-};
-export const CategoryList: React.FC<CategoryListProps> = ({
-    tableProps,
-    ...props
-}) => {
+export type CategoryListProps = RA.ListProps & { tableProps?: Tables.CategoryTableProps}
+export const CategoryList :React.FC<CategoryListProps> = ({tableProps, ...props} ) => {
     const can = true;
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
-    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+    const rowSelection = {selectedRowKeys, onChange: setSelectedRowKeys};
 
-    return can ? (
-        <RA.List
-            {...props}
-            resource="category"
-            headerButtons={({ defaultButtons }) => (
-                <>
-                    <Action.CategoryListAction
-                        key="CategoryListAction"
-                        recordItemIDs={selectedRowKeys}
-                    />
+    return can ? <RA.List {...props} resource="category" headerButtons={({ defaultButtons }) => (
+        <>
+            
+            <Action.CategoryListAction key="CategoryListAction" recordItemIDs={ selectedRowKeys }/>
 
-                    {selectedRowKeys.length ? <></> : null}
-                </>
-            )}
-        >
-            <Tables.CategoryTable {...tableProps} rowSelection={rowSelection} />
-        </RA.List>
-    ) : null;
+            {selectedRowKeys.length ? <>
+            </> : null }
+        </>
+    )}>
+        <Tables.CategoryTable {...tableProps} rowSelection={rowSelection}/>
+    </RA.List> : null
 };
-export type ClueListProps = RA.ListProps & {
-    tableProps?: Tables.ClueTableProps;
-};
-export const ClueList: React.FC<ClueListProps> = ({ tableProps, ...props }) => {
+export type ClueListProps = RA.ListProps & { tableProps?: Tables.ClueTableProps}
+export const ClueList :React.FC<ClueListProps> = ({tableProps, ...props} ) => {
     const can = true;
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
-    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+    const rowSelection = {selectedRowKeys, onChange: setSelectedRowKeys};
 
-    return can ? (
-        <RA.List
-            {...props}
-            resource="clue"
-            headerButtons={({ defaultButtons }) => (
-                <>
-                    <Action.ClueListAction
-                        key="ClueListAction"
-                        recordItemIDs={selectedRowKeys}
-                    />
+    return can ? <RA.List {...props} resource="clue" headerButtons={({ defaultButtons }) => (
+        <>
+            
+            <Action.ClueListAction key="ClueListAction" recordItemIDs={ selectedRowKeys }/>
 
-                    {selectedRowKeys.length ? <></> : null}
-                </>
-            )}
-        >
-            <Tables.ClueTable {...tableProps} rowSelection={rowSelection} />
-        </RA.List>
-    ) : null;
+            {selectedRowKeys.length ? <>
+            </> : null }
+        </>
+    )}>
+        <Tables.ClueTable {...tableProps} rowSelection={rowSelection}/>
+    </RA.List> : null
 };
-export type GameListProps = RA.ListProps & {
-    tableProps?: Tables.GameTableProps;
-};
-export const GameList: React.FC<GameListProps> = ({ tableProps, ...props }) => {
+export type GameListProps = RA.ListProps & { tableProps?: Tables.GameTableProps}
+export const GameList :React.FC<GameListProps> = ({tableProps, ...props} ) => {
     const can = true;
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
-    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+    const rowSelection = {selectedRowKeys, onChange: setSelectedRowKeys};
 
-    return can ? (
-        <RA.List
-            {...props}
-            resource="game"
-            headerButtons={({ defaultButtons }) => (
-                <>
-                    <Action.GameListAction
-                        key="GameListAction"
-                        recordItemIDs={selectedRowKeys}
-                    />
+    return can ? <RA.List {...props} resource="game" headerButtons={({ defaultButtons }) => (
+        <>
+            
+            <Action.GameListAction key="GameListAction" recordItemIDs={ selectedRowKeys }/>
 
-                    {selectedRowKeys.length ? <></> : null}
-                </>
-            )}
-        >
-            <Tables.GameTable {...tableProps} rowSelection={rowSelection} />
-        </RA.List>
-    ) : null;
+            {selectedRowKeys.length ? <>
+            </> : null }
+        </>
+    )}>
+        <Tables.GameTable {...tableProps} rowSelection={rowSelection}/>
+    </RA.List> : null
 };
-export type SeasonListProps = RA.ListProps & {
-    tableProps?: Tables.SeasonTableProps;
-};
-export const SeasonList: React.FC<SeasonListProps> = ({
-    tableProps,
-    ...props
-}) => {
+export type SeasonListProps = RA.ListProps & { tableProps?: Tables.SeasonTableProps}
+export const SeasonList :React.FC<SeasonListProps> = ({tableProps, ...props} ) => {
     const can = true;
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<Type.JeppID[]>([]);
-    const rowSelection = { selectedRowKeys, onChange: setSelectedRowKeys };
+    const rowSelection = {selectedRowKeys, onChange: setSelectedRowKeys};
 
-    return can ? (
-        <RA.List
-            {...props}
-            resource="season"
-            headerButtons={({ defaultButtons }) => (
-                <>
-                    <Action.SeasonListAction
-                        key="SeasonListAction"
-                        recordItemIDs={selectedRowKeys}
-                    />
+    return can ? <RA.List {...props} resource="season" headerButtons={({ defaultButtons }) => (
+        <>
+            
+            <Action.SeasonListAction key="SeasonListAction" recordItemIDs={ selectedRowKeys }/>
 
-                    {selectedRowKeys.length ? <></> : null}
-                </>
-            )}
-        >
-            <Tables.SeasonTable {...tableProps} rowSelection={rowSelection} />
-        </RA.List>
-    ) : null;
+            {selectedRowKeys.length ? <>
+            </> : null }
+        </>
+    )}>
+        <Tables.SeasonTable {...tableProps} rowSelection={rowSelection}/>
+    </RA.List> : null
 };

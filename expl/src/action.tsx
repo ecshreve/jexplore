@@ -19,9 +19,9 @@ import * as AntdIcons from "@ant-design/icons";
 import {
     RefineButtonSingleProps,
     RefineButtonLinkingProps,
-    RefineButtonCommonProps,
+    RefineButtonCommonProps
 } from "@refinedev/ui-types";
-import { ButtonProps, Popconfirm } from "antd";
+import {ButtonProps, Popconfirm} from "antd";
 import {
     useCustomMutation,
     useNotification,
@@ -31,290 +31,170 @@ import {
 import * as Custom from "./custom";
 import * as Type from "./typedefs";
 
+
 export type CategoryListActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const CategoryListAction: React.FC<CategoryListActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const CategoryListAction: React.FC<CategoryListActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "category/".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.UnorderedListOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "List"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "category/".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.UnorderedListOutlined/> } {...additionalProps} {...props} >
+            {hideText || "List"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type CategoryShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const CategoryShowAction: React.FC<CategoryShowActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const CategoryShowAction: React.FC<CategoryShowActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "category/show/:id".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.EyeOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "Show"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "category/show/:id".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.EyeOutlined/> } {...additionalProps} {...props} >
+            {hideText || "Show"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type ClueListActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const ClueListAction: React.FC<ClueListActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const ClueListAction: React.FC<ClueListActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "clue/".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.UnorderedListOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "List"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "clue/".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.UnorderedListOutlined/> } {...additionalProps} {...props} >
+            {hideText || "List"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type ClueShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const ClueShowAction: React.FC<ClueShowActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const ClueShowAction: React.FC<ClueShowActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "clue/show/:id".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.EyeOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "Show"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "clue/show/:id".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.EyeOutlined/> } {...additionalProps} {...props} >
+            {hideText || "Show"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type GameListActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const GameListAction: React.FC<GameListActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const GameListAction: React.FC<GameListActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "game/".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.UnorderedListOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "List"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "game/".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.UnorderedListOutlined/> } {...additionalProps} {...props} >
+            {hideText || "List"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type GameShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const GameShowAction: React.FC<GameShowActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const GameShowAction: React.FC<GameShowActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "game/show/:id".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.EyeOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "Show"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "game/show/:id".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.EyeOutlined/> } {...additionalProps} {...props} >
+            {hideText || "Show"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type SeasonListActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const SeasonListAction: React.FC<SeasonListActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const SeasonListAction: React.FC<SeasonListActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "season/".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.UnorderedListOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "List"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "season/".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.UnorderedListOutlined/> } {...additionalProps} {...props} >
+            {hideText || "List"}
+        </Antd.Button>
+    </Link> : null
+}
+
 
 export type SeasonShowActionProps = ButtonProps &
     RefineButtonCommonProps &
     RefineButtonSingleProps &
     RefineButtonLinkingProps & {
-        recordItemIDs: Type.JeppID[];
-        onSuccess?: (data: any) => void;
-    };
+    recordItemIDs: Type.JeppID[],
+    onSuccess?: (data: any)=>void
+}
 
-export const SeasonShowAction: React.FC<SeasonShowActionProps> = ({
-    recordItemIDs,
-    hideText,
-    onSuccess,
-    ...props
-}) => {
+export const SeasonShowAction: React.FC<SeasonShowActionProps> = ({recordItemIDs, hideText, onSuccess, ...props}) => {
     const can = true;
     const additionalProps = null || {};
     const Link = useLink();
 
-    return can ? (
-        <Link
-            to={
-                window.environment.appPath +
-                "season/show/:id".replace(":id", String(recordItemIDs[0]))
-            }
-        >
-            <Antd.Button
-                icon={<AntdIcons.EyeOutlined />}
-                {...additionalProps}
-                {...props}
-            >
-                {hideText || "Show"}
-            </Antd.Button>
-        </Link>
-    ) : null;
-};
+    return can ? <Link to={ window.environment.appPath + "season/show/:id".replace(":id", String(recordItemIDs[0])) }>
+        <Antd.Button icon={ <AntdIcons.EyeOutlined/> } {...additionalProps} {...props} >
+            {hideText || "Show"}
+        </Antd.Button>
+    </Link> : null
+}

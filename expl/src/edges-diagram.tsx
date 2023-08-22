@@ -13,7 +13,7 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { useParams } from "react-router-dom";
 
 import * as Type from "./typedefs";
@@ -23,16 +23,16 @@ import * as Action from "./action";
 import * as RA from "@refinedev/antd";
 import { useShow } from "@refinedev/core";
 
+
+
 export type CategoryEdgesDiagramProps = {
-    id?: Type.JeppID;
-} & RA.ShowProps;
-export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
-    id,
-    ...showProps
-}) => {
+    id?: Type.JeppID,
+} & RA.ShowProps
+export const CategoryEdgesDiagram :React.FC<CategoryEdgesDiagramProps> = ({id, ...showProps} ) => {
+
     const routeParams = useParams();
-    if (!id) {
-        id = routeParams.id;
+    if (!id){
+        id = routeParams.id
     }
 
     const { queryResult } = useShow<Type.JeppCategoryInterface>({
@@ -54,98 +54,92 @@ export const CategoryEdgesDiagram: React.FC<CategoryEdgesDiagramProps> = ({
                                         "answer",
                                         "categoryID",
                                         "gameID",
-                                    ],
+                                    ]
                                 },
                             ],
                         },
                         "totalCount",
                     ],
                     variables: {
-                        first: 10,
-                    },
+                        first: 10
+                    }
                 },
             ],
         },
     });
     const { data, isLoading } = queryResult;
-    const record = data?.data;
-    if (!record) {
-        return <></>;
+    const record = data?.data
+    if(!record){
+        return <></>
     }
 
-    const nodes: Array<Diagram.Node | undefined> = [
+    const nodes: Array<Diagram.Node|undefined> =  [
         {
             id: record.id,
             label: record.id,
+            
         },
-        ...(record.clues || []).map((i) => {
+        ...(record.clues || []).map((i)=>{
             return {
                 id: i.id,
                 label: i.id,
-            };
+            }
         }),
         Number(record._clues?.totalCount) > Number(record.clues?.length)
             ? {
-                  id: "Clue_more",
-                  label: `More ${
-                      Number(record._clues?.totalCount) -
-                      Number(record.clues?.length)
-                  }`,
-              }
+                id: "Clue_more",
+                label: `More ${Number(record._clues?.totalCount) - Number(record.clues?.length)}`
+            }
             : undefined,
     ];
-    const links: Array<Diagram.Link | undefined> = [
-        ...(record.clues || []).map((i) => {
+    const links:Array<Diagram.Link|undefined> = [
+        ...(record.clues || []).map((i)=>{
             return {
                 source: record.id,
                 target: i.id,
-                label: "Clues",
-            };
+                label: "Clues"
+            }
         }),
         Number(record._clues?.totalCount) > Number(record.clues?.length)
             ? {
-                  source: record.id,
-                  target: "Clue_more",
-                  label: "Clues",
-              }
+                source: record.id,
+                target: "Clue_more",
+                label: "Clues"
+            }
             : undefined,
-    ];
+    ]
 
     return (
-        <RA.Show
-            isLoading={isLoading}
-            title={"Edges Diagram"}
-            headerButtons={() => (
-                <>
-                    <Action.CategoryListAction recordItemIDs={[record.id]} />
-
-                    <Action.CategoryShowAction recordItemIDs={[record.id]} />
-                </>
-            )}
-            {...showProps}
+        <RA.Show isLoading={isLoading}
+                 title={"Edges Diagram"}
+                 headerButtons={() => (
+                     <>
+                         
+                         <Action.CategoryListAction recordItemIDs={ [record.id] }/>
+                         
+                         <Action.CategoryShowAction recordItemIDs={ [record.id] }/>
+                     </>
+                 )}
+                 {...showProps}
         >
             <Diagram.GoJS
-                nodes={nodes.filter(
-                    (n): n is Diagram.Node => typeof n !== "undefined",
-                )}
-                links={links.filter(
-                    (n): n is Diagram.Link => typeof n !== "undefined",
-                )}
+                nodes={ nodes.filter((n): n is Diagram.Node => typeof n !== "undefined") }
+                links={ links.filter((n): n is Diagram.Link => typeof n !== "undefined") }
             />
         </RA.Show>
-    );
-};
+    )
+}
+
+
 
 export type ClueEdgesDiagramProps = {
-    id?: Type.JeppID;
-} & RA.ShowProps;
-export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
-    id,
-    ...showProps
-}) => {
+    id?: Type.JeppID,
+} & RA.ShowProps
+export const ClueEdgesDiagram :React.FC<ClueEdgesDiagramProps> = ({id, ...showProps} ) => {
+
     const routeParams = useParams();
-    if (!id) {
-        id = routeParams.id;
+    if (!id){
+        id = routeParams.id
     }
 
     const { queryResult } = useShow<Type.JeppClueInterface>({
@@ -159,90 +153,88 @@ export const ClueEdgesDiagram: React.FC<ClueEdgesDiagramProps> = ({
                 "categoryID",
                 "gameID",
                 {
-                    category: ["id", "name"],
+                    "category": [
+                        "id",
+                        "name",
+                    ]
                 },
                 {
-                    game: ["id", "show", "airDate", "tapeDate", "seasonID"],
+                    "game": [
+                        "id",
+                        "show",
+                        "airDate",
+                        "tapeDate",
+                        "seasonID",
+                    ]
                 },
             ],
         },
     });
     const { data, isLoading } = queryResult;
-    const record = data?.data;
-    if (!record) {
-        return <></>;
+    const record = data?.data
+    if(!record){
+        return <></>
     }
 
-    const nodes: Array<Diagram.Node | undefined> = [
+    const nodes: Array<Diagram.Node|undefined> =  [
         {
             id: record.id,
             label: record.id,
+            
         },
-        record.category
-            ? {
-                  id: record.category.id || "n/a",
-                  label: record.category.id || "n/a",
-              }
-            : undefined,
-        record.game
-            ? {
-                  id: record.game.id || "n/a",
-                  label: record.game.id || "n/a",
-              }
-            : undefined,
+        record.category ? {
+            id: record.category.id || "n/a",
+            label: record.category.id ||"n/a",
+        } : undefined,
+        record.game ? {
+            id: record.game.id || "n/a",
+            label: record.game.id ||"n/a",
+        } : undefined,
     ];
-    const links: Array<Diagram.Link | undefined> = [
-        record.category
-            ? {
-                  source: record.id,
-                  target: record.category?.id || "n/a",
-                  label: "Category",
-              }
-            : undefined,
-        record.game
-            ? {
-                  source: record.id,
-                  target: record.game?.id || "n/a",
-                  label: "Game",
-              }
-            : undefined,
-    ];
+    const links:Array<Diagram.Link|undefined> = [
+        record.category ? {
+            source: record.id,
+            target: record.category?.id || "n/a",
+            label: "Category"
+        } : undefined,
+        record.game ? {
+            source: record.id,
+            target: record.game?.id || "n/a",
+            label: "Game"
+        } : undefined,
+    ]
 
     return (
-        <RA.Show
-            isLoading={isLoading}
-            title={"Edges Diagram"}
-            headerButtons={() => (
-                <>
-                    <Action.ClueListAction recordItemIDs={[record.id]} />
-
-                    <Action.ClueShowAction recordItemIDs={[record.id]} />
-                </>
-            )}
-            {...showProps}
+        <RA.Show isLoading={isLoading}
+                 title={"Edges Diagram"}
+                 headerButtons={() => (
+                     <>
+                         
+                         <Action.ClueListAction recordItemIDs={ [record.id] }/>
+                         
+                         <Action.ClueShowAction recordItemIDs={ [record.id] }/>
+                     </>
+                 )}
+                 {...showProps}
         >
             <Diagram.GoJS
-                nodes={nodes.filter(
-                    (n): n is Diagram.Node => typeof n !== "undefined",
-                )}
-                links={links.filter(
-                    (n): n is Diagram.Link => typeof n !== "undefined",
-                )}
+                nodes={ nodes.filter((n): n is Diagram.Node => typeof n !== "undefined") }
+                links={ links.filter((n): n is Diagram.Link => typeof n !== "undefined") }
             />
         </RA.Show>
-    );
-};
+    )
+}
+
+
 
 export type GameEdgesDiagramProps = {
-    id?: Type.JeppID;
-} & RA.ShowProps;
-export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
-    id,
-    ...showProps
-}) => {
+    id?: Type.JeppID,
+} & RA.ShowProps
+export const GameEdgesDiagram :React.FC<GameEdgesDiagramProps> = ({id, ...showProps} ) => {
+
     const routeParams = useParams();
-    if (!id) {
-        id = routeParams.id;
+    if (!id){
+        id = routeParams.id
     }
 
     const { queryResult } = useShow<Type.JeppGameInterface>({
@@ -256,7 +248,12 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
                 "tapeDate",
                 "seasonID",
                 {
-                    season: ["id", "number", "startDate", "endDate"],
+                    "season": [
+                        "id",
+                        "number",
+                        "startDate",
+                        "endDate",
+                    ]
                 },
                 {
                     operation: "clues",
@@ -270,111 +267,101 @@ export const GameEdgesDiagram: React.FC<GameEdgesDiagramProps> = ({
                                         "answer",
                                         "categoryID",
                                         "gameID",
-                                    ],
+                                    ]
                                 },
                             ],
                         },
                         "totalCount",
                     ],
                     variables: {
-                        first: 10,
-                    },
+                        first: 10
+                    }
                 },
             ],
         },
     });
     const { data, isLoading } = queryResult;
-    const record = data?.data;
-    if (!record) {
-        return <></>;
+    const record = data?.data
+    if(!record){
+        return <></>
     }
 
-    const nodes: Array<Diagram.Node | undefined> = [
+    const nodes: Array<Diagram.Node|undefined> =  [
         {
             id: record.id,
             label: record.id,
+            
         },
-        record.season
-            ? {
-                  id: record.season.id || "n/a",
-                  label: record.season.id || "n/a",
-              }
-            : undefined,
-        ...(record.clues || []).map((i) => {
+        record.season ? {
+            id: record.season.id || "n/a",
+            label: record.season.id ||"n/a",
+        } : undefined,
+        ...(record.clues || []).map((i)=>{
             return {
                 id: i.id,
                 label: i.id,
-            };
+            }
         }),
         Number(record._clues?.totalCount) > Number(record.clues?.length)
             ? {
-                  id: "Clue_more",
-                  label: `More ${
-                      Number(record._clues?.totalCount) -
-                      Number(record.clues?.length)
-                  }`,
-              }
+                id: "Clue_more",
+                label: `More ${Number(record._clues?.totalCount) - Number(record.clues?.length)}`
+            }
             : undefined,
     ];
-    const links: Array<Diagram.Link | undefined> = [
-        record.season
-            ? {
-                  source: record.id,
-                  target: record.season?.id || "n/a",
-                  label: "Season",
-              }
-            : undefined,
-        ...(record.clues || []).map((i) => {
+    const links:Array<Diagram.Link|undefined> = [
+        record.season ? {
+            source: record.id,
+            target: record.season?.id || "n/a",
+            label: "Season"
+        } : undefined,
+        ...(record.clues || []).map((i)=>{
             return {
                 source: record.id,
                 target: i.id,
-                label: "Clues",
-            };
+                label: "Clues"
+            }
         }),
         Number(record._clues?.totalCount) > Number(record.clues?.length)
             ? {
-                  source: record.id,
-                  target: "Clue_more",
-                  label: "Clues",
-              }
+                source: record.id,
+                target: "Clue_more",
+                label: "Clues"
+            }
             : undefined,
-    ];
+    ]
 
     return (
-        <RA.Show
-            isLoading={isLoading}
-            title={"Edges Diagram"}
-            headerButtons={() => (
-                <>
-                    <Action.GameListAction recordItemIDs={[record.id]} />
-
-                    <Action.GameShowAction recordItemIDs={[record.id]} />
-                </>
-            )}
-            {...showProps}
+        <RA.Show isLoading={isLoading}
+                 title={"Edges Diagram"}
+                 headerButtons={() => (
+                     <>
+                         
+                         <Action.GameListAction recordItemIDs={ [record.id] }/>
+                         
+                         <Action.GameShowAction recordItemIDs={ [record.id] }/>
+                     </>
+                 )}
+                 {...showProps}
         >
             <Diagram.GoJS
-                nodes={nodes.filter(
-                    (n): n is Diagram.Node => typeof n !== "undefined",
-                )}
-                links={links.filter(
-                    (n): n is Diagram.Link => typeof n !== "undefined",
-                )}
+                nodes={ nodes.filter((n): n is Diagram.Node => typeof n !== "undefined") }
+                links={ links.filter((n): n is Diagram.Link => typeof n !== "undefined") }
             />
         </RA.Show>
-    );
-};
+    )
+}
+
+
 
 export type SeasonEdgesDiagramProps = {
-    id?: Type.JeppID;
-} & RA.ShowProps;
-export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
-    id,
-    ...showProps
-}) => {
+    id?: Type.JeppID,
+} & RA.ShowProps
+export const SeasonEdgesDiagram :React.FC<SeasonEdgesDiagramProps> = ({id, ...showProps} ) => {
+
     const routeParams = useParams();
-    if (!id) {
-        id = routeParams.id;
+    if (!id){
+        id = routeParams.id
     }
 
     const { queryResult } = useShow<Type.JeppSeasonInterface>({
@@ -398,84 +385,79 @@ export const SeasonEdgesDiagram: React.FC<SeasonEdgesDiagramProps> = ({
                                         "airDate",
                                         "tapeDate",
                                         "seasonID",
-                                    ],
+                                    ]
                                 },
                             ],
                         },
                         "totalCount",
                     ],
                     variables: {
-                        first: 10,
-                    },
+                        first: 10
+                    }
                 },
             ],
         },
     });
     const { data, isLoading } = queryResult;
-    const record = data?.data;
-    if (!record) {
-        return <></>;
+    const record = data?.data
+    if(!record){
+        return <></>
     }
 
-    const nodes: Array<Diagram.Node | undefined> = [
+    const nodes: Array<Diagram.Node|undefined> =  [
         {
             id: record.id,
             label: record.id,
+            
         },
-        ...(record.games || []).map((i) => {
+        ...(record.games || []).map((i)=>{
             return {
                 id: i.id,
                 label: i.id,
-            };
+            }
         }),
         Number(record._games?.totalCount) > Number(record.games?.length)
             ? {
-                  id: "Game_more",
-                  label: `More ${
-                      Number(record._games?.totalCount) -
-                      Number(record.games?.length)
-                  }`,
-              }
+                id: "Game_more",
+                label: `More ${Number(record._games?.totalCount) - Number(record.games?.length)}`
+            }
             : undefined,
     ];
-    const links: Array<Diagram.Link | undefined> = [
-        ...(record.games || []).map((i) => {
+    const links:Array<Diagram.Link|undefined> = [
+        ...(record.games || []).map((i)=>{
             return {
                 source: record.id,
                 target: i.id,
-                label: "Games",
-            };
+                label: "Games"
+            }
         }),
         Number(record._games?.totalCount) > Number(record.games?.length)
             ? {
-                  source: record.id,
-                  target: "Game_more",
-                  label: "Games",
-              }
+                source: record.id,
+                target: "Game_more",
+                label: "Games"
+            }
             : undefined,
-    ];
+    ]
 
     return (
-        <RA.Show
-            isLoading={isLoading}
-            title={"Edges Diagram"}
-            headerButtons={() => (
-                <>
-                    <Action.SeasonListAction recordItemIDs={[record.id]} />
-
-                    <Action.SeasonShowAction recordItemIDs={[record.id]} />
-                </>
-            )}
-            {...showProps}
+        <RA.Show isLoading={isLoading}
+                 title={"Edges Diagram"}
+                 headerButtons={() => (
+                     <>
+                         
+                         <Action.SeasonListAction recordItemIDs={ [record.id] }/>
+                         
+                         <Action.SeasonShowAction recordItemIDs={ [record.id] }/>
+                     </>
+                 )}
+                 {...showProps}
         >
             <Diagram.GoJS
-                nodes={nodes.filter(
-                    (n): n is Diagram.Node => typeof n !== "undefined",
-                )}
-                links={links.filter(
-                    (n): n is Diagram.Link => typeof n !== "undefined",
-                )}
+                nodes={ nodes.filter((n): n is Diagram.Node => typeof n !== "undefined") }
+                links={ links.filter((n): n is Diagram.Link => typeof n !== "undefined") }
             />
         </RA.Show>
-    );
-};
+    )
+}
+

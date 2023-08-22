@@ -13,56 +13,59 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
-export type JeppString = string;
-export type JeppNumber = number;
-export type JeppBoolean = boolean;
-export type JeppDate = Date;
-export type JeppUUID = string;
-export type JeppImage = string;
-export type JeppCode = string;
-export type JeppURL = string;
-export type JeppRichText = string;
-export type JeppStringList = JeppString[];
-export type JeppNumberList = JeppNumber[];
-export type JeppID = JeppUUID | JeppNumber;
+export type JeppString = string
+export type JeppNumber = number
+export type JeppBoolean = boolean
+export type JeppDate = Date
+export type JeppUUID = string
+export type JeppImage = string
+export type JeppCode = string
+export type JeppURL = string
+export type JeppRichText = string
+export type JeppStringList = JeppString[]
+export type JeppNumberList = JeppNumber[]
+export type JeppID = JeppUUID | JeppNumber
+
+
 
 interface gqlField<T> {
     edges?: {
-        nodes?: Array<T>;
-    };
-    totalCount?: number;
+        nodes?: Array<T>
+    },
+    totalCount?: number,
 }
 
+
 export interface JeppCategoryInterface {
-    id: JeppNumber; // int
-    name: JeppString; // string
-    clues?: JeppClueInterface[];
-    _clues?: gqlField<JeppClueInterface>;
+    id: JeppNumber, // int
+    name: JeppString, // string
+    clues?: JeppClueInterface[],
+    _clues?: gqlField<JeppClueInterface>,
 }
 export interface JeppClueInterface {
-    id: JeppNumber; // int
-    question: JeppString; // string
-    answer: JeppString; // string
-    categoryID: JeppNumber; // int
-    gameID: JeppNumber; // int
-    category?: JeppCategoryInterface;
-    game?: JeppGameInterface;
+    id: JeppNumber, // int
+    question: JeppString, // string
+    answer: JeppString, // string
+    categoryID: JeppNumber, // int
+    gameID: JeppNumber, // int
+    category?: JeppCategoryInterface,
+    game?: JeppGameInterface,
 }
 export interface JeppGameInterface {
-    id: JeppNumber; // int
-    show: JeppNumber; // int
-    airDate: JeppDate; // time.Time
-    tapeDate: JeppDate; // time.Time
-    seasonID: JeppNumber; // int
-    season?: JeppSeasonInterface;
-    clues?: JeppClueInterface[];
-    _clues?: gqlField<JeppClueInterface>;
+    id: JeppNumber, // int
+    show: JeppNumber, // int
+    airDate: JeppDate, // time.Time
+    tapeDate: JeppDate, // time.Time
+    seasonID: JeppNumber, // int
+    season?: JeppSeasonInterface,
+    clues?: JeppClueInterface[],
+    _clues?: gqlField<JeppClueInterface>,
 }
 export interface JeppSeasonInterface {
-    id: JeppNumber; // int
-    number: JeppNumber; // int
-    startDate: JeppDate; // time.Time
-    endDate: JeppDate; // time.Time
-    games?: JeppGameInterface[];
-    _games?: gqlField<JeppGameInterface>;
+    id: JeppNumber, // int
+    number: JeppNumber, // int
+    startDate: JeppDate, // time.Time
+    endDate: JeppDate, // time.Time
+    games?: JeppGameInterface[],
+    _games?: gqlField<JeppGameInterface>,
 }

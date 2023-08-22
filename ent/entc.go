@@ -36,8 +36,9 @@ func main() {
 
 	entRefine, err := entkit.NewExtension(
 		entkit.WithGenerator("expl", entkit.DefaultRefineAdapter),
-		entkit.WithGenerator("jex", jexplore.DefaultCustomTemplate, entkit.TargetPath("./expl")),
+		entkit.WithGenerator("custom-refine", jexplore.DefaultCustomTemplate, entkit.TargetPath("./expl")),
 		entkit.WithGenerator("jsrv", entkit.DefaultServerAdapter),
+		entkit.WithGenerator("custom-server", jexplore.DefaultCustomServerTemplate, entkit.TargetPath("./jsrv")),
 		entkit.WithGraphqlURL(graphqlUri),
 		entkit.WithPrefix("Jepp"),
 		entkit.IgnoreUncommittedChanges(),

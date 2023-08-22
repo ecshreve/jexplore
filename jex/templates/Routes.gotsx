@@ -1,0 +1,105 @@
+{{- /* gotype: github.com/entkit/entkit/v2.Generator */ -}}
+
+{{- define "src/routes.tsx" -}}
+
+{{- $.Extension.FileHeader | ER_replace "^" "//" }}
+
+import React from "react";
+
+// Components imports
+import * as List from "./list";
+import * as Show from "./show";
+import * as Create from "./create";
+import * as Edit from "./edit";
+import * as EdgesDiagram from "./edges-diagram";
+
+import { Login } from "./login";
+import { Header } from "./header";
+import { Authenticated} from "@refinedev/core";
+import { ErrorComponent, ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/antd";
+import { Route, Routes, Outlet } from "react-router-dom";
+import { NavigateToResource, CatchAllNavigate } from "@refinedev/react-router-v6";
+
+{{- $indexNode := ER_indexNode $.Graph }}
+
+export const RoutesBundle: React.FC = ()=>{
+    const loginUrl = window.environment.appPath + "login";
+    return <Routes>
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated
+                    fallback={<CatchAllNavigate to={loginUrl} />}
+                >
+                    <ThemedLayoutV2
+                        Header={Header}
+                        Title={ ( { collapsed } ) => (
+                            <ThemedTitleV2
+                                    // collapsed is a boolean value that indicates whether the <Sidebar> is collapsed or not
+                                collapsed={collapsed}
+                                    // icon={collapsed ? <MySmallIcon /> : <MyLargeIcon />}
+                                text="jexplore"
+                            />
+                        ) }
+                    >
+                        <Outlet />
+                    </ThemedLayoutV2>
+                </Authenticated>
+            }
+        >
+
+            {{- if not (empty $indexNode) }}
+            <Route index element={<NavigateToResource resource="{{ $indexNode.Name | kebabcase }}" />}/>
+            {{- end }}
+            {{- range $n := $.Graph.Nodes}}
+            {{ $ant := ER_nodeConfig $n}}
+            {{- $routePath := $ant.Route }}
+            {{- if empty $routePath }}
+            {{ $routePath = $n.Name | kebabcase }}
+            {{- end }}
+            <Route path="{{ $routePath }}">
+                {{- $actions := $ant.Actions }}
+                {{- range $a := $actions }}
+                {{- if not (empty $a.Route) }}
+                <Route
+                    {{- if $a.Route.Index }}
+                    index
+                    {{- end }}
+                    {{- if not (empty $a.Route.Path ) }}
+                    path="{{ $a.Route.Path | trimAll "/" }}"
+                    {{- end }}
+                    {{- $element := replace $a.Route.Element "{name}" $n.Name}}
+                    element={<{{ $element }}/>}
+                />
+                {{- end }}
+                {{- end }}
+            </Route>
+            {{- end}}
+        </Route>
+
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated fallback={<Outlet />}>
+                    <NavigateToResource resource="{{ $indexNode.Name | kebabcase }}" />
+                </Authenticated>
+            }
+        >
+            <Route path="login" element={<Login />} />
+        </Route>
+
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated>
+                    <ThemedLayoutV2>
+                        <Outlet />
+                    </ThemedLayoutV2>
+                </Authenticated>
+            }
+        >
+            <Route path="*" element={<ErrorComponent />} />
+        </Route>
+    </Routes>
+}
+{{- end -}}

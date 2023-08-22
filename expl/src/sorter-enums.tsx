@@ -14,26 +14,26 @@
 // ---------------------------------------------------------
 
 export const CategorySorterEnums = {
-    id: "ID",
-    name: "NAME",
-};
+    "id": "ID",
+    "name": "NAME",
+}
 export const ClueSorterEnums = {
-    id: "ID",
-    question: "QUESTION",
-    answer: "ANSWER",
-    categoryID: "CATEGORY_ID",
-    gameID: "GAME_ID",
-};
+    "id": "ID",
+    "question": "QUESTION",
+    "answer": "ANSWER",
+    "categoryID": "CATEGORY_ID",
+    "gameID": "GAME_ID",
+}
 export const GameSorterEnums = {
-    id: "ID",
-    show: "SHOW",
-    airDate: "AIR_DATE",
-    tapeDate: "TAPE_DATE",
-    seasonID: "SEASON_ID",
-};
+    "id": "ID",
+    "show": "SHOW",
+    "airDate": "AIR_DATE",
+    "tapeDate": "TAPE_DATE",
+    "seasonID": "SEASON_ID",
+}
 export const SeasonSorterEnums = {
-    id: "ID",
-    number: "NUMBER",
-    startDate: "START_DATE",
-    endDate: "END_DATE",
-};
+    "id": "ID",
+    "number": "NUMBER",
+    "startDate": "START_DATE",
+    "endDate": "END_DATE",
+}

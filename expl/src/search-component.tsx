@@ -13,10 +13,10 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import { Typography, Avatar, AutoComplete, Input } from "antd";
 import { useList, useLink } from "@refinedev/core";
-import * as Interfaces from "./typedefs";
+import * as Interfaces from "./typedefs"
 import debounce from "lodash/debounce";
 import { FileImageOutlined, SearchOutlined } from "@ant-design/icons";
 
@@ -39,75 +39,65 @@ export const SearchComponent: React.FC = () => {
 
     const renderTitle = (title: string) => (
         <Typography.Title>
-            <Typography.Text style={{ fontSize: "16px" }}>
-                {title}
-            </Typography.Text>
+            <Typography.Text style={
+                { fontSize: "16px" }
+            }>{title}</Typography.Text>
+            
         </Typography.Title>
     );
 
-    const renderItem = (
-        title: string,
-        imageUrl: string | null,
-        link: string,
-    ) => ({
+    const renderItem = (title: string, imageUrl: string|null, link: string) => ({
         value: title,
         key: link,
         label: (
-            <Link
-                key={title + link}
-                to={link}
-                style={{ display: "flex", alignItems: "center" }}
-            >
-                {imageUrl ? (
-                    <Avatar
-                        size={48}
-                        src={imageUrl}
-                        style={{ minWidth: "48px" }}
-                    />
-                ) : (
-                    <FileImageOutlined style={{ fontSize: "48px" }} />
-                )}
-                <Text style={{ marginLeft: "16px" }}>{title}</Text>
+            <Link key={title+link} to={link} style={
+                { display: "flex", alignItems: "center" }
+            }>
+                { imageUrl ? <Avatar size={48} src={imageUrl} style={
+                    { minWidth: "48px" }
+                } /> : <FileImageOutlined style={ {fontSize: '48px'} } />}
+                <Text style={
+                    { marginLeft: "16px" }
+                }>{title}</Text>
             </Link>
         ),
-    });
-    const { refetch: refetchCategory } =
-        useList<Interfaces.JeppCategoryInterface>({
-            resource: "category",
-            metaData: {
-                fields: ["id", "name"],
-                searchQuery: value,
+    });const { refetch: refetchCategory } = useList<Interfaces.JeppCategoryInterface>({
+        resource: "category",
+        metaData: {
+            fields: [
+                "id",
+                "name",
+            ],
+            searchQuery: value,
+        },
+        queryOptions: {
+            enabled: false,
+            onSuccess: (data) => {
+                const storeOptionGroup = data.data.map((item) =>
+                    renderItem(
+                        String(item.name),
+                        null,
+                        window.environment.appPath + "category/show/:id".replace(":id", String(item.id)),
+                    ),
+                );
+                if (storeOptionGroup.length > 0) {
+                    setOptions((prevOptions) => [
+                        ...prevOptions,
+                        {
+                            label: renderTitle("Category"),
+                            options: storeOptionGroup,
+                        },
+                    ]);
+                }
             },
-            queryOptions: {
-                enabled: false,
-                onSuccess: (data) => {
-                    const storeOptionGroup = data.data.map((item) =>
-                        renderItem(
-                            String(item.name),
-                            null,
-                            window.environment.appPath +
-                                "category/show/:id".replace(
-                                    ":id",
-                                    String(item.id),
-                                ),
-                        ),
-                    );
-                    if (storeOptionGroup.length > 0) {
-                        setOptions((prevOptions) => [
-                            ...prevOptions,
-                            {
-                                label: renderTitle("Category"),
-                                options: storeOptionGroup,
-                            },
-                        ]);
-                    }
-                },
-            },
-        });
-    const { refetch: refetchClue } = useList<Interfaces.JeppClueInterface>({
+        },
+    });const { refetch: refetchClue } = useList<Interfaces.JeppClueInterface>({
         resource: "clue",
         metaData: {
-            fields: ["id", "id"],
+            fields: [
+                "id",
+                "id",
+            ],
             searchQuery: value,
         },
         queryOptions: {
@@ -117,8 +107,7 @@ export const SearchComponent: React.FC = () => {
                     renderItem(
                         String(item.id),
                         null,
-                        window.environment.appPath +
-                            "clue/show/:id".replace(":id", String(item.id)),
+                        window.environment.appPath + "clue/show/:id".replace(":id", String(item.id)),
                     ),
                 );
                 if (storeOptionGroup.length > 0) {
@@ -132,11 +121,13 @@ export const SearchComponent: React.FC = () => {
                 }
             },
         },
-    });
-    const { refetch: refetchGame } = useList<Interfaces.JeppGameInterface>({
+    });const { refetch: refetchGame } = useList<Interfaces.JeppGameInterface>({
         resource: "game",
         metaData: {
-            fields: ["id", "show"],
+            fields: [
+                "id",
+                "show",
+            ],
             searchQuery: value,
         },
         queryOptions: {
@@ -146,8 +137,7 @@ export const SearchComponent: React.FC = () => {
                     renderItem(
                         String(item.show),
                         null,
-                        window.environment.appPath +
-                            "game/show/:id".replace(":id", String(item.id)),
+                        window.environment.appPath + "game/show/:id".replace(":id", String(item.id)),
                     ),
                 );
                 if (storeOptionGroup.length > 0) {
@@ -161,11 +151,13 @@ export const SearchComponent: React.FC = () => {
                 }
             },
         },
-    });
-    const { refetch: refetchSeason } = useList<Interfaces.JeppSeasonInterface>({
+    });const { refetch: refetchSeason } = useList<Interfaces.JeppSeasonInterface>({
         resource: "season",
         metaData: {
-            fields: ["id", "number"],
+            fields: [
+                "id",
+                "number",
+            ],
             searchQuery: value,
         },
         queryOptions: {
@@ -175,8 +167,7 @@ export const SearchComponent: React.FC = () => {
                     renderItem(
                         String(item.number),
                         null,
-                        window.environment.appPath +
-                            "season/show/:id".replace(":id", String(item.id)),
+                        window.environment.appPath + "season/show/:id".replace(":id", String(item.id)),
                     ),
                 );
                 if (storeOptionGroup.length > 0) {
@@ -194,8 +185,8 @@ export const SearchComponent: React.FC = () => {
 
     useEffect(() => {
         setOptions([]);
-        if (value.length < 3) {
-            return;
+        if(value.length < 3){
+            return
         }
         refetchCategory();
         refetchClue();
@@ -205,19 +196,24 @@ export const SearchComponent: React.FC = () => {
 
     return (
         <AutoComplete
-            style={{
-                width: "100%",
-                maxWidth: "550px",
-            }}
+            style={
+                {
+                    width: "100%",
+                    maxWidth: "550px",
+                }
+            }
             options={options}
             filterOption={false}
-            onSearch={debounce((value: string) => setValue(value), 300)}
+            onSearch={debounce(
+                (value: string) => setValue(value),
+                300,
+            )}
         >
             <Input
                 size="large"
                 placeholder="Search"
-                suffix={<SearchOutlined />}
+                suffix={<SearchOutlined/>}
             />
         </AutoComplete>
-    );
-};
+    )
+}

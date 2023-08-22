@@ -13,337 +13,345 @@
 // to the project: https://entkit.com
 // ---------------------------------------------------------
 
-import { useState } from "react";
+import {useState} from "react";
 import * as RA from "@refinedev/antd";
 import * as Antd from "antd";
 import * as Interfaces from "./typedefs";
-import { Cursors } from "./data-provider";
+import {Cursors} from "./data-provider";
 import dayjs from "dayjs";
-import CodeEditor from "@uiw/react-textarea-code-editor";
+import CodeEditor from '@uiw/react-textarea-code-editor';
 import * as View from "./view";
 import * as Action from "./action";
 import * as Custom from "./custom";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 export const CategoryCreate: React.FC = () => {
-    const { formProps, saveButtonProps, queryResult } =
-        RA.useForm<Interfaces.JeppCategoryInterface>();
-
-    const [cluesCursors, setCluesCursors] = useState<Cursors>({});
-
-    const { selectProps: cluesSelectProps } =
-        RA.useSelect<Interfaces.JeppClueInterface>({
-            resource: "Clue",
-            optionLabel: "id",
-            optionValue: "id",
-            metaData: {
-                cursors: cluesCursors,
-                fields: ["id", "id"],
+    const {formProps, saveButtonProps, queryResult} = RA.useForm<Interfaces.JeppCategoryInterface>();
+    
+    const [ cluesCursors, setCluesCursors] = useState<Cursors>({})
+    
+    const { selectProps: cluesSelectProps } = RA.useSelect<Interfaces.JeppClueInterface>({
+        resource: "Clue",
+        optionLabel: "id",
+        optionValue: "id",
+        metaData:{
+            cursors: cluesCursors,
+            fields: ["id", "id"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "id",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "id",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
+        ],
+    });
 
     return (
         <RA.Create
             saveButtonProps={saveButtonProps}
-            headerButtons={() => <></>}
+            headerButtons={() => (
+               <>
+                   
+                   
+               </>
+            )}
         >
             <Antd.Form {...formProps} layout="vertical">
+                
                 <Antd.Form.Item
                     name="name"
                     label="Name"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                 >
-                    <View.JeppStringViewOnForm />
+                     <View.JeppStringViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     label="Clues"
                     name={["clueIDs"]}
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...cluesSelectProps} mode={"multiple"} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...cluesSelectProps} mode={ "multiple" }/>
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>
     );
 };
 export const ClueCreate: React.FC = () => {
-    const { formProps, saveButtonProps, queryResult } =
-        RA.useForm<Interfaces.JeppClueInterface>();
-
-    const [categoryCursors, setCategoryCursors] = useState<Cursors>({});
-
-    const { selectProps: categorySelectProps } =
-        RA.useSelect<Interfaces.JeppCategoryInterface>({
-            resource: "Category",
-            optionLabel: "name",
-            optionValue: "id",
-            metaData: {
-                cursors: categoryCursors,
-                fields: ["id", "name"],
+    const {formProps, saveButtonProps, queryResult} = RA.useForm<Interfaces.JeppClueInterface>();
+    
+    const [ categoryCursors, setCategoryCursors] = useState<Cursors>({})
+    
+    const { selectProps: categorySelectProps } = RA.useSelect<Interfaces.JeppCategoryInterface>({
+        resource: "Category",
+        optionLabel: "name",
+        optionValue: "id",
+        metaData:{
+            cursors: categoryCursors,
+            fields: ["id", "name"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "name",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "name",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
-    const [gameCursors, setGameCursors] = useState<Cursors>({});
-
-    const { selectProps: gameSelectProps } =
-        RA.useSelect<Interfaces.JeppGameInterface>({
-            resource: "Game",
-            optionLabel: "show",
-            optionValue: "id",
-            metaData: {
-                cursors: gameCursors,
-                fields: ["id", "show"],
+        ],
+    });
+    const [ gameCursors, setGameCursors] = useState<Cursors>({})
+    
+    const { selectProps: gameSelectProps } = RA.useSelect<Interfaces.JeppGameInterface>({
+        resource: "Game",
+        optionLabel: "show",
+        optionValue: "id",
+        metaData:{
+            cursors: gameCursors,
+            fields: ["id", "show"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "show",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "show",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
+        ],
+    });
 
     return (
         <RA.Create
             saveButtonProps={saveButtonProps}
-            headerButtons={() => <></>}
+            headerButtons={() => (
+               <>
+                   
+                   
+               </>
+            )}
         >
             <Antd.Form {...formProps} layout="vertical">
+                
                 <Antd.Form.Item
                     name="question"
                     label="Question"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                 >
-                    <View.JeppStringViewOnForm />
+                     <View.JeppStringViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="answer"
                     label="Answer"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                 >
-                    <View.JeppStringViewOnForm />
+                     <View.JeppStringViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="categoryID"
                     label="Category Id"
-                    rules={[{ required: false }]}
+                    rules={[{required: false}]}
                 >
-                    <View.JeppNumberViewOnForm />
+                     <View.JeppNumberViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="gameID"
                     label="Game Id"
-                    rules={[{ required: false }]}
+                    rules={[{required: false}]}
                 >
-                    <View.JeppNumberViewOnForm />
+                     <View.JeppNumberViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     label="Category"
                     name="categoryID"
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...categorySelectProps} mode={undefined} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...categorySelectProps} mode={ undefined }/>
                 </Antd.Form.Item>
                 <Antd.Form.Item
                     label="Game"
                     name="gameID"
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...gameSelectProps} mode={undefined} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...gameSelectProps} mode={ undefined }/>
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>
     );
 };
 export const GameCreate: React.FC = () => {
-    const { formProps, saveButtonProps, queryResult } =
-        RA.useForm<Interfaces.JeppGameInterface>();
-
-    const [seasonCursors, setSeasonCursors] = useState<Cursors>({});
-
-    const { selectProps: seasonSelectProps } =
-        RA.useSelect<Interfaces.JeppSeasonInterface>({
-            resource: "Season",
-            optionLabel: "number",
-            optionValue: "id",
-            metaData: {
-                cursors: seasonCursors,
-                fields: ["id", "number"],
+    const {formProps, saveButtonProps, queryResult} = RA.useForm<Interfaces.JeppGameInterface>();
+    
+    const [ seasonCursors, setSeasonCursors] = useState<Cursors>({})
+    
+    const { selectProps: seasonSelectProps } = RA.useSelect<Interfaces.JeppSeasonInterface>({
+        resource: "Season",
+        optionLabel: "number",
+        optionValue: "id",
+        metaData:{
+            cursors: seasonCursors,
+            fields: ["id", "number"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "number",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "number",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
-    const [cluesCursors, setCluesCursors] = useState<Cursors>({});
-
-    const { selectProps: cluesSelectProps } =
-        RA.useSelect<Interfaces.JeppClueInterface>({
-            resource: "Clue",
-            optionLabel: "id",
-            optionValue: "id",
-            metaData: {
-                cursors: cluesCursors,
-                fields: ["id", "id"],
+        ],
+    });
+    const [ cluesCursors, setCluesCursors] = useState<Cursors>({})
+    
+    const { selectProps: cluesSelectProps } = RA.useSelect<Interfaces.JeppClueInterface>({
+        resource: "Clue",
+        optionLabel: "id",
+        optionValue: "id",
+        metaData:{
+            cursors: cluesCursors,
+            fields: ["id", "id"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "id",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "id",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
+        ],
+    });
 
     return (
         <RA.Create
             saveButtonProps={saveButtonProps}
-            headerButtons={() => <></>}
+            headerButtons={() => (
+               <>
+                   
+                   
+               </>
+            )}
         >
             <Antd.Form {...formProps} layout="vertical">
+                
                 <Antd.Form.Item
                     name="show"
                     label="Show"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                 >
-                    <View.JeppNumberViewOnForm />
+                     <View.JeppNumberViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="airDate"
                     label="Air Date"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
                     })}
                 >
-                    <View.JeppDateViewOnForm />
+                     <View.JeppDateViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="tapeDate"
                     label="Tape Date"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
                     })}
                 >
-                    <View.JeppDateViewOnForm />
+                     <View.JeppDateViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="seasonID"
                     label="Season Id"
-                    rules={[{ required: false }]}
+                    rules={[{required: false}]}
                 >
-                    <View.JeppNumberViewOnForm />
+                     <View.JeppNumberViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     label="Season"
                     name="seasonID"
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...seasonSelectProps} mode={undefined} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...seasonSelectProps} mode={ undefined }/>
                 </Antd.Form.Item>
                 <Antd.Form.Item
                     label="Clues"
                     name={["clueIDs"]}
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...cluesSelectProps} mode={"multiple"} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...cluesSelectProps} mode={ "multiple" }/>
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>
     );
 };
 export const SeasonCreate: React.FC = () => {
-    const { formProps, saveButtonProps, queryResult } =
-        RA.useForm<Interfaces.JeppSeasonInterface>();
-
-    const [gamesCursors, setGamesCursors] = useState<Cursors>({});
-
-    const { selectProps: gamesSelectProps } =
-        RA.useSelect<Interfaces.JeppGameInterface>({
-            resource: "Game",
-            optionLabel: "show",
-            optionValue: "id",
-            metaData: {
-                cursors: gamesCursors,
-                fields: ["id", "show"],
+    const {formProps, saveButtonProps, queryResult} = RA.useForm<Interfaces.JeppSeasonInterface>();
+    
+    const [ gamesCursors, setGamesCursors] = useState<Cursors>({})
+    
+    const { selectProps: gamesSelectProps } = RA.useSelect<Interfaces.JeppGameInterface>({
+        resource: "Game",
+        optionLabel: "show",
+        optionValue: "id",
+        metaData:{
+            cursors: gamesCursors,
+            fields: ["id", "show"]
+        },
+        onSearch: (value: string) => [
+            {
+                field: "show",
+                operator: "contains",
+                value,
             },
-            onSearch: (value: string) => [
-                {
-                    field: "show",
-                    operator: "contains",
-                    value,
-                },
-            ],
-        });
+        ],
+    });
 
     return (
         <RA.Create
             saveButtonProps={saveButtonProps}
-            headerButtons={() => <></>}
+            headerButtons={() => (
+               <>
+                   
+                   
+               </>
+            )}
         >
             <Antd.Form {...formProps} layout="vertical">
+                
                 <Antd.Form.Item
                     name="number"
                     label="Number"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                 >
-                    <View.JeppNumberViewOnForm />
+                     <View.JeppNumberViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="startDate"
                     label="Start Date"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
                     })}
                 >
-                    <View.JeppDateViewOnForm />
+                     <View.JeppDateViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     name="endDate"
                     label="End Date"
-                    rules={[{ required: true }]}
+                    rules={[{required: true}]}
                     getValueProps={(value) => ({
                         value: value ? dayjs(value) : "",
                     })}
                 >
-                    <View.JeppDateViewOnForm />
+                     <View.JeppDateViewOnForm/>
                 </Antd.Form.Item>
-
+                
                 <Antd.Form.Item
                     label="Games"
                     name={["gameIDs"]}
-                    rules={[{ required: false }]}
-                >
-                    <Antd.Select {...gamesSelectProps} mode={"multiple"} />
+                    rules={[{required: false}]}>
+                    <Antd.Select {...gamesSelectProps} mode={ "multiple" }/>
                 </Antd.Form.Item>
             </Antd.Form>
         </RA.Create>

@@ -24,92 +24,113 @@ import * as EdgesDiagram from "./edges-diagram";
 
 import { Login } from "./login";
 import { Header } from "./header";
-import { Authenticated } from "@refinedev/core";
+import { Authenticated} from "@refinedev/core";
 import { ErrorComponent, ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/antd";
 import { Route, Routes, Outlet } from "react-router-dom";
-import {
-    NavigateToResource,
-    CatchAllNavigate,
-} from "@refinedev/react-router-v6";
+import { NavigateToResource, CatchAllNavigate } from "@refinedev/react-router-v6";
 
-export const RoutesBundle: React.FC = () => {
+export const RoutesBundle: React.FC = ()=>{
     const loginUrl = window.environment.appPath + "login";
-    return (
-        <Routes>
-            <Route
-                path={window.environment.appPath}
-                element={
-                    <Authenticated
-                        fallback={<CatchAllNavigate to={loginUrl} />}
-                    >
-                        <ThemedLayoutV2
-                            Header={Header}
-                            Title={({ collapsed }) => (
-                                <ThemedTitleV2
+    return <Routes>
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated
+                    fallback={<CatchAllNavigate to={loginUrl} />}
+                >
+                    <ThemedLayoutV2
+                        Header={Header}
+                        Title={ ( { collapsed } ) => (
+                            <ThemedTitleV2
                                     // collapsed is a boolean value that indicates whether the <Sidebar> is collapsed or not
-                                    collapsed={collapsed}
+                                collapsed={collapsed}
                                     // icon={collapsed ? <MySmallIcon /> : <MyLargeIcon />}
-                                    text="jexplore"
-                                />
-                            )}
-                        >
-                            <Outlet />
-                        </ThemedLayoutV2>
-                    </Authenticated>
-                }
-            >
+                                text="jexplore"
+                            />
+                        ) }
+                    >
+                        <Outlet />
+                    </ThemedLayoutV2>
+                </Authenticated>
+            }
+        >
+            <Route index element={<NavigateToResource resource="season" />}/>
+            
+            
+            <Route path="category">
                 <Route
                     index
-                    element={<NavigateToResource resource="season" />}
+                    path=""
+                    element={<List.CategoryList/>}
                 />
-
-                <Route path="category">
-                    <Route index path="" element={<List.CategoryList />} />
-                    <Route
-                        path="show/:id"
-                        element={<Show.CategoryMainShow />}
-                    />
-                </Route>
-
-                <Route path="clue">
-                    <Route index path="" element={<List.ClueList />} />
-                    <Route path="show/:id" element={<Show.ClueMainShow />} />
-                </Route>
-
-                <Route path="game">
-                    <Route index path="" element={<List.GameList />} />
-                    <Route path="show/:id" element={<Show.GameMainShow />} />
-                </Route>
-
-                <Route path="season">
-                    <Route index path="" element={<List.SeasonList />} />
-                    <Route path="show/:id" element={<Show.SeasonMainShow />} />
-                </Route>
+                <Route
+                    path="show/:id"
+                    element={<Show.CategoryMainShow/>}
+                />
             </Route>
-
-            <Route
-                path={window.environment.appPath}
-                element={
-                    <Authenticated fallback={<Outlet />}>
-                        <NavigateToResource resource="season" />
-                    </Authenticated>
-                }
-            >
-                <Route path="login" element={<Login />} />
+            
+            
+            <Route path="clue">
+                <Route
+                    index
+                    path=""
+                    element={<List.ClueList/>}
+                />
+                <Route
+                    path="show/:id"
+                    element={<Show.ClueMainShow/>}
+                />
             </Route>
-
-            <Route
-                path={window.environment.appPath}
-                element={
-                    <Authenticated>
-                        <ThemedLayoutV2>
-                            <Outlet />
-                        </ThemedLayoutV2>
-                    </Authenticated>
-                }
-            >
-                <Route path="*" element={<ErrorComponent />} />
+            
+            
+            <Route path="game">
+                <Route
+                    index
+                    path=""
+                    element={<List.GameList/>}
+                />
+                <Route
+                    path="show/:id"
+                    element={<Show.GameMainShow/>}
+                />
             </Route>
-        </Routes>
-    );
-};
+            
+            
+            <Route path="season">
+                <Route
+                    index
+                    path=""
+                    element={<List.SeasonList/>}
+                />
+                <Route
+                    path="show/:id"
+                    element={<Show.SeasonMainShow/>}
+                />
+            </Route>
+        </Route>
+
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated fallback={<Outlet />}>
+                    <NavigateToResource resource="season" />
+                </Authenticated>
+            }
+        >
+            <Route path="login" element={<Login />} />
+        </Route>
+
+        <Route
+            path={window.environment.appPath}
+            element={
+                <Authenticated>
+                    <ThemedLayoutV2>
+                        <Outlet />
+                    </ThemedLayoutV2>
+                </Authenticated>
+            }
+        >
+            <Route path="*" element={<ErrorComponent />} />
+        </Route>
+    </Routes>
+}
